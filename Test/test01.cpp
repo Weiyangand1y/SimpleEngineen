@@ -4,11 +4,21 @@
 #include "termcolor.hpp"
 #endif
 #include "L1/App/Application.h"
-#include <L1/Lib/Math/math.h>
+#include "L1/Lib/Math/math.h"
+#include "L2/Lib/imgui/MyImGui.h"
+#include "L1/Object/ScriptObject.h"
+
 
 class TestApplication:public Application{
 public:
-    void _run(){
+    void _init() override{
+        std::cout<<"==============="<<std::endl;
+        MyImGui::static_init(get_window()->get_window());
+        ScriptObject so;
+
+              
+    }
+    void _run() override{
         renderer.start_framebuffer("f1");  //--------------------
         renderer.clear_color();
         mat4 m(1.0f);
@@ -28,6 +38,12 @@ public:
         //                     Render::ShaderType::SCREEN);
         // renderer.end_framebuffer();
 
+        MyImGui::static_begin();
+        ImGui::Begin("Test");
+        ImGui::Image((void*)renderer.get_framebuffer_color_texture_id("f1"),
+                         ImVec2{300.f,300.f}, ImVec2{0,1}, ImVec2{1,0});
+        ImGui::End();
+        MyImGui::static_end();
     }
 };
 
@@ -39,5 +55,6 @@ int main(){
     std::cout << termcolor::green << "This text is green" << termcolor::reset << std::endl;
     #endif
     TestApplication app;
+    app.init();
     app.run();
 }

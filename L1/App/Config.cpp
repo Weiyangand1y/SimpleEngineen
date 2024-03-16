@@ -2,9 +2,11 @@
 
 void Config::init() {
     data={
+        {"title","Simple Game Engineen"},
         {"icon_path","C:\\Users\\21wyc\\Pictures\\Camera Roll\\searchPicture.png"},
         {"shader_base_path",R"(C:\Users\21wyc\Documents\Project\GameMada\graphic\shader\)"},
-        {"texture_base_path","C:/Users/21wyc/Pictures/"}
+        {"texture_base_path","C:/Users/21wyc/Pictures/"},
+        {"lua_script_file","C:\\Users\\21wyc\\Documents\\Project\\SimpleEngine\\assets\\Script\\"}
     };
 }
 
@@ -26,4 +28,8 @@ std::string Config::get(const std::string& key) {
             return data[key];
     }
     return ""; // 如果键不存在，返回空字符串
+}
+
+std::tuple<int, int> Config::get_windows_size() {
+    return std::tuple<int, int>(800,800);
 }

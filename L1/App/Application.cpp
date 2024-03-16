@@ -1,12 +1,21 @@
 #include "Application.h"
+#include "Config.h"
 #include <iostream>
 
-Application::Application()
-    : window(800, 800, "My Window"), renderer(), drawer(renderer) {
-    init();
+Application::Application(){
+    auto [w,h]=Config::getInstance().get_windows_size();
+    window.create(w,h,Config::getInstance().get("title").c_str());
+    renderer.init();
+    drawer.set_render(renderer);
 }
 
-void Application::init() {}
+void Application::init() {
+    _init();
+}
+
+void Application::_init() {
+    std::cout<<"00000000000"<<std::endl;
+}
 
 void Application::run() {
     while (!window.should_close()) {
@@ -23,3 +32,7 @@ void Application::run() {
 }
 
 void Application::_run() {}
+
+Window* Application::get_window() {
+    return &window;
+}

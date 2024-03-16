@@ -18,7 +18,6 @@ public:
 private:
     std::unordered_map<std::string, FrameBuffer> frame_buffers;
     FrameBuffer* fb=nullptr;   
-    void init();
     void init_vertex_db();
     void init_shader_db();
     void init_texture_db();
@@ -28,6 +27,7 @@ private:
     ShaderType current_shader_type;
 public:
     Render();
+    void init();
     void use_vertex(VertexType vertex_type);
     
     void use_shader(ShaderType shader_type);

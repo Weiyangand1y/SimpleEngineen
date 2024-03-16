@@ -10,7 +10,7 @@ void set_window_icon(GLFWwindow* window) {
     glfwSetWindowIcon(window, 1, &image);
     image_loader.free_data(data);
 }
-Window::Window(int width, int height, const char* title) {
+void Window::create(int width, int height, const char* title) {
     // 初始化GLFW
     if (!glfwInit()) {
         throw std::runtime_error("无法初始化GLFW");
@@ -19,7 +19,7 @@ Window::Window(int width, int height, const char* title) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     _window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-
+    
     set_window_icon(_window);
 
     if (!_window) {
@@ -40,11 +40,14 @@ Window::Window(int width, int height, const char* title) {
     glViewport(0, 0, width, height);
     glfwSwapInterval(1);
     //init_imgui(_window);
+    std::cout<<"<<<<<<"<<std::endl;
     }
-Window::~Window(){
-    glfwDestroyWindow(_window);
-    glfwTerminate();
-}
+    Window::Window() {        
+    }
+    Window::~Window() {
+        glfwDestroyWindow(_window);
+        glfwTerminate();
+    }
 bool Window::should_close(){
     return glfwWindowShouldClose(_window);
 }
@@ -54,6 +57,10 @@ void Window::poll_events(){
 
 float Window::get_time() {
     return (float)glfwGetTime();
+}
+
+GLFWwindow* Window::get_window() {
+    return _window;
 }
 
 void Window::framebuffer_size_callback(GLFWwindow* window,int width,int height){

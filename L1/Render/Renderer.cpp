@@ -4,10 +4,18 @@
 #include "L1/Debug/CheckGL.h"
 #include "L1/Lib/IO/textLoader.h"
 #include "L1/App/Config.h"
-Render::Render() {
-    init();
+Render::Render() {}
+
+void Render::init() {
     glClearColor(0.94f, 0.84f, 0.44f, 1.0f);
+    init_vertex_db();
+    init_shader_db();
+    init_texture_db();
+    frame_buffers["f1"]=FrameBuffer(800,800);
+    fb=&frame_buffers["f1"];
+    
 }
+
 
 void Render::start_framebuffer() {
     fb->bind();
@@ -34,15 +42,6 @@ int Render::get_framebuffer_color_texture_id(std::string frame_name) {
 }
 
 
-
-void Render::init() {
-    init_vertex_db();
-    init_shader_db();
-    init_texture_db();
-    frame_buffers["f1"]=FrameBuffer(800,800);
-    fb=&frame_buffers["f1"];
-    
-}
 
 void Render::init_shader_db() {
     std::string base_path=Config::getInstance().get("shader_base_path");

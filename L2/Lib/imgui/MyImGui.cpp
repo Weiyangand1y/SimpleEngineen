@@ -1,8 +1,7 @@
 #include "MyImGui.h"
 #include "iostream"
 #include <GLFW/glfw3.h>
-void MyImGui::static_init(GLFWwindow* window) {
-    
+void MyImGui::static_init(GLFWwindow* window) {    
     const char* glsl_version = "#version 130";
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();

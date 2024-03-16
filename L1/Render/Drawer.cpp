@@ -2,7 +2,11 @@
 #include "L1/Lib/Math/math.h"
 #include <glad/glad.h>
 
-Drawer::Drawer(Render& p_renderer) {
+Drawer::Drawer() {
+    
+}
+
+void Drawer::set_render(Render& p_renderer) {
     renderer=&p_renderer;
 }
 

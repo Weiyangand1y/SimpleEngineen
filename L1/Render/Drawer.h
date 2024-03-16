@@ -6,7 +6,8 @@ class Drawer{
 private:
     Render* renderer;
 public:    
-    Drawer(Render& renderer);
+    Drawer();
+    void set_render(Render& renderer);
     void draw_triangle();
     void draw_triangle(float x,float y,float sx=1.f,float sy=1.f);
 

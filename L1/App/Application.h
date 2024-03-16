@@ -5,7 +5,7 @@
 
 class Application{
 protected:
-    Window window;
+    Window window;//must before the renderer
     Render renderer;
     Drawer drawer;
     float time=0.f;
@@ -13,6 +13,8 @@ protected:
 public:
     Application();
     void init();
+    virtual void _init();
     void run();
     virtual void _run();
+    Window* get_window();
 };
