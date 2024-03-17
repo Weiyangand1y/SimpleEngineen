@@ -8,12 +8,14 @@ Render::Render() {}
 
 void Render::init() {
     glClearColor(0.94f, 0.84f, 0.44f, 1.0f);
+
     init_vertex_db();
-    init_shader_db();
-    init_texture_db();
-    frame_buffers["f1"]=FrameBuffer(800,800);
-    fb=&frame_buffers["f1"];
-    
+    shader_db.init();
+    texture_db.init();
+
+    auto [w,h]=Config::getInstance().get_windows_size();
+    frame_buffers["f1"]=FrameBuffer(w,h);
+    fb=&frame_buffers["f1"];   
 }
 
 
@@ -42,50 +44,25 @@ int Render::get_framebuffer_color_texture_id(std::string frame_name) {
 }
 
 
-
-void Render::init_shader_db() {
-    std::string base_path=Config::getInstance().get("shader_base_path");
-    std::string very_simple_v=loadTextFile(base_path+"very_simple.vert");
-    std::string very_simple_f=loadTextFile(base_path+"very_simple.frag");
-    std::string simple_texture_v=loadTextFile(base_path+"simple_texture.vert");
-    std::string simple_texture_f=loadTextFile(base_path+"simple_texture.frag");
-
-    Shader very_simple_shader(very_simple_v,very_simple_f);
-    std::string can_transform_v=loadTextFile(base_path+"transform.vert");
-    shader_db[ShaderType::VERY_SIMPLE]=very_simple_shader;
-    shader_db[ShaderType::CAN_TRANSFORM]=Shader(can_transform_v,very_simple_f);
-    shader_db[ShaderType::RECT_TEXTURE]=Shader(simple_texture_v,simple_texture_f);
-    std::string screen_texture_f=loadTextFile(base_path+"screen_texture.frag");
-    shader_db[ShaderType::SCREEN]=Shader(simple_texture_v,screen_texture_f);
-}
-
-void Render::init_texture_db() {
-    std::string base_path=Config::getInstance().get("texture_base_path");
-    texture_db["Claudette_Huy"]=Texture(base_path+"character/Claudette_Huy.png");    
-    texture_db["Maki_Rollo"]=Texture(base_path+"character/Maki_Rollo.png");
-    texture_db["Pippi_Carter"]=Texture(base_path+"character/Pippi_Carter.png");
-}
-
 void Render::use_vertex(VertexType vertex_type) {
     unsigned int vao_id=vertex_db[vertex_type];
     glBindVertexArray(vao_id);
 }
 
-void Render::use_shader(ShaderType shader_type) {
-    shader_db[shader_type].use();
-    current_shader_type=shader_type;
+void Render::use_shader(std::string shader_name) {
+    shader_db.get_shader(shader_name).use();
 }
 
-Shader& Render::get_shader() {
-    return shader_db[current_shader_type];
+Shader& Render::get_shader(std::string shader_name) {
+    return shader_db.get_shader(shader_name);
 }
 
-void Render::use_texture(std::string id) {
-    texture_db[id].use();
+void Render::use_texture(std::string name) {
+    texture_db.get_texture(name).use();
 }
 
-Texture& Render::get_texture(std::string id) {
-    return texture_db[id];
+Texture& Render::get_texture(std::string name) {
+    return texture_db.get_texture(name);
 }
 
 
@@ -93,10 +70,6 @@ void Render::clear_color() {
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT));  
 }
 
-void Render::render() {
-    GL_CALL(glClear(GL_COLOR_BUFFER_BIT));     
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-}
 
 void Render::init_vertex_db() {
     //triangle

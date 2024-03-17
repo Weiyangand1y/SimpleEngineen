@@ -3,10 +3,10 @@
 
 ScriptObject::ScriptObject() {
     lua.open_libraries(sol::lib::base);
-    lua.new_usertype<ScriptObject>("MyClass",
-            "doFunction", &ScriptObject::script_function
-    );        
-    lua.set("myObject", this);
+    int c=6;
+    lua["aFunc"]=[&]()->int{
+        return c;
+    };
     lua.script_file(Config::getInstance().get("lua_script_file")+"test1.lua");
 }
 

@@ -1,3 +1,4 @@
+#include "glad/glad.h"
 #include "Window.h"
 #include "L1/Lib/IO/imageLoader.h"
 #include "L1/App/Config.h"
@@ -31,6 +32,7 @@ void Window::create(int width, int height, const char* title) {
 
     glfwSetFramebufferSizeCallback(_window, framebuffer_size_callback);
     glfwSetKeyCallback(_window, key_callback);
+    glfwSetCursorPosCallback(_window,cursor_pos_callback);
     
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         throw std::runtime_error("无法初始化GLAD");
@@ -39,7 +41,6 @@ void Window::create(int width, int height, const char* title) {
     glfwSetWindowUserPointer(_window,this);
     glViewport(0, 0, width, height);
     glfwSwapInterval(1);
-    //init_imgui(_window);
     std::cout<<"<<<<<<"<<std::endl;
     }
     Window::Window() {        
@@ -66,10 +67,19 @@ GLFWwindow* Window::get_window() {
 void Window::framebuffer_size_callback(GLFWwindow* window,int width,int height){
     glViewport(0, 0, width, height);
     Window* self=(Window*)glfwGetWindowUserPointer(window);
+    if(self->framebuffer_size_callback)
+        self->m_framebuffer_size_callback(width,height);
 }
 
 void Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     Window* self=(Window*)glfwGetWindowUserPointer(window);
+    if(self->m_key_callback)
+        self->m_key_callback(key,scancode,action,mods);
+}
+void Window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {
+    Window* self=(Window*)glfwGetWindowUserPointer(window);
+    if(self->m_cursor_pos_callback)
+        self->m_cursor_pos_callback(xpos,ypos);
 }
 void Window::swap_buffers() {
     glfwSwapBuffers(_window);

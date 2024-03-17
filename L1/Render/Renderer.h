@@ -4,6 +4,9 @@
 #include "L1/Lib/OpengL/Shader.h"
 #include "L1/Lib/OpengL/Texture.h"
 #include "L1/Lib/OpengL/Buffer/FrameBuffer.h"
+#include "L1/ResourceManger/TextureDB.h"
+#include "L1/ResourceManger/ShaderDB.h"
+
 class Render{
 public:
     enum class VertexType{
@@ -11,33 +14,28 @@ public:
         TEX_CUBE,COLOR_TRIANGLE,
         TEX_RECT
         };
-    enum class ShaderType{
-        VERY_SIMPLE, COLOR, RECT_TEXTURE,CAN_TRANSFORM,
-        SCREEN
-    };
 private:
     std::unordered_map<std::string, FrameBuffer> frame_buffers;
     FrameBuffer* fb=nullptr;   
     void init_vertex_db();
-    void init_shader_db();
-    void init_texture_db();
+
     std::unordered_map<VertexType,unsigned int> vertex_db;
-    std::unordered_map<ShaderType,Shader> shader_db;
-    std::unordered_map<std::string,Texture> texture_db;
-    ShaderType current_shader_type;
+
+    TextureDB texture_db;
+    ShaderDB shader_db;
+
 public:
     Render();
     void init();
     void use_vertex(VertexType vertex_type);
     
-    void use_shader(ShaderType shader_type);
-    Shader& get_shader();
+    void use_shader(std::string shader_name);
+    Shader& get_shader(std::string shader_name);
 
-    void use_texture(std::string id);
-    Texture& get_texture(std::string id);
+    void use_texture(std::string name);
+    Texture& get_texture(std::string name);
 
     void clear_color();
-    void render();
 
     void start_framebuffer();
     void start_framebuffer(std::string frame_name);

@@ -14,6 +14,6 @@ public:
     void draw_rect();
     void draw_texture(std::string id,float x=0.f,float y=0.f);
     void draw_texture(std::string id,const float* mat4_data);
-    void draw_texture(int texture_id,Render::ShaderType shader_type=Render::ShaderType::RECT_TEXTURE);
+    void draw_texture(int texture_id,std::string shader_name="rect_texture");
     
 };

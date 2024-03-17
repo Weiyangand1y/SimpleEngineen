@@ -23,6 +23,8 @@ include_directories(
     D:/a_folder/lua/lua-5.4.6/src
     D:/又一个文件夹/imgui_in_use
     D:/a_folder/sol2-develop/sol2-develop/single/single/include
+    D:/a_folder/fmt-master/fmt-master/include
+    D:/a_folder/box2d-main/box2d-main/include
 )
 
 add_executable(test01 
@@ -36,6 +38,8 @@ add_executable(test01
 
 if(MSVC)
     target_compile_options(test01 PRIVATE /D_CRT_SECURE_NO_WARNINGS )
+    add_compile_options(/wd26451)
+    add_compile_options(/wd4312)
 endif()
 
 
@@ -46,6 +50,17 @@ add_executable(test02
 find_package(Poco COMPONENTS Foundation Net REQUIRED)
 target_link_libraries(test02 PRIVATE Poco::Foundation Poco::Net)
 
+add_executable(test03
+                ./Test/test03.cpp
+)
+
+
+add_executable(test04
+                ./Test/test04.cpp
+)
+
+target_link_directories(test04 PRIVATE D:/a_folder/box2d-main/box2d-main/build/bin/Debug)
+target_link_libraries(test04 PRIVATE box2d)
 
 
 target_link_directories(test01 PRIVATE
