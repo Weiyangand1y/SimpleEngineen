@@ -32,23 +32,25 @@ add_executable(test01
                 D:/一个文件夹/aLib/glad/src/glad.c
                 ${L1_SRC}
                 ${L2_SRC}
+                ${L3_SRC}
                 ${IMGUI_FILE}
                 )
 
 
 if(MSVC)
     target_compile_options(test01 PRIVATE /D_CRT_SECURE_NO_WARNINGS )
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
     add_compile_options(/wd26451)
     add_compile_options(/wd4312)
 endif()
 
 
-add_executable(test02
-                ./Test/test02.cpp
-)
+# add_executable(test02
+#                 ./Test/test02.cpp
+# )
 
-find_package(Poco COMPONENTS Foundation Net REQUIRED)
-target_link_libraries(test02 PRIVATE Poco::Foundation Poco::Net)
+# find_package(Poco COMPONENTS Foundation Net REQUIRED)
+# target_link_libraries(test02 PRIVATE Poco::Foundation Poco::Net)
 
 add_executable(test03
                 ./Test/test03.cpp
@@ -58,6 +60,13 @@ add_executable(test03
 add_executable(test04
                 ./Test/test04.cpp
 )
+
+add_executable(test05
+                ./Test/test05.cpp
+                ./L1/Object/SignalObject.cpp
+)
+
+
 
 target_link_directories(test04 PRIVATE D:/a_folder/box2d-main/box2d-main/build/bin/Debug)
 target_link_libraries(test04 PRIVATE box2d)

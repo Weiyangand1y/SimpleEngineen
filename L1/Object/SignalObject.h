@@ -7,19 +7,27 @@
 #include <functional>
 #include <string>
 
+
 using Info = std::vector<std::any>;
 using Callback = std::function<void(Info&)>;
 using Callbackn = std::function<void(void)>;
 
-class SignalObject {
-    std::unordered_map<std::string, std::vector<Callback>> signal_map;
+struct PairIdCallback{
+    int id=0;
+    Callback callbak;
+};
 
+class SignalObject {
+    std::unordered_map<std::string, std::vector<PairIdCallback>> signal_map;
+    int get_next_id(std::string signal_name);
 public:
     SignalObject();
 
-    void connect(std::string signal_name, Callback callback);
+    int connect(std::string signal_name, Callback callback);
 
     void connect(std::string signal_name, Callbackn callback);
+
+    void disconnect(std::string signal_name, int id);
 
     void emit(std::string signal_name, Info info);
 

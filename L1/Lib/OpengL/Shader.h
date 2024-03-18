@@ -18,6 +18,7 @@ public:
     Shader();
     Shader(const char* vs, const char* fs);
     Shader(const std::string& vs, const std::string& fs);
+    ~Shader();
     std::unordered_map<std::string, int> uniform_db;
     void use();
 

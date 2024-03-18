@@ -2,11 +2,12 @@
 #include "Window.h"
 #include "L1/Lib/IO/imageLoader.h"
 #include "L1/App/Config.h"
+#include "L1/Debug/Log.h"
 void set_window_icon(GLFWwindow* window) {
     int w, h, c;
     ImageLoader image_loader;
     unsigned char* data = image_loader.loadImage(
-        Config::getInstance().get("icon_path").c_str(), &w, &h, &c);
+        Config::getInstance().get("icon_path").c_str(), &w, &h, &c,false);
     GLFWimage image = {w, h, data};
     glfwSetWindowIcon(window, 1, &image);
     image_loader.free_data(data);
@@ -41,7 +42,7 @@ void Window::create(int width, int height, const char* title) {
     glfwSetWindowUserPointer(_window,this);
     glViewport(0, 0, width, height);
     glfwSwapInterval(1);
-    std::cout<<"<<<<<<"<<std::endl;
+    debug("window created\n");
     }
     Window::Window() {        
     }
@@ -67,7 +68,7 @@ GLFWwindow* Window::get_window() {
 void Window::framebuffer_size_callback(GLFWwindow* window,int width,int height){
     glViewport(0, 0, width, height);
     Window* self=(Window*)glfwGetWindowUserPointer(window);
-    if(self->framebuffer_size_callback)
+    if(self->m_framebuffer_size_callback)
         self->m_framebuffer_size_callback(width,height);
 }
 

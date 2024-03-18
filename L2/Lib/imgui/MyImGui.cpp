@@ -1,6 +1,7 @@
 #include "MyImGui.h"
-#include "iostream"
+#include <iostream>
 #include <GLFW/glfw3.h>
+#include "L1/App/Config.h"
 void MyImGui::static_init(GLFWwindow* window) {    
     const char* glsl_version = "#version 130";
     IMGUI_CHECKVERSION();
@@ -18,16 +19,27 @@ void MyImGui::static_init(GLFWwindow* window) {
 
     ImGuiStyle* style = &ImGui::GetStyle();
     ImVec4* colors = style->Colors;
-    colors[ImGuiCol_TitleBg] = ImVec4(0.93f, 0.23f, 0.10f, 0.80f);
+    colors[ImGuiCol_TitleBgActive] = ImVec4(0.93f, 0.23f, 0.10f, 0.80f);
 
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
-    io.Fonts->AddFontFromFileTTF(
-        "C:\\Users\\21wyc\\Desktop\\STZHONGS.TTF", 18, nullptr,
-        io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
+                                18, nullptr,
+                                io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
+    io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
+                                48, nullptr,
+                                io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
+    
 }
+
+ImFont* MyImGui::get_imfont(int index){
+    ImFontAtlas* fontAtlas = ImGui::GetIO().Fonts;
+    int numFonts = fontAtlas->Fonts.Size;
+    if(index>=numFonts)return nullptr;
+    return fontAtlas->Fonts[index];
+}
+
 void MyImGui::static_begin() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

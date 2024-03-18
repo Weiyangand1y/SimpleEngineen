@@ -51,8 +51,11 @@ Shader::Shader(const char* vs, const char* fs) {
 Shader::Shader(const std::string& vs, const std::string& fs) {
     compile_shader_from_string(vs, fs);
 }
+Shader::~Shader() {
+    //GL_CALL(glDeleteProgram(id);)
+}
 void Shader::use() {
-    glUseProgram(id);
+    GL_CALL(glUseProgram(id);)
 }
 
 void Shader::setBool(const std::string& name, bool value) const {

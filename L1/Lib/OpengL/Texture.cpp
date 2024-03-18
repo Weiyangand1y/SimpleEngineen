@@ -26,10 +26,14 @@ Texture::Texture(std::string filename){
         GL_CALL(glGenerateMipmap(GL_TEXTURE_2D);)
     }   
     image_loader.free_data(data);
-    printf("(%d, %d, %d)\n",w,h,c);
+    //printf("(%d, %d, %d)\n",w,h,c);
 }
 
 Texture::Texture() {}
+
+Texture::~Texture() {
+    //GL_CALL (glDeleteTextures(1,&id));
+}
 
 void Texture::use() {
     GL_CALL(glBindTexture(GL_TEXTURE_2D,id);)

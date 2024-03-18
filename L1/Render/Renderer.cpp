@@ -57,6 +57,10 @@ Shader& Render::get_shader(std::string shader_name) {
     return shader_db.get_shader(shader_name);
 }
 
+ShaderDB& Render::get_shader_db() {
+    return shader_db;
+}
+
 void Render::use_texture(std::string name) {
     texture_db.get_texture(name).use();
 }
@@ -65,6 +69,9 @@ Texture& Render::get_texture(std::string name) {
     return texture_db.get_texture(name);
 }
 
+TextureDB& Render::get_texture_db() {
+    return texture_db;
+}
 
 void Render::clear_color() {
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT));  

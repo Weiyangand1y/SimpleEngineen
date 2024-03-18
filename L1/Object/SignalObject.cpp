@@ -1,10 +1,18 @@
 #include "SignalObject.h"
 
+int SignalObject::get_next_id(std::string signal_name) {
+    auto& list=signal_map[signal_name];
+    if(list.empty())return 0;
+    else return list.back().id+1;
+}
+
 SignalObject::SignalObject() {}
 
-void SignalObject::connect(std::string signal_name, Callback callback) {
-    std::vector<Callback>& list = signal_map[signal_name];
-    list.push_back(callback);
+int SignalObject::connect(std::string signal_name, Callback callback) {
+    auto& list = signal_map[signal_name];
+    int id=get_next_id(signal_name);
+    list.push_back({id,callback});
+    return id;
 }
 
 void SignalObject::connect(std::string signal_name, Callbackn callback) {
@@ -12,22 +20,33 @@ void SignalObject::connect(std::string signal_name, Callbackn callback) {
         info.resize(0);
         callback();
     };
-    std::vector<Callback>& list = signal_map[signal_name];
-    list.push_back(cb);
+    auto& list = signal_map[signal_name];
+    list.push_back({get_next_id(signal_name),cb});
+}
+
+void SignalObject::disconnect(std::string signal_name, int id) {
+    auto& list = signal_map[signal_name];
+    auto it = std::find_if(list.begin(), list.end(), [id](const PairIdCallback& s) {
+        return s.id == id;
+    });
+
+    if (it != list.end()) {
+        list.erase(it);
+    }
 }
 
 void SignalObject::emit(std::string signal_name, Info info) {
-    std::vector<Callback>& list = signal_map[signal_name];
+    auto& list = signal_map[signal_name];
     for (size_t i = 0; i < list.size(); i++) {
-        list[i](info);
+        list[i].callbak(info);
     }
 }
 
 void SignalObject::emit(std::string signal_name) {
     Info info;
-    std::vector<Callback>& list = signal_map[signal_name];
+    auto& list = signal_map[signal_name];
     for (size_t i = 0; i < list.size(); i++) {
-        list[i](info);
+        list[i].callbak(info);
     }
 }
 

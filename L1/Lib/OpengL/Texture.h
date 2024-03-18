@@ -9,6 +9,7 @@ private:
 public:
     Texture(std::string filename);
     Texture();
+    ~Texture();
     void use();
     void use(int index);
     int get_id(){return id;}

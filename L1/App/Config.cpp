@@ -1,13 +1,19 @@
 #include "Config.h"
+#include "L1/Debug/Log.h"
+#include <iostream>
 
 void Config::init() {
+    debug("Config init\n");
     data={
-        {"title","Simple Game Engineen"},
-        {"icon_path","C:\\Users\\21wyc\\Pictures\\Camera Roll\\searchPicture.png"},
+
         {"shader_base_path",R"(C:\Users\21wyc\Documents\Project\GameMada\graphic\shader\)"},
         {"texture_base_path","C:/Users/21wyc/Pictures/"},
         {"lua_script_file","C:\\Users\\21wyc\\Documents\\Project\\SimpleEngine\\assets\\Script\\"}
     };
+    lua.script_file(data["lua_script_file"]+"config.lua");
+    data["title"]=lua.get_or<std::string>("title","Simple Game Engineen");
+    data["icon_path"]=lua.get_or<std::string>("icon_path","C:\\Users\\21wyc\\Pictures\\Camera Roll\\searchPicture.png");
+    data["font_path"]=lua.get_or<std::string>("font_path","C:\\Users\\21wyc\\Desktop\\STZHONGS.TTF");
 }
 
 Config::Config() {
@@ -15,7 +21,7 @@ Config::Config() {
 }
 
 Config& Config::getInstance() {
-    static Config instance; // 在首次调用时初始化
+    static Config instance; 
     return instance;
 }
 
@@ -31,5 +37,7 @@ std::string Config::get(const std::string& key) {
 }
 
 std::tuple<int, int> Config::get_windows_size() {
-    return std::tuple<int, int>(800,800);
+    int w=lua["window_size"]["w"];
+    int h=lua["window_size"]["h"];
+    return std::tuple<int, int>(w,h);
 }

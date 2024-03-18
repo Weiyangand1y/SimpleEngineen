@@ -3,8 +3,10 @@
 #include <string>
 #include <unordered_map>
 #include <tuple>
+#include "sol/sol.hpp"
 class Config {
 private:
+    sol::state lua;
     std::unordered_map<std::string, std::string> data;
     void init();
     Config();

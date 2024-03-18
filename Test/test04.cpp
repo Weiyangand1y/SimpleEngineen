@@ -65,6 +65,7 @@ int main() {
         // It is generally best to keep the time step and iterations fixed.
         world.Step(timeStep, velocityIterations, positionIterations);
 
+        body->ApplyForce(b2Vec2(1.0,0.0),body->GetWorldCenter(),false);
         // Now print the position and angle of the body.
         position = body->GetPosition();
         angle = body->GetAngle();

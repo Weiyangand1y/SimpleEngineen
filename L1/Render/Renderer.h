@@ -31,9 +31,11 @@ public:
     
     void use_shader(std::string shader_name);
     Shader& get_shader(std::string shader_name);
+    ShaderDB& get_shader_db();
 
     void use_texture(std::string name);
     Texture& get_texture(std::string name);
+    TextureDB& get_texture_db();
 
     void clear_color();
 

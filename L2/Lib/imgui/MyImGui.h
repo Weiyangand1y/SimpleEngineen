@@ -9,6 +9,7 @@ public:
     static void static_init(GLFWwindow* window);
     static void static_begin();
     static void static_end();
+    static ImFont* get_imfont(int index);
     MyImGui();
     
     bool show_demo_window = true;
