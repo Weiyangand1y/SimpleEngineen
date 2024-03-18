@@ -32,7 +32,7 @@ add_executable(test01
                 D:/一个文件夹/aLib/glad/src/glad.c
                 ${L1_SRC}
                 ${L2_SRC}
-                ${L3_SRC}
+                # ${L3_SRC}
                 ${IMGUI_FILE}
                 )
 
@@ -76,6 +76,21 @@ target_link_directories(test01 PRIVATE
     D:/一个文件夹/aLib/glfw-3.3.8.bin.WIN64/lib-vc2022
     D:/一个文件夹/aLib/lua
 )
-
-
 target_link_libraries(test01 PRIVATE glfw3 LuaLib)
+
+#------------------------------------------------------
+add_executable(test06
+                ./Test/test06.cpp
+                D:/一个文件夹/aLib/glad/src/glad.c
+                ${L1_SRC}
+                # ${L2_SRC}
+                ${L3_SRC}
+                # ${IMGUI_FILE}
+)
+target_link_directories(test06 PRIVATE
+    D:/一个文件夹/aLib/glfw-3.3.8.bin.WIN64/lib-vc2022
+    D:/一个文件夹/aLib/lua
+)
+
+
+target_link_libraries(test06 PRIVATE glfw3 LuaLib)

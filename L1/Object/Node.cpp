@@ -28,6 +28,15 @@ void Node::_process(float delta) {
     }
 }
 
+void Node::after_process(float delta) {}
+
+void Node::_after_process(float delta) {
+    after_process(delta);
+    for (Node* child : children) {
+        child->_after_process(delta);
+    }
+}
+
 Node::Node() {
     ready();
 }

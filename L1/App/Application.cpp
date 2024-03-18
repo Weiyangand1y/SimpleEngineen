@@ -36,3 +36,11 @@ void Application::_run() {}
 Window* Application::get_window() {
     return &window;
 }
+
+Drawer* Application::get_drawer() {
+    return &drawer;
+}
+
+Render* Application::get_renderer() {
+    return &renderer;
+}

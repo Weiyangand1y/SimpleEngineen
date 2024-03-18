@@ -12,6 +12,7 @@ TextureDB::TextureDB() {
 }
 
 void TextureDB::load(std::string name, std::string file_path) {
+    if(db.find(name)!=db.end())return;//
     db[name]=Texture(file_path);
 }
 

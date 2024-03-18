@@ -49,10 +49,20 @@ void Drawer::draw_texture(std::string id,float x,float y) {
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void Drawer::draw_texture(std::string id,const float* mat4_data) {
+void Drawer::draw_texture(int id, const float* mat4_data) {
     renderer->use_vertex(Render::VertexType::TEX_RECT);
     renderer->use_texture(id);
+    Shader& shader=renderer->get_shader("rect_texture");
+    shader.use();
+    shader.setInt("texture1",0);
+    shader.setMat4("transform",mat4_data);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void Drawer::draw_texture(std::string id,const float* mat4_data) {
+    renderer->use_vertex(Render::VertexType::TEX_RECT);
     Texture& texture=renderer->get_texture(id);
+    texture.use();
     Shader& shader=renderer->get_shader("rect_texture");
     shader.use();
     shader.setInt("texture1",0);

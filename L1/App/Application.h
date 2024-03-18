@@ -17,4 +17,6 @@ public:
     void run();
     virtual void _run();
     Window* get_window();
+    Drawer* get_drawer();
+    Render* get_renderer();
 };

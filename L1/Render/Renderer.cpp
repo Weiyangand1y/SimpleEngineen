@@ -46,7 +46,7 @@ int Render::get_framebuffer_color_texture_id(std::string frame_name) {
 
 void Render::use_vertex(VertexType vertex_type) {
     unsigned int vao_id=vertex_db[vertex_type];
-    glBindVertexArray(vao_id);
+    GL_CALL(glBindVertexArray(vao_id);)
 }
 
 void Render::use_shader(std::string shader_name) {
@@ -63,6 +63,10 @@ ShaderDB& Render::get_shader_db() {
 
 void Render::use_texture(std::string name) {
     texture_db.get_texture(name).use();
+}
+
+void Render::use_texture(int texture_id) {
+    GL_CALL(glBindTexture(GL_TEXTURE_2D,texture_id);)
 }
 
 Texture& Render::get_texture(std::string name) {

@@ -22,6 +22,7 @@ Sprite2D::Sprite2D() {
     rotation=result[4];
 }
 
+
 mat4 Sprite2D::get_transform_mat4() {
     mat4 t(1.f);
     t=scale(t,vec3(sx,sy,1.f));
