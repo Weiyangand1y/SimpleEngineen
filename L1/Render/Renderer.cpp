@@ -8,7 +8,8 @@ Render::Render() {}
 
 void Render::init() {
     glClearColor(0.94f, 0.84f, 0.44f, 1.0f);
-
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     init_vertex_db();
     shader_db.init();
     texture_db.init();

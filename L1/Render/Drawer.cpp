@@ -34,6 +34,14 @@ void Drawer::draw_rect(){
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
+void Drawer::draw_rect(const float* mat4_data) {
+    renderer->use_vertex(Render::VertexType::RECT);
+    renderer->use_shader("can_transform");
+    Shader& shader=renderer->get_shader("can_transform");
+    shader.setMat4("transform",mat4_data);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
 void Drawer::draw_texture(std::string id,float x,float y) {
     mat4 t(1.f);
     translate(t,vec3(x,y,0.0));

@@ -6,7 +6,7 @@
 
 #include "L3/Object/Physics/PhysicWorld.h"
 #include "L3/Object/Physics/PhysicObject.h"
-
+#include "L3/Object/Mix/PhysicNode.h"
 class L3App : public Application{
 Scene* scene;
 PhysicWorld pw;
@@ -20,13 +20,22 @@ public:
         scene->root_node->add_child(sp);
 
         //-----------------------------
-        po=new PhysicObject();
-        pw.create_object(po);
+        po=new PhysicObject(PhysicObject::BodyType::DYNAMIC);
+        po->init_info={30,30,0,5.7,9.0};
+        pw.register_object(po);
+        po->update_callback=[=](float x,float y,float angle){
+            sp->set_position_and_angle(x,y,angle);
+        };
+        po->set_init_speed(0.f,30.f);
+        
 
+        PhysicObject* go=new PhysicObject(PhysicObject::BodyType::STATIC);
+        go->init_info={0,-30,0.1f,80,10};
+        pw.register_object(go);
+        
     }
     void _run()override{
-        Sprite2D* s=(Sprite2D*)scene->root_node->get_Child("@Sprite2D");
-        s->set_position(po->get_position_x(),po->get_position_y());
+        po->update();
         scene->root_node->_process(delta_time);
         scene->root_node->_after_process(delta_time);
         pw.run();

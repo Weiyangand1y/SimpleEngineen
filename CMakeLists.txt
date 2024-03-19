@@ -42,6 +42,7 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
     add_compile_options(/wd26451)
     add_compile_options(/wd4312)
+    add_compile_options("/utf-8")
 endif()
 
 

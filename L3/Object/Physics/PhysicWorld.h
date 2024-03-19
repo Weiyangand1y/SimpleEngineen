@@ -8,7 +8,7 @@ private:
     float timeStep = 1.0f / 60.0f;
 public:
     PhysicWorld();
-    void create_object(PhysicObject* obj);
+    void register_object(PhysicObject* obj);
     void run();
 };
 

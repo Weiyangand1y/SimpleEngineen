@@ -10,11 +10,11 @@ int GetBodyCount(b2World* world) {
 }
 
 PhysicWorld::PhysicWorld() {
-    b2Vec2 gravity(0.0f, -1.0f);
+    b2Vec2 gravity(0.0f, -10.0f);
     world=new b2World(gravity);
 }
 
-void PhysicWorld::create_object(PhysicObject* obj) {
+void PhysicWorld::register_object(PhysicObject* obj) {
     obj->init(world);
 }
 
