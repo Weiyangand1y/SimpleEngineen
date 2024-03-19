@@ -1,4 +1,13 @@
 #include "Node.h"
+Node* Node::get_Child(const std::string& name) {
+    auto it = std::find_if(children.begin(), children.end(), [&](const Node* s) {
+        return s->name == name;
+    });
+    if (it != children.end()) {
+        return *it;
+    }
+    return nullptr;
+}
 void Node::addChild(Node* node) {
     children.push_back(node);
     node->ready();
@@ -35,6 +44,10 @@ void Node::_after_process(float delta) {
     for (Node* child : children) {
         child->_after_process(delta);
     }
+}
+
+void Node::set_name(std::string p_name) {
+    name=p_name;
 }
 
 Node::Node() {

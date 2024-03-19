@@ -97,4 +97,25 @@ target_link_libraries(test06 PRIVATE
                         glfw3 
                         LuaLib
                                     
-                                    )
+                        )
+# -----------------------------------
+add_executable(test07
+                ./Test/test07.cpp
+                D:/一个文件夹/aLib/glad/src/glad.c
+                ${L1_SRC}
+                # ${L2_SRC}
+                ${L3_SRC}
+                # ${IMGUI_FILE}
+)
+target_link_directories(test07 PRIVATE
+    D:/一个文件夹/aLib/glfw-3.3.8.bin.WIN64/lib-vc2022
+    D:/一个文件夹/aLib/lua
+    D:/a_folder/box2d-main/box2d-main/build/bin/Debug
+)
+
+
+target_link_libraries(test07 PRIVATE 
+                        glfw3 
+                        LuaLib
+                        box2d            
+                        )

@@ -13,4 +13,5 @@ public:
     void draw()override;
     void set_texture(std::string name);
     void process(float delta_time)override;
+    void set_position(float x,float y);
 };

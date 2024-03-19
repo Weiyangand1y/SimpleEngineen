@@ -3,6 +3,7 @@
 #include "L1/Debug/Log.h"
 
 Sprite2D::Sprite2D(){
+    set_name("@Sprite2D");
     m_position=vec2(5.f);
     m_scale=vec2(0.1f);
     m_rotation=0.f;
@@ -32,11 +33,14 @@ void Sprite2D::set_texture(std::string name) {
     Render* r=scene->app->get_renderer();
     Texture& t=r->get_texture(name);
     texture_id = t .get_id();
-    //debug("size {} {}",t.w,t.h);
     m_texture_size={t.w,t.h};
 
 }
 
 void Sprite2D::process(float delta_time) {
     //m_position+=delta_time*1.f;
+}
+
+void Sprite2D::set_position(float x, float y) {
+    m_position={x,y};
 }
