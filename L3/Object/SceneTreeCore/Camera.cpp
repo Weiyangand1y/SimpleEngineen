@@ -14,7 +14,8 @@ mat4& Camera::get_transform_mat4() {
 
 Camera::Camera() {
     center_position=vec2(0.0f);
-    top=right=bottom=left=10.f;
+    top=bottom=40.f;
+    right=left=60.f;
     update_mat();
 }
 

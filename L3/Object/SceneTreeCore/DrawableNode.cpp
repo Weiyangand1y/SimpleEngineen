@@ -7,9 +7,6 @@ void DrawableNode::create_from_scene(Scene* scene) {
     debug("DrawableNode::create_from_scene\n");
 }
 
-void DrawableNode::set_viewport(Viewport* p_viewport) {
-    viewport=p_viewport;
-}
 
 void DrawableNode::after_process(float delta) {
     draw();

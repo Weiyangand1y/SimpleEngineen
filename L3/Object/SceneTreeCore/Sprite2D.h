@@ -4,6 +4,7 @@
 class Sprite2D : public DrawableNode{
     vec2 m_position;
     vec2 m_scale;
+    vec2 m_texture_size;
     float m_rotation;
     unsigned int texture_id;
 public:

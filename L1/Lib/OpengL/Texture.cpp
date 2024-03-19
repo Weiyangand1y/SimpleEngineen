@@ -11,7 +11,7 @@ Texture::Texture(std::string filename){
     GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);)
     GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);)
 
-    int w,h,c;
+    int c;
     ImageLoader image_loader;
     unsigned char* data=image_loader.loadImage(filename.c_str(),&w,&h,&c);
     if (!data){

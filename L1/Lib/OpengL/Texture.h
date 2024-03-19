@@ -7,6 +7,7 @@ class Texture {
 private:
     unsigned int id;
 public:
+    int w,h;
     Texture(std::string filename);
     Texture();
     ~Texture();

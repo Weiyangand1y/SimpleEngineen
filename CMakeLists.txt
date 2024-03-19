@@ -93,4 +93,8 @@ target_link_directories(test06 PRIVATE
 )
 
 
-target_link_libraries(test06 PRIVATE glfw3 LuaLib)
+target_link_libraries(test06 PRIVATE 
+                        glfw3 
+                        LuaLib
+                                    
+                                    )

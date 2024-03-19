@@ -18,8 +18,7 @@ public:
         Sprite2D* sp=new Sprite2D();
         scene->let_node_know_scene(sp);
         sp->set_texture("Pippi_Carter");
-        sp->set_viewport(scene->default_viewport);
-        scene->root_node->addChild(sp);
+        scene->root_node->add_child(sp);
     }
     void _run()override{
         scene->root_node->_process(delta_time);
