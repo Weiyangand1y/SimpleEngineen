@@ -5,31 +5,14 @@
 Sprite2D::Sprite2D(){
     set_name("@Sprite2D");
     m_position=vec2(5.f);
-    m_scale=vec2(0.2f);
+    m_scale=vec2(0.1f);
     m_rotation=0.f;
-}
-mat4 Sprite2D::get_transform() {
-    mat4 t(1.f);
-    //!!!下面三个是右乘矩阵 
-    t=translate(t,vec3(m_position,0.f));
-    t=rotate(t,m_rotation,vec3(0.f,0.f,1.f));
-    
-    vec2 s2=m_scale*m_texture_size;
-    //debug("{}\n",to_string(s2));
-    t=scale(t,vec3(s2,1.f));
-    
-    //debug("{}\n",to_string(t[3]));
-    return t;
 }
 
 void Sprite2D::draw() {
     mat4 result=viewport->get_transform_mat4()*get_transform();
-    //drawer->draw_texture(texture_id,value_ptr(viewport->get_transform_mat4()));
+    drawer->draw_rect(value_ptr(result));
     drawer->draw_texture(texture_id,value_ptr(result));
-
-    mat4 m(1.f);m=translate(m,vec3(0,-30,0));
-    m=rotate(m,0.1f,vec3(0.f,0.f,1.f));m=scale(m,vec3(160.f,20.f,1.f));
-    drawer->draw_rect(value_ptr(viewport->get_transform_mat4()*m));
 }
 
 void Sprite2D::set_texture(std::string name) {
@@ -37,19 +20,12 @@ void Sprite2D::set_texture(std::string name) {
     Render* r=scene->app->get_renderer();
     Texture& t=r->get_texture(name);
     texture_id = t .get_id();
-    m_texture_size={t.w,t.h};
-
+    m_size={t.w,t.h};
+    vec2 s2=m_scale*m_size;
+    debug("ms: {}, {}\n",s2.x,s2.y);
 }
 
 void Sprite2D::process(float delta_time) {
     //m_position+=delta_time*1.f;
 }
 
-void Sprite2D::set_position(float x, float y) {
-    m_position={x,y};
-}
-
-void Sprite2D::set_position_and_angle(float x, float y, float angle) {
-    m_position={x,y};
-    m_rotation=angle;
-}

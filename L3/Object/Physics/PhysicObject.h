@@ -20,6 +20,12 @@ public:
     struct InitInfo{//位置x,y, 角度，box的长宽
         float px, py, angle, sx, sy;
     };
+    struct InitSpeed{
+        float speed_x,speed_y,angle_speed;
+    };
+    struct PhysicMaterialInfo{
+        float density,restitution,friction;
+    };
     InitInfo init_info;
 };
 

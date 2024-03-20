@@ -36,9 +36,18 @@ void Drawer::draw_rect(){
 
 void Drawer::draw_rect(const float* mat4_data) {
     renderer->use_vertex(Render::VertexType::RECT);
-    renderer->use_shader("can_transform");
     Shader& shader=renderer->get_shader("can_transform");
+    shader.use();
     shader.setMat4("transform",mat4_data);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void Drawer::draw_rect(const float* mat4_data, float r,float g,float b,float a) {
+    renderer->use_vertex(Render::VertexType::RECT);
+    Shader& shader=renderer->get_shader("color_transform");
+    shader.use();
+    shader.setMat4("transform",mat4_data);
+    shader.setFloat4("color",r,g,b,a);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 

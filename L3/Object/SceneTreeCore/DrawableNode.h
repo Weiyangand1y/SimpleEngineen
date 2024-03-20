@@ -1,9 +1,8 @@
 #pragma once
-#include "Viewport.h"
-#include "SceneNode.h"
+#include "Node2D.h"
 #include "L1/Render/Drawer.h"
 
-class DrawableNode : public SceneNode{
+class DrawableNode : public Node2D{
 private:   
     
 protected:

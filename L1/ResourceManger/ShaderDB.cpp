@@ -10,13 +10,14 @@ void ShaderDB::init() {
     std::string very_simple_f=loadTextFile(base_path+"very_simple.frag");
     std::string simple_texture_v=loadTextFile(base_path+"simple_texture.vert");
     std::string simple_texture_f=loadTextFile(base_path+"simple_texture.frag");
-
-    Shader very_simple_shader(very_simple_v,very_simple_f);
+    std::string simple_color_f=loadTextFile(base_path+"simple_color.frag");
     std::string can_transform_v=loadTextFile(base_path+"transform.vert");
-    shader_db["very_simple"]=very_simple_shader;
-    shader_db["can_transform"]=Shader(can_transform_v,very_simple_f);
-    shader_db["rect_texture"]=Shader(simple_texture_v,simple_texture_f);
     std::string screen_texture_f=loadTextFile(base_path+"screen_texture.frag");
+
+    shader_db["very_simple"]=Shader(very_simple_v,very_simple_f);
+    shader_db["can_transform"]=Shader(can_transform_v,very_simple_f);
+    shader_db["color_transform"]=Shader(can_transform_v,simple_color_f);
+    shader_db["rect_texture"]=Shader(simple_texture_v,simple_texture_f);
     shader_db["screen"]=Shader(simple_texture_v,screen_texture_f);
 }
 

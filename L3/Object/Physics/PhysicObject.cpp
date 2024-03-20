@@ -15,6 +15,7 @@ void PhysicObject::init(b2World* world) {
     fixtureDef.shape = &shape;
     fixtureDef.density = 1.0f;
     fixtureDef.friction = 0.1f;
+    fixtureDef.restitution = 1.0f; // 设置弹性为 0.5
     body->CreateFixture(&fixtureDef);
 }
 

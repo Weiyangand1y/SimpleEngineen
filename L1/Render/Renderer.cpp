@@ -86,9 +86,9 @@ void Render::clear_color() {
 void Render::init_vertex_db() {
     //triangle
     std::vector<float> triangle_vertices={
-        -0.5f, -0.5f, 0.0f, // left  
-         0.5f, -0.5f, 0.0f, // right 
-         0.0f,  0.5f, 0.0f  // top   
+        -1.0f, -1.0f, 0.0f, // left  
+         1.0f, -1.0f, 0.0f, // right 
+         0.0f,  1.0f, 0.0f  // top   
     };
     VBO triangle_vbo(triangle_vertices);
     BufferLayout triangle_bufferLayout;
@@ -99,9 +99,9 @@ void Render::init_vertex_db() {
     //color_triangle
     std::vector<float> color_triangle_vertices = {
         // positions         // colors
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
+         1.0f, -1.0f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
+        -1.0f, -1.0f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
+         0.0f,  1.0f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
     };
     VBO color_triangle_vbo(color_triangle_vertices);
     BufferLayout color_triangle_bufferLayout;
@@ -113,13 +113,13 @@ void Render::init_vertex_db() {
     //rect
     std::vector<float> rect_vertices = {
         // positions   
-        -0.5f,  0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f, 
-         0.5f, -0.5f, 0.0f, 
+        -1.0f,  1.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f, 
+         1.0f, -1.0f, 0.0f, 
 
-        -0.5f,  0.5f, 0.0f, 
-         0.5f, -0.5f, 0.0f, 
-         0.5f,  0.5f, 0.0f, 
+        -1.0f,  1.0f, 0.0f, 
+         1.0f, -1.0f, 0.0f, 
+         1.0f,  1.0f, 0.0f, 
     };
     VBO rect_vbo(rect_vertices);
     BufferLayout rect_bufferLayout;
@@ -130,13 +130,13 @@ void Render::init_vertex_db() {
     //texture rect
     std::vector<float> texture_rect_vertices={
         // positions         // texture coords
-        0.5f,  0.5f, 0.0f,  1.0f, 1.0f, // top right
-        0.5f, -0.5f, 0.0f,  1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // bottom left
+        1.0f,  1.0f, 0.0f,  1.0f, 1.0f, // top right
+        1.0f, -1.0f, 0.0f,  1.0f, 0.0f, // bottom right
+        -1.0f, -1.0f, 0.0f,  0.0f, 0.0f, // bottom left
 
-        0.5f,  0.5f, 0.0f,  1.0f, 1.0f, // top right
-        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // bottom left
-        -0.5f,  0.5f, 0.0f,  0.0f, 1.0f  // top left 
+        1.0f,  1.0f, 0.0f,  1.0f, 1.0f, // top right
+        -1.0f, -1.0f, 0.0f,  0.0f, 0.0f, // bottom left
+        -1.0f,  1.0f, 0.0f,  0.0f, 1.0f  // top left 
     };
     VBO texture_rect_vbo(texture_rect_vertices);
     BufferLayout texture_rect_bufferLayout;
@@ -149,47 +149,47 @@ void Render::init_vertex_db() {
     //cube
     std::vector<float> cube_vertices = {
         // positions          // texture Coords
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        -1.0f, -1.0f, -1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f, -1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
+         1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
+        -1.0f,  1.0f, -1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,  0.0f, 0.0f,
 
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f,  1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f,  1.0f, 1.0f,
+         1.0f,  1.0f,  1.0f,  1.0f, 1.0f,
+        -1.0f,  1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
 
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
+        -1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
+        -1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
 
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
+         1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
+         1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
+         1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
 
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
+         1.0f, -1.0f, -1.0f,  1.0f, 1.0f,
+         1.0f, -1.0f,  1.0f,  1.0f, 0.0f,
+         1.0f, -1.0f,  1.0f,  1.0f, 0.0f,
+        -1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
+        -1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
 
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+        -1.0f,  1.0f, -1.0f,  0.0f, 1.0f,
+         1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
+         1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
+        -1.0f,  1.0f,  1.0f,  0.0f, 0.0f,
+        -1.0f,  1.0f, -1.0f,  0.0f, 1.0f
     };
 
 }

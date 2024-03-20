@@ -1,21 +1,26 @@
 #include "Node.h"
 Node* Node::get_Child(const std::string& name) {
-    auto it = std::find_if(children.begin(), children.end(), [&](const Node* s) {
-        return s->name == name;
-    });
-    if (it != children.end()) {
-        return *it;
-    }
-    return nullptr;
+    if(children_cache.find(name)==children_cache.end())
+        return nullptr;
+    return children_cache[name];
 }
 void Node::addChild(Node* node) {
     children.push_back(node);
     node->ready();
     node->parent=this;
+    if(children_cache.find(node->name)!=children_cache.end()){
+        char last_char=node->name.back();
+        if(last_char>='0' && last_char<'9')
+            node->name.back()=last_char+1;
+        else
+            node->name+='0';
+    }
+    children_cache[node->name]=node;
 }
 void Node::removeChild(Node* node) {
     children.erase(std::remove(children.begin(), children.end(), node),
                    children.end());
+    children_cache.erase(node->name);
 }
 
 void Node::ready() {
