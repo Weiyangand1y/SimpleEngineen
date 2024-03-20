@@ -100,4 +100,11 @@ void Drawer::draw_texture(int texture_id, std::string shader_name) {
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-
+void Drawer::draw_circle(const float* mat4_data,float r,float g,float b,float a) {
+    renderer->use_vertex(Render::VertexType::CIRCLE);
+    Shader& shader=renderer->get_shader("color_transform");
+    shader.use();
+    shader.setMat4("transform",mat4_data);
+    shader.setFloat4("color",r,g,b,a);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 103);
+}

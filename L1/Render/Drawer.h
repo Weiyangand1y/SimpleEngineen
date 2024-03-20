@@ -18,5 +18,5 @@ public:
     void draw_texture(int id,const float* mat4_data);
     void draw_texture(std::string id,const float* mat4_data);
     void draw_texture(int texture_id,std::string shader_name="rect_texture");
-    
+    void draw_circle(const float* mat4_data,float r,float g,float b,float a=0.4f);
 };

@@ -1,21 +1,19 @@
 #include "Node.h"
+#include "L1/Debug/Log.h"
 Node* Node::get_Child(const std::string& name) {
     if(children_cache.find(name)==children_cache.end())
         return nullptr;
     return children_cache[name];
 }
 void Node::addChild(Node* node) {
-    children.push_back(node);
-    node->ready();
+    children.push_back(node);   
     node->parent=this;
     if(children_cache.find(node->name)!=children_cache.end()){
-        char last_char=node->name.back();
-        if(last_char>='0' && last_char<'9')
-            node->name.back()=last_char+1;
-        else
-            node->name+='0';
+        debug("{} is collision name\n",node->name);
+        node->name.append(std::to_string(children.size()));
     }
     children_cache[node->name]=node;
+    node->ready();
 }
 void Node::removeChild(Node* node) {
     children.erase(std::remove(children.begin(), children.end(), node),
@@ -24,7 +22,7 @@ void Node::removeChild(Node* node) {
 }
 
 void Node::ready() {
-    std::cout << name << " is ready" << std::endl;
+    debug("{} is ready\n",name);
 }
 
 void Node::process(float delta) {}

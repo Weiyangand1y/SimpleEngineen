@@ -50,3 +50,13 @@ public:
 
 template<typename T>
 T get_value(std::vector<std::any>& info, int index);
+
+template<typename T>
+T InfoWrapper::get_next_value() {
+    return std::any_cast<T>(info[index++]);
+}
+
+template<typename T>
+T get_value(std::vector<std::any>& info, int index) {
+    return std::any_cast<T>(info[index]);
+}

@@ -1,33 +1,38 @@
 #include "L1/Debug/Log.h"
 #include "L1/App/Application.h"
+#include "L1/Object/SignalObject.h"
+#include "L1/Lib/Math/random.hpp"
+
+#include "L2/Lib/imgui/MyImGui.h"
 
 #include "L3/Object/SceneTreeCore/Sprite2D.h"
 #include "L3/Object/SubClass/SceneTree/PhysicScene.h"
 #include "L3/Object/SubClass/SceneTree/FollowSprite2D.h"
 #include "L3/Object/Mix/PhysicNode.h"
 #include "L3/Object/SubClass/SceneTree/RectDraw.hpp"
+#include <Windows.h>
 class L3App : public Application{
 PhysicScene* scene;
-void draw_line(){
-    RectDraw* rd=scene->create_scene_node<RectDraw>();
-        rd->m_size={0.5f,100.f};
-        rd->m_position={100.f,0.f};
-        scene->root_node->add_child(rd);
-    RectDraw* rd2=scene->create_scene_node<RectDraw>();
-        rd2->m_size={0.5f,100.f};
-        rd2->m_position={-100.f,0.f};
-        scene->root_node->add_child(rd2);
-    RectDraw* rd3=scene->create_scene_node<RectDraw>();
-        rd3->m_size={100.f,0.5f};
-        rd3->m_position={0.f,50.f};
-        scene->root_node->add_child(rd3);
-    RectDraw* rd4=scene->create_scene_node<RectDraw>();
-        rd4->m_size={100.f,0.5f};
-        rd4->m_position={0.f,-50.f};
-        scene->root_node->add_child(rd4);
-}
+SignalObject so;
 public:
     void _init()override{
+        Window* window=get_window();
+        int id=so.connect("mouse_move",[](Info info){
+            InfoWrapper info_wrap(info);
+                double x=std::any_cast<double>(info[0]);
+                double y=std::any_cast<double>(info[1]);
+                //fmt::print(fg(fmt::color::aqua),"cursor pos: [ {}, {} ]\n",x,y);
+        });
+
+        window->m_cursor_pos_callback=[&](double xpos,double ypos){
+            so.emit("mouse_move",{xpos,ypos});
+        };
+        window->m_key_callback=[&](int key, int scancode, int action, int mods){
+            if(key==' ' && action==1)so.emit("fly");
+        };
+
+        MyImGui::static_init(window->get_window());
+        //------------------------------
         scene=new PhysicScene(this);
         scene->init();
         //
@@ -36,12 +41,22 @@ public:
         sp->set_position(0.f,9.f);
         scene->root_node->add_child(sp);
         //-----------------------------
-        PhysicNode* pn=new PhysicNode();
+        auto* pn=new CircleNode();
         pn->set_position(50.f,60.f);
         pn->m_size={5.7f,9.f};
         scene->let_node_know_scene(pn);
         scene->root_node->add_child(pn);
-        pn->set_physic_material(.2f,1.2f);
+        pn->set_physic_material(1.8f,0.2f);
+        //----------------------------
+        so.connect("jump",[=](Info info){
+            pn->set_init_speed(30.f,10.f);
+        });
+        so.connect("fly",[=](Info info){
+            RandomGenerator rgt;
+            float angle=rgt.getRandomFloat(1.4f,1.8f);
+            debug("angle: {}",angle);
+            pn->set_init_speed(cosf(angle)*20.f,sinf(angle)*20.f);
+        });
         //----------------------------
         FollowSprite2D* fs=scene->create_scene_node<FollowSprite2D>();
         fs->set_texture("Maki_Rollo");
@@ -57,17 +72,40 @@ public:
         scene->root_node->add_child(gn);
         //
         RectDraw* rd=scene->create_scene_node<RectDraw>();
-        rd->m_size={100.f,1.f};
-        rd->m_position={0.f,-1.f};
+        rd->m_size={100.f,0.2f};
+        rd->m_position={0.f,-0.2f};
         rd->m_rotation=0.2f;
         scene->root_node->add_child(rd);
-        draw_line();
+        rd->make_many();
     }
     void _run()override{
         scene->run(delta_time);
+        MyImGui::static_begin();
+
+        ImFont* imFont = MyImGui::get_imfont(1);
+        ImGui::Begin("---------------",nullptr,ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground);
+        ImGui::PushFont(imFont);
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.9f, 0.4f, 0.4f, 1.f)); 
+        if (ImGui::Button("按下",ImVec2(100,50))) {
+            so.emit("jump");
+        }
+        ImGui::PopStyleColor();
+        ImGui::PopFont();
+        ImGui::End();
+
+
+        ImVec2 text_pos=ImGui::GetWindowPos()+ImVec2{100,100};
+        ImGui::GetForegroundDrawList()
+                        ->AddText(imFont,48.0f,text_pos,0xffffffff,
+                        "将所绘制的文字都\n放到一个较大的纹理上去");
+        ImGui::GetForegroundDrawList()->AddCircle(text_pos,10,0xff1166ff);
+
+        MyImGui::static_end();
     }
 };
-int main(){
+int CALLBACK WinMain(__in  HINSTANCE hInstance,__in  HINSTANCE hPrevInstance,
+  __in  LPSTR lpCmdLine, __in  int nCmdShow){
+    
     system("cls");
     L3App app;
     app.init();

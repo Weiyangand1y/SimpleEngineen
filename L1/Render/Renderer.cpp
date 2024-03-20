@@ -146,45 +146,67 @@ void Render::init_vertex_db() {
     texture_rect_bufferLayout.submit_float_layout();
     vertex_db.emplace(VertexType::TEX_RECT,texture_rect_bufferLayout.get_id());
 
+    //circle
+    float radius = 1.f;
+    int numSegments = 100;
+    std::vector<float> circle_vertices( numSegments * 3+3);
+    circle_vertices[0] = 0.f;
+    circle_vertices[1] = 0.f;
+    circle_vertices[2] = 0.f;
+    for (int i = 1; i < numSegments+1; ++i) {
+        float angle = 2.0f * 3.2f * i / numSegments;
+        circle_vertices[i * 3 ] = radius * cos(angle);
+        circle_vertices[i * 3 +1] = radius * sin(angle);
+        circle_vertices[i * 3 +2] = 0.f;
+    }
+    VBO circle_vbo(circle_vertices);
+    BufferLayout circle_bufferLayout;
+    circle_bufferLayout.add_float_layout(3);
+    circle_bufferLayout.add_vbo(circle_vbo.get_id());
+    circle_bufferLayout.submit_float_layout();
+    vertex_db.emplace(VertexType::CIRCLE,circle_bufferLayout.get_id());
+
+
+
     //cube
     std::vector<float> cube_vertices = {
         // positions          // texture Coords
-        -1.0f, -1.0f, -1.0f,  0.0f, 0.0f,
+        -1.0f, -1.0f, -1.0f,  0.0f, 0.0f,//1
          1.0f, -1.0f, -1.0f,  1.0f, 0.0f,
          1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
          1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
         -1.0f,  1.0f, -1.0f,  0.0f, 1.0f,
         -1.0f, -1.0f, -1.0f,  0.0f, 0.0f,
 
-        -1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
+        -1.0f, -1.0f,  1.0f,  0.0f, 0.0f,//2
          1.0f, -1.0f,  1.0f,  1.0f, 0.0f,
          1.0f,  1.0f,  1.0f,  1.0f, 1.0f,
          1.0f,  1.0f,  1.0f,  1.0f, 1.0f,
         -1.0f,  1.0f,  1.0f,  0.0f, 1.0f,
         -1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
 
-        -1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
+        -1.0f,  1.0f,  1.0f,  1.0f, 0.0f,//3
         -1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
         -1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
         -1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
         -1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
         -1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
 
-         1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f,  1.0f, 0.0f,//4
          1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
          1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
          1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
          1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
          1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
 
-        -1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,  0.0f, 1.0f,//5
          1.0f, -1.0f, -1.0f,  1.0f, 1.0f,
          1.0f, -1.0f,  1.0f,  1.0f, 0.0f,
          1.0f, -1.0f,  1.0f,  1.0f, 0.0f,
         -1.0f, -1.0f,  1.0f,  0.0f, 0.0f,
         -1.0f, -1.0f, -1.0f,  0.0f, 1.0f,
 
-        -1.0f,  1.0f, -1.0f,  0.0f, 1.0f,
+        -1.0f,  1.0f, -1.0f,  0.0f, 1.0f,//6
          1.0f,  1.0f, -1.0f,  1.0f, 1.0f,
          1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
          1.0f,  1.0f,  1.0f,  1.0f, 0.0f,
@@ -192,4 +214,11 @@ void Render::init_vertex_db() {
         -1.0f,  1.0f, -1.0f,  0.0f, 1.0f
     };
 
+    VBO cube_vbo(cube_vertices);
+    BufferLayout cube_bufferLayout;
+    cube_bufferLayout.add_float_layout(3);
+    cube_bufferLayout.add_float_layout(2);
+    cube_bufferLayout.add_vbo(cube_vbo.get_id());
+    cube_bufferLayout.submit_float_layout();
+    vertex_db.emplace(VertexType::TEX_RECT,cube_bufferLayout.get_id());
 }

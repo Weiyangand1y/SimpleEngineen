@@ -5,7 +5,7 @@ class PhysicScene : public Scene{
 b2World* physic_world;
 int32 velocityIterations = 6;
 int32 positionIterations = 2;
-float timeStep = 1.0f / 60.0f;
+float timeStep = 1.0f / 144.0f;
 public:
     PhysicScene(Application* p_app);
     void init(float gravity_y=-10.f,float gravity_x=0.f);

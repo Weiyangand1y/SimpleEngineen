@@ -5,12 +5,11 @@
 #include "L1/Object/ScriptObject.h"
 #include "L1/Object/SignalObject.h"
 #include "L1/Debug/Log.h"
-#include "L2/Object/FunObject/Sprite2D.h"
+
 
 class TestApplication:public Application{
 public:
     SignalObject so;
-    std::vector<Sprite2D> sprite2d_list;
     void _init() override{
         std::cout<<"==============="<<std::endl;
 
@@ -22,8 +21,7 @@ public:
                 //fmt::print(fg(fmt::color::aqua),"cursor pos: [ {}, {} ]\n",x,y);
         });
         debug("signal object's id: {}\n",id);
-        sprite2d_list.resize(10);
-        
+
         window->m_cursor_pos_callback=[&](double xpos,double ypos){
             so.emit("mouse_move",{xpos,ypos});
         };
@@ -36,11 +34,6 @@ public:
         renderer.start_framebuffer("f1");  //--------------------
         renderer.clear_color();
         
-        for(auto& s:sprite2d_list){
-            s._move(sin(time)*0.01f,cos(time)*0.01f);
-            s._rotate(tanh(time)*0.01f);
-            drawer.draw_texture(std::string("Claudette_Huy"),value_ptr(s.get_transform_mat4()) );
-        }
 
         drawer.draw_texture("kairo");
 

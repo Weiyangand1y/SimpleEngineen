@@ -11,7 +11,11 @@ Sprite2D::Sprite2D(){
 
 void Sprite2D::draw() {
     mat4 result=viewport->get_transform_mat4()*get_transform();
+    mat4 m2=viewport->get_transform_mat4()*get_transform2();
     drawer->draw_rect(value_ptr(result));
+
+
+    drawer->draw_circle(value_ptr(m2),0.9f,0.4f,0.8f,0.4f);
     drawer->draw_texture(texture_id,value_ptr(result));
 }
 
