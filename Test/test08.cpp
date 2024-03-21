@@ -10,7 +10,7 @@
 #include "L3/Object/SubClass/SceneTree/FollowSprite2D.h"
 #include "L3/Object/Mix/PhysicNode.h"
 #include "L3/Object/SubClass/SceneTree/RectDraw.hpp"
-#include <Windows.h>
+//#include <Windows.h>
 class L3App : public Application{
 PhysicScene* scene;
 SignalObject so;
@@ -54,7 +54,7 @@ public:
         so.connect("fly",[=](Info info){
             RandomGenerator rgt;
             float angle=rgt.getRandomFloat(1.4f,1.8f);
-            debug("angle: {}",angle);
+            debug("angle: {:.3f}\t",angle);
             pn->set_init_speed(cosf(angle)*20.f,sinf(angle)*20.f);
         });
         //----------------------------
@@ -82,30 +82,32 @@ public:
         scene->run(delta_time);
         MyImGui::static_begin();
 
-        ImFont* imFont = MyImGui::get_imfont(1);
-        ImGui::Begin("---------------",nullptr,ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground);
+        ImFont* imFont = MyImGui::get_imfont(0);
+        ImGui::Begin("操作区域");
         ImGui::PushFont(imFont);
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.9f, 0.4f, 0.4f, 1.f)); 
-        if (ImGui::Button("按下",ImVec2(100,50))) {
+        
+        if (ImGui::Button("按下",ImVec2(60,40))) {
             so.emit("jump");
         }
-        ImGui::PopStyleColor();
+        ImGui::Button("OK");
+       
         ImGui::PopFont();
         ImGui::End();
 
-
-        ImVec2 text_pos=ImGui::GetWindowPos()+ImVec2{100,100};
-        ImGui::GetForegroundDrawList()
-                        ->AddText(imFont,48.0f,text_pos,0xffffffff,
-                        "将所绘制的文字都\n放到一个较大的纹理上去");
-        ImGui::GetForegroundDrawList()->AddCircle(text_pos,10,0xff1166ff);
-
+        int id=renderer.get_framebuffer_color_texture_id("f2");
+        ImGui::Begin("运行界面");       
+        ImVec2 size = ImGui::GetWindowSize();
+        ImGui::Image((void*)renderer.get_framebuffer_color_texture_id("f2"),
+                         ImVec2{size.x,size.x*0.6667f}, ImVec2{0,1}, ImVec2{1,0});
+        ImGui::End();
         MyImGui::static_end();
     }
 };
-int CALLBACK WinMain(__in  HINSTANCE hInstance,__in  HINSTANCE hPrevInstance,
-  __in  LPSTR lpCmdLine, __in  int nCmdShow){
-    
+int 
+// CALLBACK WinMain(__in  HINSTANCE hInstance,__in  HINSTANCE hPrevInstance,
+//   __in  LPSTR lpCmdLine, __in  int nCmdShow)
+main()
+{  
     system("cls");
     L3App app;
     app.init();

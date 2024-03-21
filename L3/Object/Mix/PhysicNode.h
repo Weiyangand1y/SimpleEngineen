@@ -23,4 +23,5 @@ public:
 class CircleNode : public PhysicNode{
 public:
     void init_body()override;
+    void _process(float delta_time)override;
 };

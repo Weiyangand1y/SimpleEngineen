@@ -16,7 +16,7 @@ public:
     virtual void _process(float delta);
 
     virtual void after_process(float delta);
-    void _after_process(float delta);
+    virtual void _after_process(float delta);
 
     void set_name(std::string p_name);
 

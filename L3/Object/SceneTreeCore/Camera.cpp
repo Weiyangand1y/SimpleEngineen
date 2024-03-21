@@ -1,5 +1,5 @@
 #include "Camera.h"
-
+#include "L1/Debug/Log.h"
 void Camera::update_mat() {
     float _left   =  center_position.x-left;
     float _right  =  center_position.x+right;
@@ -9,6 +9,7 @@ void Camera::update_mat() {
 }
 
 mat4& Camera::get_transform_mat4() {
+    //debug("*** camera pos: {} {}\n",center_position.x,center_position.y);
     return transform_mat4;
 }
 
@@ -30,6 +31,7 @@ Camera::Camera(vec2 p_center_position, vec2 p_half_wh)
 
 void Camera::set_center_position(vec2 p_center_position) {
     center_position=p_center_position;
+    //debug("### camera pos: {} {}\n",center_position.x,center_position.y);
     update_mat();
 }
 

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 #include "L1/App/Config.h"
+
 void MyImGui::static_init(GLFWwindow* window) {    
     const char* glsl_version = "#version 130";
     IMGUI_CHECKVERSION();
@@ -14,18 +15,23 @@ void MyImGui::static_init(GLFWwindow* window) {
     io.ConfigFlags |=
         ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-    ImGui::StyleColorsDark();
+    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+    ImGui::StyleColorsLight();
 
     ImGuiStyle* style = &ImGui::GetStyle();
     ImVec4* colors = style->Colors;
-    colors[ImGuiCol_TitleBgActive] = ImVec4(0.93f, 0.23f, 0.10f, 0.80f);
-
-
+    colors[ImGuiCol_TitleBgActive] = ImColor(0xffb3a7fa);
+    colors[ImGuiCol_ScrollbarBg]=ImVec4(0.93f, 0.23f, 0.30f, 0.80f),
+    colors[ImGuiCol_ScrollbarGrab]=ImVec4(0.93f, 0.93f, 0.60f, 0.80f),
+    colors[ImGuiCol_ScrollbarGrabHovered]=ImVec4(0.43f, 0.73f, 0.80f, 0.80f),
+    colors[ImGuiCol_ScrollbarGrabActive]=ImVec4(0.43f, 0.53f, 0.10f, 0.80f),
+    colors[ImGuiCol_Button]=ImColor(0xe9b9aaff);
+    colors[ImGuiCol_ButtonHovered]=ImColor(0xd98481ff);
+    colors[ImGuiCol_ButtonActive]=ImColor(0xeea8abff);
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
     io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
-                                18, nullptr,
+                                24, nullptr,
                                 io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
     io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
                                 48, nullptr,

@@ -4,6 +4,7 @@
 #include "L1/Debug/CheckGL.h"
 #include "L1/Lib/IO/textLoader.h"
 #include "L1/App/Config.h"
+#include "L1/Debug/Log.h"
 Render::Render() {}
 
 void Render::init() {
@@ -26,7 +27,8 @@ void Render::start_framebuffer() {
 
 void Render::start_framebuffer(std::string frame_name) {
     if(frame_buffers.find(frame_name)==frame_buffers.end()){
-        frame_buffers[frame_name]=FrameBuffer(800,800);        
+        auto [w,h]=Config::getInstance().get_windows_size();
+        frame_buffers[frame_name]=FrameBuffer(w,h);        
     }
     fb=&frame_buffers[frame_name];
     fb->bind();

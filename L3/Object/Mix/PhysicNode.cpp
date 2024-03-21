@@ -57,7 +57,6 @@ void CircleNode::init_body() {
     else if(body_type==BodyType::DYNAMIC) body->SetType(b2_staticBody);
     else body->SetType(b2_kinematicBody);
     body->SetTransform({m_position.x,m_position.y},m_rotation);
-
     vec2 v=m_size*m_scale;
     b2CircleShape shape;
     shape.m_radius=v.y;
@@ -67,4 +66,11 @@ void CircleNode::init_body() {
     fixtureDef.friction =0.1f;
     fixtureDef.restitution = 0.5f; 
     body->CreateFixture(&fixtureDef);
+}
+
+void CircleNode::_process(float delta_time) {
+    m_position={body->GetPosition().x,body->GetPosition().y};
+    m_rotation=body->GetAngle();
+    viewport->get_camera()->set_center_position(m_position);
+    Node::_process(delta_time);  
 }
