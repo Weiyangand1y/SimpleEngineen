@@ -6,7 +6,7 @@ void Config::init() {
     debug("Config init\n");
     data={
 
-        {"shader_base_path",R"(C:\Users\21wyc\Documents\Project\GameMada\graphic\shader\)"},
+        {"shader_base_path",R"(C:\Users\21wyc\Documents\Project\SimpleEngine\assets\Shader\)"},
         {"texture_base_path","C:/Users/21wyc/Pictures/"},
         {"lua_script_file","C:\\Users\\21wyc\\Documents\\Project\\SimpleEngine\\assets\\Script\\"}
     };

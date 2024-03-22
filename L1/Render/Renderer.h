@@ -34,6 +34,7 @@ public:
     ShaderDB& get_shader_db();
 
     void use_texture(std::string name);
+    void use_texture(std::string name,int index);
     void use_texture(int texture_id);
     Texture& get_texture(std::string name);
     TextureDB& get_texture_db();

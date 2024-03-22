@@ -10,6 +10,8 @@ file(GLOB_RECURSE L1_SRC ./L1/*.cpp)
 file(GLOB_RECURSE L2_SRC ./L2/*.cpp)
 file(GLOB_RECURSE L3_SRC ./L3/*.cpp)
 
+file(GLOB_RECURSE L3_5_SRC ./L3.5/*.cpp)
+
 project(SimpleEngineen)
 
 include_directories(
@@ -141,4 +143,24 @@ target_link_libraries(test08 PRIVATE
                         glfw3 
                         LuaLib
                         box2d            
+                        )
+# ------------------------------------------
+add_executable(test09
+                # WIN32
+                ./Test/test09.cpp
+                D:/一个文件夹/aLib/glad/src/glad.c
+                ${L1_SRC}
+                ${L2_SRC}
+                ${IMGUI_FILE}
+                ${L3_5_SRC}
+)
+target_link_directories(test09 PRIVATE
+    D:/一个文件夹/aLib/glfw-3.3.8.bin.WIN64/lib-vc2022
+    D:/一个文件夹/aLib/lua
+)
+
+
+target_link_libraries(test09 PRIVATE 
+                        glfw3 
+                        LuaLib         
                         )

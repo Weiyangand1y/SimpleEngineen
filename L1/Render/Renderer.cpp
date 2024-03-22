@@ -68,6 +68,10 @@ void Render::use_texture(std::string name) {
     texture_db.get_texture(name).use();
 }
 
+void Render::use_texture(std::string name, int index) {
+    texture_db.get_texture(name).use(index);
+}
+
 void Render::use_texture(int texture_id) {
     GL_CALL(glBindTexture(GL_TEXTURE_2D,texture_id);)
 }
@@ -222,5 +226,5 @@ void Render::init_vertex_db() {
     cube_bufferLayout.add_float_layout(2);
     cube_bufferLayout.add_vbo(cube_vbo.get_id());
     cube_bufferLayout.submit_float_layout();
-    vertex_db.emplace(VertexType::TEX_RECT,cube_bufferLayout.get_id());
+    vertex_db.emplace(VertexType::TEX_CUBE,cube_bufferLayout.get_id());
 }
