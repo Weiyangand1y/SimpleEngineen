@@ -34,6 +34,7 @@ void Window::create(int width, int height, const char* title) {
     glfwSetFramebufferSizeCallback(_window, framebuffer_size_callback);
     glfwSetKeyCallback(_window, key_callback);
     glfwSetCursorPosCallback(_window,cursor_pos_callback);
+    glfwSetMouseButtonCallback(_window,mouse_button_callback);
     
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         throw std::runtime_error("无法初始化GLAD");
@@ -81,6 +82,11 @@ void Window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {
     Window* self=(Window*)glfwGetWindowUserPointer(window);
     if(self->m_cursor_pos_callback)
         self->m_cursor_pos_callback(xpos,ypos);
+}
+void Window::mouse_button_callback(GLFWwindow* window,int button,int action,int mods) {
+    Window* self=(Window*)glfwGetWindowUserPointer(window);
+    if(self->m_mouse_button_callback)
+        self->m_mouse_button_callback(button,action,mods);
 }
 void Window::swap_buffers() {
     glfwSwapBuffers(_window);

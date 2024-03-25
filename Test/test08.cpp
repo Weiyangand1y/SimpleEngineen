@@ -11,21 +11,36 @@
 #include "L3/Object/Mix/PhysicNode.h"
 #include "L3/Object/SubClass/SceneTree/RectDraw.hpp"
 //#include <Windows.h>
+//#include <windows.h> 
 class L3App : public Application{
 PhysicScene* scene;
 SignalObject so;
 public:
     void _init()override{
         Window* window=get_window();
-        int id=so.connect("mouse_move",[](Info info){
+        int id=so.connect("mouse_button",[](Info info){
             InfoWrapper info_wrap(info);
-                double x=std::any_cast<double>(info[0]);
-                double y=std::any_cast<double>(info[1]);
-                //fmt::print(fg(fmt::color::aqua),"cursor pos: [ {}, {} ]\n",x,y);
+            int button=info_wrap.get_next_value<int>();
+            int action=info_wrap.get_next_value<int>();
+            int mods=info_wrap.get_next_value<int>();
+            auto& io=ImGui::GetIO();
+            auto pos=io.MousePos;
+            // fmt::print(fg(fmt::color::aqua),"mouse button: [ {}, {} ] pos:[{}, {}]\n",
+            // button?"right":"left",
+            // action?"press":"release",
+            // pos.x,pos.y
+            // );
         });
 
-        window->m_cursor_pos_callback=[&](double xpos,double ypos){
-            so.emit("mouse_move",{xpos,ypos});
+        so.connect("mb2",[](Info info){
+            InfoWrapper info_wrap(info);
+            float nx=info_wrap.get_next_value<float>();
+            float ny=info_wrap.get_next_value<float>();
+            debug("click: {} {}\n",nx,ny);
+        });
+
+        window->m_mouse_button_callback=[&](int button, int action, int mods){
+            so.emit("mouse_button",{button,action,mods});
         };
         window->m_key_callback=[&](int key, int scancode, int action, int mods){
             if(key==' ' && action==1)so.emit("fly");
@@ -79,6 +94,7 @@ public:
         rd->make_many();
     }
     void _run()override{
+        //Sleep(5);
         scene->run(delta_time);
         MyImGui::static_begin();
 
@@ -99,6 +115,16 @@ public:
         ImVec2 size = ImGui::GetWindowSize();
         ImGui::Image((void*)renderer.get_framebuffer_color_texture_id("f2"),
                          ImVec2{size.x,size.x*0.6667f}, ImVec2{0,1}, ImVec2{1,0});
+        if(ImGui::IsMouseClicked(ImGuiMouseButton_Left)){
+            auto p=ImGui::GetItemRectMin();
+            auto q=ImGui::GetIO().MouseClickedPos[0];
+            
+            float delta_x=q.x-p.x;
+            float delta_y=q.y-p.y;
+            debug("p: {}, {}\n",delta_x,delta_y);
+            so.emit("mb2",{delta_x*2/size.x-1.f,-delta_y*2/(size.x*0.6667f)+1.f});
+        }
+        
         ImGui::End();
         MyImGui::static_end();
     }

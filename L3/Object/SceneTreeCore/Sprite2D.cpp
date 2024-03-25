@@ -31,5 +31,9 @@ void Sprite2D::set_texture(std::string name) {
 
 void Sprite2D::process(float delta_time) {
     //m_position+=delta_time*1.f;
+    vec4 p1=vec4(1.f,1.f,0.f,1.f);
+    mat4 result=viewport->get_transform_mat4()*get_transform();
+    p1=result*p1;
+    //debug(">> {:.2f}, {:.2f}, {:.2f}, {:.2f}\n",p1.x,p1.y,p1.z,p1.w);
 }
 

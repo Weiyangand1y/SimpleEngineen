@@ -108,3 +108,18 @@ void Drawer::draw_circle(const float* mat4_data,float r,float g,float b,float a)
     shader.setFloat4("color",r,g,b,a);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 103);
 }
+
+void Drawer::draw_cube(const float* m,const float* v,const float* p,std::string key) {
+    renderer->use_vertex(Render::VertexType::TEX_CUBE);
+    Shader& s=renderer->get_shader("simple_cube");
+    s.use();
+    renderer->use_texture("p1",0);
+    renderer->use_texture("Pippi_Carter",1);
+    
+    s.setInt("texture1",0);
+    s.setInt("texture2",1);
+
+    s.setMat4("view",v);
+    s.setMat4("projection",p);
+    s.setMat4("model", m);
+}

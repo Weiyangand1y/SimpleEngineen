@@ -6,6 +6,7 @@ void TextureDB::init() {
     db["Claudette_Huy"]=Texture(base_path+"character/Claudette_Huy.png");    
     db["Maki_Rollo"]=Texture(base_path+"character/Maki_Rollo.png");
     db["Pippi_Carter"]=Texture(base_path+"character/Pippi_Carter.png");
+    db["p1"]=Texture("C:/Users/21wyc/Pictures/Screenshots/aPicture.png");
 }
 
 TextureDB::TextureDB() {
