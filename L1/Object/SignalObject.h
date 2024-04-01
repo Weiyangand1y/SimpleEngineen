@@ -9,7 +9,7 @@
 
 
 using Info = std::vector<std::any>;
-using Callback = std::function<void(Info&)>;
+using Callback = std::function<void(const Info&)>;
 using Callbackn = std::function<void(void)>;
 
 struct PairIdCallback{
@@ -29,9 +29,11 @@ public:
 
     void disconnect(std::string signal_name, int id);
 
-    void emit(std::string signal_name, Info info);
+    void emit(std::string signal_name, const Info& info);
 
     void emit(std::string signal_name);
+    //连接转发的封装，本质还是connect
+    int connect_to_emit(std::string signal_name,SignalObject& other_signal_object,std::string other_signal_name);
 
 };
 

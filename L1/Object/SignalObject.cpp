@@ -1,5 +1,5 @@
 #include "SignalObject.h"
-
+#include "L1/Debug/Log.h"
 int SignalObject::get_next_id(std::string signal_name) {
     auto& list=signal_map[signal_name];
     if(list.empty())return 0;
@@ -35,7 +35,11 @@ void SignalObject::disconnect(std::string signal_name, int id) {
     }
 }
 
-void SignalObject::emit(std::string signal_name, Info info) {
+void SignalObject::emit(std::string signal_name, const Info& info) {
+    if(signal_map.find(signal_name)==signal_map.end()){
+        debug("no: { }\n",signal_name);
+        return;
+    }
     auto& list = signal_map[signal_name];
     for (size_t i = 0; i < list.size(); i++) {
         list[i].callbak(info);
@@ -49,6 +53,15 @@ void SignalObject::emit(std::string signal_name) {
         list[i].callbak(info);
     }
 }
+
+int SignalObject::connect_to_emit(std::string signal_name,
+                                   SignalObject& other_signal_object,
+                                   std::string other_signal_name) {
+    int return_id = connect(signal_name, [&other_signal_object, other_signal_name](const Info& info) {
+        other_signal_object.emit(other_signal_name, info);
+    });
+    return return_id;
+    }
 
 InfoWrapper::InfoWrapper(Info& p_info) : info(p_info) {}
 

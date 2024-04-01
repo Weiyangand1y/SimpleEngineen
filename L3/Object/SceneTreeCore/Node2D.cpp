@@ -12,6 +12,7 @@ mat4 Node2D::get_transform() {
     return t;
 }
 
+//
 mat4 Node2D::get_transform2() {
     mat4 t(1.f);
     //!!!下面三个是右乘矩阵 

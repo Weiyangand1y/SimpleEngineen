@@ -18,6 +18,8 @@ public:
     Scene(Application* p_app);
     void let_node_know_scene(SceneNode* scene_node);
     void* handle_requst(std::string what, void* data);
+    void add_to_root_node(SceneNode* scene_node);
+
     template<typename T>
     T* create_scene_node();
 protected:

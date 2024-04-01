@@ -8,9 +8,9 @@ void SceneNode::create_from_scene(Scene* p_scene) {
 }
 
 void SceneNode::add_child(SceneNode* node) {
-    addChild(node);
     assert(viewport);
     node->viewport=viewport;
+    addChild(node);    
 }
 
 void SceneNode::set_viewport(Viewport* p_viewport) {

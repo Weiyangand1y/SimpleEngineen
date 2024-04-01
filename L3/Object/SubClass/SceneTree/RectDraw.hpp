@@ -8,6 +8,11 @@ public:
     };
     Color m_color;
     RectDraw(){}
+    void set_transform(float px,float py,float sx=10.f,float sy=10.f,float angle=0.f){
+        m_position={px,py};
+        m_size={sx,sy};
+        m_rotation=angle;
+    }
     void draw()override{
         mat4 result=viewport->get_transform_mat4()*get_transform();
         drawer->draw_rect(value_ptr(result),m_color.r,m_color.g,m_color.b,m_color.a);

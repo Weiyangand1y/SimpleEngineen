@@ -8,6 +8,12 @@ Viewport::Viewport() {
     fb.set_size(w,h);
     fb.create();
     viewport=this;
+    signal.connect("click",[](Info info){
+        InfoWrapper info_wrap(info);
+        float nx=info_wrap.get_next_value<float>();
+        float ny=info_wrap.get_next_value<float>();
+        debug("click: {} {}\t Normalized-Coord\n",nx,ny);
+    });
 }
 void Viewport::set_camera(Camera* p_camera) {
     camera=p_camera;
@@ -23,9 +29,10 @@ mat4& Viewport::get_transform_mat4() {
 }
 
 void Viewport::add_child(SceneNode* node) {
-    addChild(node);
     node->set_viewport(this);
     debug("Viewport should put itself to its child\n");
+    addChild(node);
+    
 }
 #define FB(X) r->start_framebuffer("f2");\
         r->clear_color();\

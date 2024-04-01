@@ -18,6 +18,10 @@ void Scene::let_node_know_scene(SceneNode* scene_node) {
     scene_node->create_from_scene(this);
 }
 
+void Scene::add_to_root_node(SceneNode* scene_node) {
+    root_node->add_child(scene_node);
+}
+
 //这个函数假定你已知道指针类型
 void* Scene::handle_requst(std::string what, void* obj_data) {
     auto it = handlers.find(what);
