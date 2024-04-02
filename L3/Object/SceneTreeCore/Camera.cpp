@@ -13,8 +13,7 @@ mat4& Camera::get_transform_mat4() {
     return transform_mat4;
 }
 
-Camera::Camera() {
-    
+Camera::Camera() {   
     center_position=vec2(0.0f);
     float radio=1.5f;
     top=bottom=80.f;

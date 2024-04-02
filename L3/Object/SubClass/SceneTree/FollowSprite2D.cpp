@@ -29,6 +29,5 @@ void FollowSprite2D::process(float delta) {
     assert(to_follow);
     m_position=to_follow->m_position;
     m_rotation=to_follow->m_rotation;
-    
-    
+  
 }

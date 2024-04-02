@@ -1,83 +1,33 @@
-#include "L1/Debug/Log.h"
-#include "L1/App/Application.h"
-#include "L1/Object/SignalObject.h"
-#include "L1/Lib/Math/random.hpp"
-
-#include "L2/Lib/imgui/MyImGui.h"
-#include "L2/Lib/imgui/UI/ImViewport.h"
-
-#include "L3/Object/SceneTreeCore/Sprite2D.h"
-#include "L3/Object/SubClass/SceneTree/PhysicScene.h"
-#include "L3/Object/SubClass/SceneTree/FollowSprite2D.h"
-#include "L3/Object/Mix/PhysicNode.h"
-#include "L3/Object/SubClass/SceneTree/RectDraw.hpp"
-//#include <Windows.h>
-//#include <windows.h> 
-
-class TexturePhysicNode : public SceneNode{
-public:
-    TexturePhysicNode(){
-    }
-    void ready()override{
-        auto* pn=new CircleNode();
-        pn->set_position(50.f,60.f);
-        pn->m_size={5.7f,9.f};
-        scene->let_node_know_scene(pn);
-        add_child(pn);
-        pn->set_physic_material(1.8f,0.2f);
-        //----------
-        FollowSprite2D* fs=scene->create_scene_node<FollowSprite2D>();
-        fs->set_texture("Maki_Rollo");
-        fs->set_who_to_follow(pn);
-        add_child(fs);
-        //----------------
-        signal.connect("jump",[=](const Info& info){
-            pn->set_init_speed(30.f,10.f);
-        });
-        signal.connect("fly",[=](const Info& info){
-            RandomGenerator rgt;
-            float angle=rgt.getRandomFloat(1.4f,1.8f);
-            debug("angle: {:.3f}\t",angle);
-            pn->set_init_speed(cosf(angle)*20.f,sinf(angle)*20.f);
-        });
-               
-        viewport->signal.connect("click",[=](const Info& info){
-            fs->signal.emit("click",info);
-        });
-        
-        
-    }
-
-};
-
-class RectPhysicNode : public SceneNode{
-public:
-    RectPhysicNode(){}
-    void ready()override{
-        float px=0.f,py=-1.f;
-        float sx=100.f,sy=10.f;
-        float angle=0.2f;
-
-        PhysicNode* gn=new PhysicNode();
-        gn->set_position(px,py);
-        gn->m_size  =   {sx,sy};
-        gn->m_rotation=angle;
-        gn->body_type=PhysicNode::BodyType::STATIC;
-        scene->let_node_know_scene(gn);
-        add_child(gn);
-        //
-        RectDraw* rd=scene->create_scene_node<RectDraw>();
-        rd->set_transform(px,py,  sx,sy,  angle);
-        add_child(rd);
-        rd->make_many();
-    }
-    
-};
-
+#include "test08.h"
 class L3App : public Application{
 PhysicScene* scene;
 SignalObject so;
+ScriptObject script;
 ImViewport iv;
+AddUI add_ui;
+void script_binding(){
+    script.script["add_tpn_node"]=[&](float x,float y){
+        TexturePhysicNode* tpn=scene->create_scene_node<TexturePhysicNode>(x,y);
+        scene->add_to_root_node(tpn);
+    };
+    script.script["rigster"]=[&](SceneNode& sn){
+        scene->let_node_know_scene(&sn);
+    };
+    script.script["add_node"]=[&](SceneNode& sn){
+        scene->add_to_root_node(&sn);
+    };
+    script.script["scene"]=(Scene*)scene;
+    script.script.new_usertype<Sprite2D>("Sprite2D",
+    sol::constructors<Sprite2D>(),
+    "create_from_scene",&Sprite2D::create_from_scene,
+    "set_texture",&Sprite2D::set_texture,
+    "set_position",&Sprite2D::set_position,
+    sol::base_classes, sol::bases<SceneNode>()
+    );
+}
+void script_execute(){
+    script.execute(Config::getInstance().get("lua_script_file")+"test2.lua");
+}
 void init_window() {
     Window* window = get_window();
     MyImGui::static_init(window->get_window());
@@ -89,27 +39,43 @@ void init_window() {
 public:
     void _init()override{
         init_window();
+        script_binding();        
         //
         scene=new PhysicScene(this);
         scene->init();
+        //-----------------------------
+        script_execute();
         //------------------------------
-        Sprite2D* sp=scene->create_scene_node<Sprite2D>();
-        sp->set_texture("Pippi_Carter");
-        sp->set_position(0.f,9.f);
-        scene->add_to_root_node(sp);
+        // Sprite2D* sp=scene->create_scene_node<Sprite2D>();
+        // sp->set_texture("Pippi_Carter");
+        // sp->set_position(0.f,9.f);
+        // scene->add_to_root_node(sp);
         //----------------------------
         TexturePhysicNode* tpn=scene->create_scene_node<TexturePhysicNode>();
         scene->add_to_root_node(tpn);
+        //----------------------------
+        TexturePhysicNode* tpn2=scene->create_scene_node<TexturePhysicNode>(30.f,80.f);
+        tpn2->texture_key="Claudette_Huy";
+        scene->add_to_root_node(tpn2);
         //------------------------------
-        so.connect_to_emit("jump",tpn->signal,"jump");
+        so.connect_to_emit("jump",tpn2->signal,"jump");
         so.connect_to_emit("fly",tpn->signal,"fly");
         so.connect_to_emit("mb2",scene->default_viewport->signal,"click");
         //----------------------------
         RectPhysicNode* rpn=scene->create_scene_node<RectPhysicNode>();
         scene->add_to_root_node(rpn);
         //----------------------------
+        FollowCamera* fc=scene->create_scene_node<FollowCamera>();
+        fc->set_who_to_follow(tpn2->body);
+        fc->set_camera(scene->default_viewport->get_camera());
+        scene->add_to_root_node(fc);
+        //----------------------------
         iv.mouse_click_callback=[&](float x,float y){
             so.emit("mb2",{x,y});
+        };
+        add_ui.callback=[=](float x,float y){
+            TexturePhysicNode* tpn0=scene->create_scene_node<TexturePhysicNode>(x,y);
+            scene->add_to_root_node(tpn0);
         };
     }
     void _run()override{
@@ -132,7 +98,9 @@ public:
 
         int id=renderer.get_framebuffer_color_texture_id("f2");
         iv.texture_id=id;
-        iv.show();
+        iv.drawGui();
+
+        add_ui.show();
 
         
 

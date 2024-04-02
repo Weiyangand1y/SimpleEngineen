@@ -2,7 +2,7 @@
 #include "L3/Object/SceneTreeCore/DrawableNode.h"
 #include "box2d/box2d.h"
 #include "L1/Lib/Math/math.h"
-//之所以是DrawableNode，考虑到可以用纯色矩形
+
 class PhysicNode : public Node2D{
 public:
     enum class BodyType {STATIC, DYNAMIC};

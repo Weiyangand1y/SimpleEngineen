@@ -9,7 +9,7 @@ void Node::addChild(Node* node) {
     children.push_back(node);   
     node->parent=this;
     if(children_cache.find(node->name)!=children_cache.end()){
-        debug("{} is collision name\n",node->name);
+//        debug("{} is collision name\n",node->name);
         node->name.append(std::to_string(children.size()));
     }
     children_cache[node->name]=node;
@@ -22,7 +22,7 @@ void Node::removeChild(Node* node) {
 }
 
 void Node::ready() {
-    debug("{} is ready\n",name);
+//    debug("{} is ready\n",name);
 }
 
 void Node::process(float delta) {}

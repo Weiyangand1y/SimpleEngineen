@@ -20,12 +20,20 @@ public:
     void* handle_requst(std::string what, void* data);
     void add_to_root_node(SceneNode* scene_node);
 
+    template<typename T, typename...Args>
+    T* create_scene_node(Args... args);
     template<typename T>
     T* create_scene_node();
 protected:
     void add_handler(std::string key, std::function<void*(void*)> handler);
 };
 
+template <typename T, typename...Args>
+inline T* Scene::create_scene_node(Args... args) {
+    T* node=new T(args...);
+    let_node_know_scene(node);
+    return node;
+}
 template <typename T>
 inline T* Scene::create_scene_node() {
     T* node=new T();

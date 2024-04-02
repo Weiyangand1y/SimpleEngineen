@@ -48,7 +48,7 @@ void PhysicNode::set_physic_material(float friction, float restitution,float den
     current->SetRestitution(restitution);
     current->SetFriction(friction);
     current->SetDensity(density);
-    
+    auto s=current->GetShape();   
 }
 
 void CircleNode::init_body() {
@@ -71,6 +71,5 @@ void CircleNode::init_body() {
 void CircleNode::_process(float delta_time) {
     m_position={body->GetPosition().x,body->GetPosition().y};
     m_rotation=body->GetAngle();
-    viewport->get_camera()->set_center_position(m_position);
     Node::_process(delta_time);  
 }
