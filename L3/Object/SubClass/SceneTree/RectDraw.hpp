@@ -18,8 +18,11 @@ public:
         drawer->draw_rect(value_ptr(result),m_color.r,m_color.g,m_color.b,m_color.a);
     }
     void make_many(){
-        float w=0.2f;
-        float len=50.f;
+        make(0.2f,50.f);
+        make(0.2f,100.f);
+        make(0.2f,150.f);
+    }
+    void make(float w,float len){
         RectDraw* rd=scene->create_scene_node<RectDraw>();
         rd->m_size={w,len};
         rd->m_position={len,0.f};

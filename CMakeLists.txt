@@ -4,7 +4,18 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
 cmake_host_system_information(RESULT CPU_NUMBER_OF_LOGICAL_CORES QUERY NUMBER_OF_LOGICAL_CORES)
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP${CPU_NUMBER_OF_LOGICAL_CORES}>)
 
-add_definitions(-DDEBUG)
+
+set(CMAKE_BUILD_TYPE "Debug")
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-DDEBUG)
+    set(BOX2D_PATH D:/a_folder/box2d-main/box2d-main/build/bin/Debug)
+    # 这里可以添加一些只在Debug模式下需要的代码
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(BOX2D_PATH D:/a_folder/box2d-main/box2d-main/build/bin/Release)
+    add_definitions(-DNO_CONSOLE)
+    # 这里可以添加一些只在Release模式下需要的代码
+endif()
+
 file(GLOB IMGUI_FILE D:/又一个文件夹/imgui_in_use/*.cpp)
 file(GLOB_RECURSE L1_SRC ./L1/*.cpp)
 file(GLOB_RECURSE L2_SRC ./L2/*.cpp)
@@ -13,6 +24,9 @@ file(GLOB_RECURSE L3_SRC ./L3/*.cpp)
 file(GLOB_RECURSE L3_5_SRC ./L3.5/*.cpp)
 
 project(SimpleEngineen)
+
+
+
 
 include_directories(
     .
@@ -123,6 +137,10 @@ target_link_libraries(test07 PRIVATE
                         box2d            
                         )
 # -------------------------------------------------------
+
+
+
+
 add_executable(test08
                 # WIN32
                 ./Test/test08.cpp
@@ -132,10 +150,11 @@ add_executable(test08
                 ${L3_SRC}
                  ${IMGUI_FILE}
 )
+
 target_link_directories(test08 PRIVATE
     D:/一个文件夹/aLib/glfw-3.3.8.bin.WIN64/lib-vc2022
     D:/一个文件夹/aLib/lua
-    D:/a_folder/box2d-main/box2d-main/build/bin/Debug
+    ${BOX2D_PATH}
 )
 
 

@@ -50,7 +50,7 @@ public:
         script_execute();
         //----------------------------
         TexturePhysicNode* tpn=scene->create_scene_node<TexturePhysicNode>();
-        scene->add_to_root_node(tpn);
+        scene->add_to_root_node(tpn);                                                                                                                                                                                                                                                                                                                                                                                                                                                      
         //----------------------------
         TexturePhysicNode* tpn2=scene->create_scene_node<TexturePhysicNode>(30.f,80.f);
         tpn2->texture_key="Claudette_Huy";
@@ -111,15 +111,19 @@ public:
         MyImGui::static_end();
     }
 };
-int 
-// CALLBACK WinMain(__in  HINSTANCE hInstance,__in  HINSTANCE hPrevInstance,
-//   __in  LPSTR lpCmdLine, __in  int nCmdShow)
-main()
+
+// #ifdef NO_CONSOLE
+// #include <Windows.h>
+// int CALLBACK WinMain(__in  HINSTANCE hInstance,__in  HINSTANCE hPrevInstance,
+//    __in  LPSTR lpCmdLine, __in  int nCmdShow)
+// #else
+int main()
+// #endif
 {  
     system("chcp 65001");
     system("cls");
     std::cout<<"你好"<<std::endl;
     L3App app;
     app.init();
-    app.run();
+    app.run(); 
 }

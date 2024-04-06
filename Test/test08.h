@@ -61,15 +61,15 @@ public:
         pn->set_circle_radius(9.f);
         pn->set_physic_material(1.8f,0.2f);
         //----------
-        // Sprite2D* s=create_add_child<Sprite2D>();
-        // s->set_texture(texture_key);
-        // s->set_who_to_follow(pn);
-        // body=s;
+        Sprite2D* s=create_add_child<Sprite2D>();
+        s->set_texture(texture_key);
+        s->set_who_to_follow(pn);
+        body=s;
         //----------------
-        FollowSprite2D* fs=create_add_child<FollowSprite2D>();
-        body=fs;
-        fs->set_texture(texture_key);
-        fs->set_who_to_follow(pn);
+        // FollowSprite2D* fs=create_add_child<FollowSprite2D>();
+        // body=fs;
+        // fs->set_texture(texture_key);
+        // fs->set_who_to_follow(pn);
         //----------------
         signal.connect("jump",[=](const Info& info){
             pn->set_init_speed(30.f,10.f);
@@ -82,7 +82,7 @@ public:
         });
                
         viewport->signal.connect("click",[=](const Info& info){
-            fs->signal.emit("click",info);
+            //fs->signal.emit("click",info);
         });
         
         
