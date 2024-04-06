@@ -1,10 +1,12 @@
 #include "ImViewport.h"
 #include "L1/Debug/Log.h"
+#include "RoundButton.h"
 void ImViewport::drawGui() {
     ImGui::Begin("运行界面",0,ImGuiWindowFlags_NoMove);
     ImVec2 size = ImGui::GetWindowSize();
     ImGui::Image((void*)texture_id,
                         ImVec2{size.x,size.x*0.6667f}, ImVec2{0,1}, ImVec2{1,0});
+    
     if(ImGui::IsItemHovered()){
         if(ImGui::IsMouseClicked(ImGuiMouseButton_Left)){
         auto p=ImGui::GetItemRectMin();
@@ -18,8 +20,10 @@ void ImViewport::drawGui() {
     if(delta_len.x!=0.f){
         debug("drag {} {}\n",delta_len.x,delta_len.y);
     }
-
-    }
     
+    }
+    ImGui::SetNextItemAllowOverlap();
+    ImGui::SetCursorPos({50,50});
+    RoundedButton("Click");
     ImGui::End();
 }

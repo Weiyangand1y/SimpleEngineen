@@ -5,6 +5,8 @@ SignalObject so;
 ScriptObject script;
 ImViewport iv;
 AddUI add_ui;
+bool running=true;
+
 void script_binding(){
     script.script["add_tpn_node"]=[&](float x,float y){
         TexturePhysicNode* tpn=scene->create_scene_node<TexturePhysicNode>(x,y);
@@ -20,8 +22,9 @@ void script_binding(){
     script.script.new_usertype<Sprite2D>("Sprite2D",
     sol::constructors<Sprite2D>(),
     "create_from_scene",&Sprite2D::create_from_scene,
-    "set_texture",&Sprite2D::set_texture,
-    "set_position",&Sprite2D::set_position,
+    "set_texture",      &Sprite2D::set_texture,
+    "set_position",     &Sprite2D::set_position,
+    "set_scale",        static_cast<void(Sprite2D::*)(float)>(&Sprite2D::set_scale),
     sol::base_classes, sol::bases<SceneNode>()
     );
 }
@@ -45,11 +48,6 @@ public:
         scene->init();
         //-----------------------------
         script_execute();
-        //------------------------------
-        // Sprite2D* sp=scene->create_scene_node<Sprite2D>();
-        // sp->set_texture("Pippi_Carter");
-        // sp->set_position(0.f,9.f);
-        // scene->add_to_root_node(sp);
         //----------------------------
         TexturePhysicNode* tpn=scene->create_scene_node<TexturePhysicNode>();
         scene->add_to_root_node(tpn);
@@ -80,18 +78,25 @@ public:
     }
     void _run()override{
         //Sleep(5);
-        scene->run(delta_time);
+        if(running)
+            scene->run(delta_time);
         MyImGui::static_begin();
 
         ImFont* imFont = MyImGui::get_imfont(0);
         ImGui::Begin("操作区域");
         ImGui::PushFont(imFont);
         
-        if (ImGui::Button("按下",ImVec2(60,40))) {
+        if (RoundedButton("按下",{100,40})) {
             so.emit("jump");
         }
+        if(RoundedButton("stop")){
+            running=!running;
+        }
+        if(RoundedButton("圆")){
+            Logger::log(1,"hello?");
+        }
         ImGui::TextColored(ImVec4(0.5f,0.3f,0.8f,1.f),"------");
-        ImGui::Button("OK");
+        RoundedButton("OK");
         ImGui::GetWindowDrawList()->AddCircle({50,50},100,0xff1122ff);
         ImGui::PopFont();
         ImGui::End();
@@ -102,7 +107,6 @@ public:
 
         add_ui.show();
 
-        
 
         MyImGui::static_end();
     }

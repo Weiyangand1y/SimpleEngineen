@@ -14,7 +14,7 @@ Scene::Scene(Application* p_app) {
 
 
 void Scene::let_node_know_scene(SceneNode* scene_node) {
-    debug("Scene::add_node\n");
+    Logger::log(0,"Scene::add_node");
     scene_node->create_from_scene(this);
 }
 

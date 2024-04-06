@@ -4,12 +4,12 @@
 void DrawableNode::create_from_scene(Scene* scene) {
     SceneNode::create_from_scene(scene);
     drawer=scene->app->get_drawer();
-    debug("DrawableNode::create_from_scene\n");
+    Logger::log(0,"DrawableNode::create_from_scene");
 }
 
 
 void DrawableNode::after_process(float delta) {
-    draw();
+    if(visible)draw();    
 }
 
 void DrawableNode::draw() {

@@ -4,7 +4,7 @@
 
 class DrawableNode : public Node2D{
 private:   
-    
+    bool visible=true;
 protected:
     Drawer* drawer;
 public:

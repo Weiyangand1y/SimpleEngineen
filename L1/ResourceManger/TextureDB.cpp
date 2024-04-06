@@ -2,11 +2,10 @@
 #include "L1/App/Config.h"
 #include <assert.h>
 void TextureDB::init() {
-    std::string base_path=Config::getInstance().get("texture_base_path");
-    db["Claudette_Huy"]=Texture(base_path+"character/Claudette_Huy.png");    
-    db["Maki_Rollo"]=Texture(base_path+"character/Maki_Rollo.png");
-    db["Pippi_Carter"]=Texture(base_path+"character/Pippi_Carter.png");
-    db["p1"]=Texture("C:/Users/21wyc/Pictures/Screenshots/aPicture.png");
+    Config::getInstance().
+        do_for_kv_list("image_path",[&](std::string key,std::string path){
+            db[key]=Texture(path);
+    });
 }
 
 TextureDB::TextureDB() {

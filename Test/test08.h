@@ -6,6 +6,7 @@
 
 #include "L2/Lib/imgui/MyImGui.h"
 #include "L2/Lib/imgui/UI/ImViewport.h"
+#include "L2/Lib/imgui/UI/RoundButton.h"
 
 #include "L3/Object/SceneTreeCore/Sprite2D.h"
 #include "L3/Object/SubClass/SceneTree/PhysicScene.h"
@@ -20,21 +21,33 @@
 class AddUI{
 public:
     float x=0.f,y=0.f;
+    char textBuffer[256] = { 0 };
     std::function<void(float x,float)> callback;
+    AddUI(){
+        
+    }
     void show(){
         ImGui::Begin("Add Node");
         ImGui::DragFloat("x",&x,5.f,-100.f,100.f);
         ImGui::DragFloat("y",&y,5.f,-100.f,100.f);
         if(ImGui::Button("Add"))callback(x,y);
+        if(ImGui::InputText("##TextEdit", textBuffer, IM_ARRAYSIZE(textBuffer),
+                ImGuiInputTextFlags_EnterReturnsTrue)){
+                    debug("enter, text is: {}\n",textBuffer);
+                };
+        ImGui::SameLine();
+        ImGui::SmallButton("send");
         ImGui::End();
     }
 };
 
 
+
+
 class TexturePhysicNode : public SceneNode{
 public:
     std::string texture_key="Maki_Rollo";
-    Node2D* body=nullptr;
+    Node2D* body;
     float m_px=50.f,m_py=60.f;
     TexturePhysicNode(){
     }
@@ -43,18 +56,20 @@ public:
         m_py=py;
     }
     void ready()override{
-        auto* pn=new CircleNode();
-        pn->set_position(m_px,m_py);
-        pn->m_size={5.7f,9.f};
-        scene->let_node_know_scene(pn);
-        add_child(pn);
+        auto* pn=create_add_child<CircleNode>();
+        pn->set_transform(m_px,m_py);
+        pn->set_circle_radius(9.f);
         pn->set_physic_material(1.8f,0.2f);
         //----------
-        FollowSprite2D* fs=scene->create_scene_node<FollowSprite2D>();
+        // Sprite2D* s=create_add_child<Sprite2D>();
+        // s->set_texture(texture_key);
+        // s->set_who_to_follow(pn);
+        // body=s;
+        //----------------
+        FollowSprite2D* fs=create_add_child<FollowSprite2D>();
         body=fs;
         fs->set_texture(texture_key);
         fs->set_who_to_follow(pn);
-        add_child(fs);
         //----------------
         signal.connect("jump",[=](const Info& info){
             pn->set_init_speed(30.f,10.f);
@@ -83,17 +98,13 @@ public:
         float sx=100.f,sy=10.f;
         float angle=0.2f;
 
-        PhysicNode* gn=new PhysicNode();
-        gn->set_position(px,py);
-        gn->m_size  =   {sx,sy};
-        gn->m_rotation=angle;
-        gn->body_type=PhysicNode::BodyType::STATIC;
-        scene->let_node_know_scene(gn);
-        add_child(gn);
+        auto* gn=create_add_child<PhysicNode>(sx,sy);
+        gn->set_transform(px,py,angle);
+        gn->set_body_type(PhysicNode::BodyType::STATIC);
+
         //
-        RectDraw* rd=scene->create_scene_node<RectDraw>();
+        RectDraw* rd=create_add_child<RectDraw>();
         rd->set_transform(px,py,  sx,sy,  angle);
-        add_child(rd);
         rd->make_many();
     }
     

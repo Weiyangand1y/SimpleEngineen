@@ -19,22 +19,23 @@ public:
     }
     void make_many(){
         float w=0.2f;
+        float len=50.f;
         RectDraw* rd=scene->create_scene_node<RectDraw>();
-        rd->m_size={w,100.f};
-        rd->m_position={100.f,0.f};
+        rd->m_size={w,len};
+        rd->m_position={len,0.f};
         rd->m_color={0.4f,0.95f,0.95f,.4f};
         add_child(rd);
         RectDraw* rd2=scene->create_scene_node<RectDraw>();
-        rd2->m_size={w,100.f};
-        rd2->m_position={-100.f,0.f};
+        rd2->m_size={w,len};
+        rd2->m_position={-len,0.f};
         add_child(rd2);
         RectDraw* rd3=scene->create_scene_node<RectDraw>();
-        rd3->m_size={100.f,w};
-        rd3->m_position={0.f,50.f};
+        rd3->m_size={len,w};
+        rd3->m_position={0.f,len};
         add_child(rd3);
         RectDraw* rd4=scene->create_scene_node<RectDraw>();
-        rd4->m_size={100.f,w};
-        rd4->m_position={0.f,-50.f};
+        rd4->m_size={len,w};
+        rd4->m_position={0.f,-len};
         add_child(rd4);
     }
 };

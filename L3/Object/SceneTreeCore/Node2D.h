@@ -16,6 +16,8 @@ public:
     mat4 get_transform2();
     void set_position(float x,float y);
     void set_position_and_angle(float x,float y,float angle);
+    void set_scale(float x,float y);
+    void set_scale(float s);
     void set_who_to_follow(Node2D* p_to_follow);
     void _process(float delta)override;
 };

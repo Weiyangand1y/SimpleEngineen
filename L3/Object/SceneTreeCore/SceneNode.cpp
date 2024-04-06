@@ -4,7 +4,7 @@
 #include "Viewport.h"
 void SceneNode::create_from_scene(Scene* p_scene) {
     scene=p_scene;
-    debug("SceneNode::create_from_scene\n");
+    Logger::log(0,"SceneNode::create_from_scene\n");
 }
 
 void SceneNode::add_child(SceneNode* node) {

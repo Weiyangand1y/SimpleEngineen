@@ -3,17 +3,15 @@
 #include <iostream>
 
 void Config::init() {
-    debug("Config init\n");
+    Logger::log(1,"Config init");
     data={
-
-        {"shader_base_path",R"(C:\Users\21wyc\Documents\Project\SimpleEngine\assets\Shader\)"},
-        {"texture_base_path","C:/Users/21wyc/Pictures/"},
-        {"lua_script_file","C:\\Users\\21wyc\\Documents\\Project\\SimpleEngine\\assets\\Script\\"}
+        {"shader_base_path", "C:/Users/21wyc/Documents/Project/SimpleEngine/assets/Shader/"},
+        {"lua_script_file",  "C:/Users/21wyc/Documents/Project/SimpleEngine/assets/Script/"}
     };
     lua.script_file(data["lua_script_file"]+"config.lua");
     data["title"]=lua.get_or<std::string>("title","Simple Game Engineen");
-    data["icon_path"]=lua.get_or<std::string>("icon_path","C:\\Users\\21wyc\\Pictures\\Camera Roll\\searchPicture.png");
-    data["font_path"]=lua.get_or<std::string>("font_path","C:\\Users\\21wyc\\Desktop\\STZHONGS.TTF");
+    data["icon_path"]=lua.get_or<std::string>("icon_path","C:/Users/21wyc/Pictures/Camera Roll/searchPicture.png");
+    data["font_path"]=lua.get_or<std::string>("font_path","C:/Users/21wyc/Desktop/STZHONGS.TTF");
 }
 
 Config::Config() {
@@ -27,6 +25,15 @@ Config& Config::getInstance() {
 
 void Config::set(const std::string& key, const std::string& value) {
     data[key] = value;
+}
+
+void Config::do_for_kv_list(const std::string& key,std::function<void(std::string, std::string)> call) {
+    sol::table imagePaths = lua[key];
+    imagePaths.for_each([&](sol::object key, sol::object value) {
+        std::string imageName = key.as<std::string>();
+        std::string imagePath = value.as<std::string>();
+        call(imageName,imagePath);
+    });
 }
 
 std::string Config::get(const std::string& key) {

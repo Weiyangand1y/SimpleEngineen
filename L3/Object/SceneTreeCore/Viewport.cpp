@@ -12,7 +12,7 @@ Viewport::Viewport() {
         InfoWrapper info_wrap(info);
         float nx=info_wrap.get_next_value<float>();
         float ny=info_wrap.get_next_value<float>();
-        debug("click: {} {}\t Normalized-Coord\n",nx,ny);
+        debug("click: {:.4f} {:.4f}\t Normalized-Coord\n",nx,ny);
     });
 }
 void Viewport::set_camera(Camera* p_camera) {
@@ -30,7 +30,7 @@ mat4& Viewport::get_transform_mat4() {
 
 void Viewport::add_child(SceneNode* node) {
     node->set_viewport(this);
-    debug("Viewport should put itself to its child\n");
+    Logger::log(0,"Viewport should put itself to its child\n");
     addChild(node);
     
 }

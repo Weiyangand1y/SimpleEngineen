@@ -43,7 +43,7 @@ void Window::create(int width, int height, const char* title) {
     glfwSetWindowUserPointer(_window,this);
     glViewport(0, 0, width, height);
     glfwSwapInterval(1);
-    debug("window created\n");
+    Logger::log(1,"window created");
     }
     Window::Window() {        
     }
