@@ -100,6 +100,11 @@ public:
         ImGui::GetWindowDrawList()->AddCircle({50,50},100,0xff1122ff);
         ImGui::PopFont();
         ImGui::End();
+        auto& io=ImGui::GetIO();
+         for (int i = 0; i < io.InputQueueCharacters.Size; i++) { 
+            ImWchar c = io.InputQueueCharacters[i]; 
+            printf("\'%c\' (0x%04X)", (c > ' ' && c <= 255) ? (char)c : '?', c);
+        }
 
         int id=renderer.get_framebuffer_color_texture_id("f2");
         iv.texture_id=id;

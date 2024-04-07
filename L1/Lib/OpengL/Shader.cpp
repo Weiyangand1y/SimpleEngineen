@@ -58,22 +58,33 @@ void Shader::use() {
     GL_CALL(glUseProgram(id);)
 }
 
-void Shader::setBool(const std::string& name, bool value) const {
-    GL_CALL(glUniform1i(glGetUniformLocation(id, name.c_str()), (int)value));
-}
-void Shader::setInt(const std::string& name, int value) const {
-    GL_CALL(glUniform1i(glGetUniformLocation(id, name.c_str()), value));
-}
-void Shader::setFloat(const std::string& name, float value) const {
-    GL_CALL(glUniform1f(glGetUniformLocation(id, name.c_str()), value));
-}
-
-void Shader::setFloat4(const std::string& name,float v1,float v2,float v3,float v4) const {
-    GL_CALL(glUniform4f(glGetUniformLocation(id, name.c_str()), v1,v2,v3,v4));
+int Shader::get_uniform_loc(const std::string& name){
+    if (uniform_db.find(name) == uniform_db.end()) {
+        GLint location = glGetUniformLocation(id, name.c_str());
+        if (location == -1) {
+            throw std::runtime_error("Uniform " + name + " not found in shader.");
+        }
+        uniform_db[name] = static_cast<int>(location);
+    }
+    return uniform_db[name];
 }
 
-void Shader::setMat4(const std::string& name, const float* value) const {
-    GL_CALL(glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()),1,GL_FALSE, value));
+void Shader::setBool(const std::string& name, bool value) {
+    GL_CALL(glUniform1i(get_uniform_loc(name), (int)value));
+}
+void Shader::setInt(const std::string& name, int value) {
+    GL_CALL(glUniform1i(get_uniform_loc(name), value));
+}
+void Shader::setFloat(const std::string& name, float value) {
+    GL_CALL(glUniform1f(get_uniform_loc(name), value));
+}
+
+void Shader::setFloat4(const std::string& name,float v1,float v2,float v3,float v4) {
+    GL_CALL(glUniform4f(get_uniform_loc(name), v1,v2,v3,v4));
+}
+
+void Shader::setMat4(const std::string& name, const float* value) {
+    GL_CALL(glUniformMatrix4fv(get_uniform_loc(name),1,GL_FALSE, value));
 }
 
 void Shader::compile_shader_from_string(const std::string& vertexCode,
