@@ -14,7 +14,7 @@
 #include "L3/Object/Mix/PhysicNode.h"
 #include "L3/Object/SubClass/SceneTree/RectDraw.hpp"
 #include "L3/Object/SubClass/SceneTree/FollowCamera.hpp"
-
+#include "L3/Object/Mix/ScriptBind.h"
 //#include <Windows.h>
 //#include <windows.h> 
 

@@ -15,13 +15,13 @@ void PhysicNode::_process(float delta_time) {
     Node::_process(delta_time);  
 }
 
-void PhysicNode::create_from_scene(Scene* scene) {    
-    SceneNode::create_from_scene(scene);
+void PhysicNode::enter_scene(Scene* scene) {    
+    SceneNode::enter_scene(scene);
     body =(b2Body*)scene->handle_requst("make_physic_object",&b2BodyDef());
     init_body();
 }
 
-// need to call after create_from_scene
+// need to call after enter_scene
 // I want to subclass to make it different
 //   ... Make default ...
 void PhysicNode::init_body() {    

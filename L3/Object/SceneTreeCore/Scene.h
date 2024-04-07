@@ -16,7 +16,7 @@ public:
     Camera* default_camera;
     SceneNode* root_node;
     Scene(Application* p_app);
-    void let_node_know_scene(SceneNode* scene_node);
+    void make_enter_scene(SceneNode* scene_node);
     void* handle_requst(std::string what, void* data);
     void add_to_root_node(SceneNode* scene_node);
 
@@ -31,12 +31,12 @@ protected:
 template <typename T, typename...Args>
 inline T* Scene::create_scene_node(Args... args) {
     T* node=new T(args...);
-    let_node_know_scene(node);
+    make_enter_scene(node);
     return node;
 }
 template <typename T>
 inline T* Scene::create_scene_node() {
     T* node=new T();
-    let_node_know_scene(node);
+    make_enter_scene(node);
     return node;
 }

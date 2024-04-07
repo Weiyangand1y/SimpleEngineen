@@ -1,10 +1,10 @@
 #include "DrawableNode.h"
 #include "Scene.h"
 #include "L1/Debug/Log.h"
-void DrawableNode::create_from_scene(Scene* scene) {
-    SceneNode::create_from_scene(scene);
+void DrawableNode::enter_scene(Scene* scene) {
+    SceneNode::enter_scene(scene);
     drawer=scene->app->get_drawer();
-    Logger::log(0,"DrawableNode::create_from_scene");
+    Logger::log(0,"DrawableNode::enter_scene");
 }
 
 

@@ -15,14 +15,6 @@ int SignalObject::connect(std::string signal_name, Callback callback) {
     return id;
 }
 
-void SignalObject::connect(std::string signal_name, Callbackn callback) {
-    Callback cb = [&](Info info) {
-        info.resize(0);
-        callback();
-    };
-    auto& list = signal_map[signal_name];
-    list.push_back({get_next_id(signal_name),cb});
-}
 
 void SignalObject::disconnect(std::string signal_name, int id) {
     auto& list = signal_map[signal_name];

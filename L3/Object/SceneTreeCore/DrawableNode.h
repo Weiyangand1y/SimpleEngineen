@@ -8,7 +8,7 @@ private:
 protected:
     Drawer* drawer;
 public:
-    void create_from_scene(Scene* scene)override;
+    void enter_scene(Scene* scene)override;
     void after_process(float delta)override;
     virtual void draw();
 };

@@ -15,7 +15,7 @@ public:
     void _init()override{
         scene=new Scene(this);
         Sprite2D* sp=new Sprite2D();
-        scene->let_node_know_scene(sp);
+        scene->make_enter_scene(sp);
         sp->set_texture("Pippi_Carter");
         scene->root_node->add_child(sp);
 

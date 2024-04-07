@@ -15,7 +15,7 @@ public:
     PhysicNode();
     PhysicNode(float sx,float sy);
     void _process(float delta_time)override;
-    void create_from_scene(Scene* scene)override;
+    void enter_scene(Scene* scene)override;
     virtual void init_body();
     void set_transform(float px,float py,float r=0.f);
     void set_init_speed(float speed_x,float speed_y,float angle_speed=0.f);

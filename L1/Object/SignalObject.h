@@ -25,7 +25,7 @@ public:
 
     int connect(std::string signal_name, Callback callback);
 
-    void connect(std::string signal_name, Callbackn callback);
+
 
     void disconnect(std::string signal_name, int id);
 

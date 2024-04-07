@@ -9,13 +9,13 @@ Scene::Scene(Application* p_app) {
     default_viewport->set_camera(default_camera);
     root_node=default_viewport;
 
-    let_node_know_scene(root_node);
+    make_enter_scene(root_node);
 }
 
 
-void Scene::let_node_know_scene(SceneNode* scene_node) {
+void Scene::make_enter_scene(SceneNode* scene_node) {
     Logger::log(0,"Scene::add_node");
-    scene_node->create_from_scene(this);
+    scene_node->enter_scene(this);
 }
 
 void Scene::add_to_root_node(SceneNode* scene_node) {

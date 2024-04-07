@@ -11,12 +11,12 @@ public:
         scene=new Scene(this);
 
         // DrawableNode* dn=new DrawableNode();
-        // scene->let_node_know_scene(dn);
+        // scene->make_enter_scene(dn);
         // scene->root_node->addChild(dn);
         // dn->set_viewport(scene->default_viewport);
 
         Sprite2D* sp=new Sprite2D();
-        scene->let_node_know_scene(sp);
+        scene->make_enter_scene(sp);
         sp->set_texture("Pippi_Carter");
         scene->root_node->add_child(sp);
     }

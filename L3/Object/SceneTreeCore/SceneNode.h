@@ -9,7 +9,7 @@ protected:
     Viewport* viewport=nullptr;
 public:
     SignalObject signal;
-    virtual void create_from_scene(Scene* scene);
+    virtual void enter_scene(Scene* scene);
     virtual void add_child(SceneNode* node);
     void set_viewport(Viewport* p_viewport);
     template<typename T, typename...Args>

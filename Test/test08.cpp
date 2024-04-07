@@ -1,4 +1,34 @@
 #include "test08.h"
+std::string UnicodeToUTF8(unsigned int codepoint) {
+    std::string out;
+
+    if (codepoint <= 0x7f) {
+        out.append(1, static_cast<char>(codepoint));
+    } else if (codepoint <= 0x7ff) {
+        out.append(1, static_cast<char>(0xc0 | ((codepoint >> 6) & 0x1f)));
+        out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
+    } else if (codepoint <= 0xffff) {
+        out.append(1, static_cast<char>(0xe0 | ((codepoint >> 12) & 0x0f)));
+        out.append(1, static_cast<char>(0x80 | ((codepoint >> 6) & 0x3f)));
+        out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
+    } else {
+        out.append(1, static_cast<char>(0xf0 | ((codepoint >> 18) & 0x07)));
+        out.append(1, static_cast<char>(0x80 | ((codepoint >> 12) & 0x3f)));
+        out.append(1, static_cast<char>(0x80 | ((codepoint >> 6) & 0x3f)));
+        out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
+    }
+    return out;
+}
+
+std::string UnicodeSeqToUTF8(const std::vector<unsigned int>& unicodeSeq) {
+    std::string utf8Str;
+    for (auto codepoint : unicodeSeq) {
+        utf8Str += UnicodeToUTF8(codepoint);
+    }
+    return utf8Str;
+}
+
+
 class L3App : public Application{
 PhysicScene* scene;
 SignalObject so;
@@ -13,20 +43,14 @@ void script_binding(){
         scene->add_to_root_node(tpn);
     };
     script.script["rigster"]=[&](SceneNode& sn){
-        scene->let_node_know_scene(&sn);
+        scene->make_enter_scene(&sn);
     };
     script.script["add_node"]=[&](SceneNode& sn){
         scene->add_to_root_node(&sn);
     };
     script.script["scene"]=(Scene*)scene;
-    script.script.new_usertype<Sprite2D>("Sprite2D",
-    sol::constructors<Sprite2D>(),
-    "create_from_scene",&Sprite2D::create_from_scene,
-    "set_texture",      &Sprite2D::set_texture,
-    "set_position",     &Sprite2D::set_position,
-    "set_scale",        static_cast<void(Sprite2D::*)(float)>(&Sprite2D::set_scale),
-    sol::base_classes, sol::bases<SceneNode>()
-    );
+
+    script_bind_class(script.script);
 }
 void script_execute(){
     script.execute(Config::getInstance().get("lua_script_file")+"test2.lua");
@@ -101,11 +125,13 @@ public:
         ImGui::PopFont();
         ImGui::End();
         auto& io=ImGui::GetIO();
-         for (int i = 0; i < io.InputQueueCharacters.Size; i++) { 
-            ImWchar c = io.InputQueueCharacters[i]; 
-            printf("\'%c\' (0x%04X)", (c > ' ' && c <= 255) ? (char)c : '?', c);
+                
+        if(io.InputQueueCharacters.Size>0){
+            char buf[64]={0};
+            ImGui::ImTextStrToUtf8(buf,64,io.InputQueueCharacters.begin(),io.InputQueueCharacters.end());
+            printf("pinyin: %s\n",buf);
         }
-
+            
         int id=renderer.get_framebuffer_color_texture_id("f2");
         iv.texture_id=id;
         iv.drawGui();
