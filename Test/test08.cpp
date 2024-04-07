@@ -1,4 +1,15 @@
 #include "test08.h"
+#include <chrono>
+
+#define MEASURE_TIME(code) \
+    do { \
+        auto start = std::chrono::high_resolution_clock::now(); \
+        code; \
+        auto end = std::chrono::high_resolution_clock::now(); \
+        std::chrono::duration<double> elapsed = end - start; \
+        std::cout << "Elapsed time: " << elapsed.count() << " seconds" << std::endl; \
+    } while(0)
+
 std::string UnicodeToUTF8(unsigned int codepoint) {
     std::string out;
 
@@ -53,18 +64,27 @@ void script_binding(){
     script_bind_class(script.script);
 }
 void script_execute(){
+    script.script.require_file("test",Config::getInstance().get("lua_script_file")+"make_simple.lua");
     script.execute(Config::getInstance().get("lua_script_file")+"test2.lua");
 }
 void init_window() {
     Window* window = get_window();
     MyImGui::static_init(window->get_window());
     window->m_key_callback = [&](int key, int scancode, int action, int mods) {
-        if (key == ' ' && action == 1)so.emit("fly");
+        if(action==1){
+            if(key==' ')so.emit("fly");
+            else if(key=='A')so.emit("left");
+            else if(key=='D')so.emit("right");
+            else if(key=='W')so.emit("up");
+            else if(key=='S')so.emit("down");
+        }
     };   
 }
 
 public:
-    void _init()override{
+    void _init()override{   
+
+    MEASURE_TIME(
         init_window();
         script_binding();        
         //
@@ -72,9 +92,15 @@ public:
         scene->init();
         //-----------------------------
         script_execute();
+        );
+        
+
         //----------------------------
         TexturePhysicNode* tpn=scene->create_scene_node<TexturePhysicNode>();
-        scene->add_to_root_node(tpn);                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+        scene->add_to_root_node(tpn); 
+        PhysicNodeController* pnc=new PhysicNodeController(tpn->mpn);
+        pnc->connect_signal(so); 
+
         //----------------------------
         TexturePhysicNode* tpn2=scene->create_scene_node<TexturePhysicNode>(30.f,80.f);
         tpn2->texture_key="Claudette_Huy";
@@ -88,7 +114,7 @@ public:
         scene->add_to_root_node(rpn);
         //----------------------------
         FollowCamera* fc=scene->create_scene_node<FollowCamera>();
-        fc->set_who_to_follow(tpn2->body);
+        fc->set_who_to_follow(tpn->body);
         fc->set_camera(scene->default_viewport->get_camera());
         scene->add_to_root_node(fc);
         //----------------------------

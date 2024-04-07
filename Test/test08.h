@@ -15,6 +15,7 @@
 #include "L3/Object/SubClass/SceneTree/RectDraw.hpp"
 #include "L3/Object/SubClass/SceneTree/FollowCamera.hpp"
 #include "L3/Object/Mix/ScriptBind.h"
+#include "L3/Object/Mix/Controller.h"
 //#include <Windows.h>
 //#include <windows.h> 
 
@@ -48,6 +49,7 @@ class TexturePhysicNode : public SceneNode{
 public:
     std::string texture_key="Maki_Rollo";
     Node2D* body;
+    PhysicNode* mpn;
     float m_px=50.f,m_py=60.f;
     TexturePhysicNode(){
     }
@@ -60,6 +62,7 @@ public:
         pn->set_transform(m_px,m_py);
         pn->set_circle_radius(9.f);
         pn->set_physic_material(1.8f,0.2f);
+        mpn=pn;
         //----------
         Sprite2D* s=create_add_child<Sprite2D>();
         s->set_texture(texture_key);

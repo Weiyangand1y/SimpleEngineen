@@ -69,6 +69,10 @@ void PhysicNode::set_body_type(BodyType p_body_type) {
     }
 }
 
+void PhysicNode::add_impulse(float x, float y) {
+    body->ApplyLinearImpulse({x,y},body->GetWorldCenter(),true);
+}
+
 void CircleNode::init_body() {
     assert(body);
     set_body_type(body_type);

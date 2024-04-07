@@ -21,6 +21,8 @@ public:
     void set_init_speed(float speed_x,float speed_y,float angle_speed=0.f);
     void set_physic_material(float friction,float restitution,float density=1.f);
     void set_body_type(BodyType p_body_type);
+
+    void add_impulse(float x,float y);
 };
 
 class CircleNode : public PhysicNode{
