@@ -18,6 +18,8 @@ public:
     virtual void after_process(float delta);
     virtual void _after_process(float delta);
 
+    
+
     void set_name(std::string p_name);
 
     Node(std::string p_name);

@@ -3,15 +3,24 @@
 #include "L1/Object/SignalObject.h"
 class Scene;
 class Viewport;
+using SignalRecode = std::vector<std::tuple<SignalObject*,std::string,int>>;
 class SceneNode : public Node{
 protected:
     Scene* scene;
     Viewport* viewport=nullptr;
 public:
     SignalObject signal;
+    SignalRecode signal_record;
     virtual void enter_scene(Scene* scene);
     virtual void add_child(SceneNode* node);
+    //为了传viewport，一些不需要用到viewport的node也需要viewport
     void set_viewport(Viewport* p_viewport);
+    virtual void before_free();
+    void queue_free();
+    void get_all_children(std::vector<SceneNode*>& result);
+    void make_signal_record(SignalObject& so,std::string name,int id);
+    void connect_signal(SignalObject& so,std::string signal_name,Callback func);
+
     template<typename T, typename...Args>
     T* create_add_child(Args... args);
     template<typename T>

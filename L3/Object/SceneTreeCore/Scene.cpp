@@ -12,6 +12,14 @@ Scene::Scene(Application* p_app) {
     make_enter_scene(root_node);
 }
 
+void Scene::add_free_node(SceneNode* node){
+    free_queue.push_back(node);
+    node->get_all_children(free_queue);
+}
+void Scene::do_queue_free(){
+    for(auto c: free_queue)c->before_free();
+    for(auto c: free_queue)delete c;
+}
 
 void Scene::make_enter_scene(SceneNode* scene_node) {
     Logger::log(0,"Scene::add_node");

@@ -10,6 +10,7 @@ class SceneNode;
 class Scene{
 private:
     std::unordered_map<std::string, std::function<void*(void*)>> handlers;
+    std::vector<SceneNode*> free_queue;
 public:
     Application* app;
     Viewport* default_viewport;
@@ -19,6 +20,9 @@ public:
     void make_enter_scene(SceneNode* scene_node);
     void* handle_requst(std::string what, void* data);
     void add_to_root_node(SceneNode* scene_node);
+    
+    void add_free_node(SceneNode* node);
+    void do_queue_free();
 
     template<typename T, typename...Args>
     T* create_scene_node(Args... args);

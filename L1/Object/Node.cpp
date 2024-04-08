@@ -49,6 +49,8 @@ void Node::_after_process(float delta) {
     }
 }
 
+
+
 void Node::set_name(std::string p_name) {
     name=p_name;
 }

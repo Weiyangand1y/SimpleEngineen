@@ -93,7 +93,20 @@ public:
         //-----------------------------
         script_execute();
         );
-        
+        //----------------------------
+        auto n1=scene->root_node->create_add_child<SceneNode>();
+        n1->connect_signal(so,"hello",[](const Info&){debug("***n1\n")});
+        auto n2=scene->root_node->create_add_child<SceneNode>();
+        n2->connect_signal(so,"hello",[](const Info&){debug("***n2\n")});
+        auto n3=scene->root_node->create_add_child<SceneNode>();
+        n3->connect_signal(so,"hello",[](const Info&){debug("***n3\n")});
+        auto n4=n1->create_add_child<SceneNode>();
+        n4->connect_signal(so,"hello",[](const Info&){debug("***n4\n")});
+        so.emit("hello");
+        n1->queue_free();
+        scene->do_queue_free();
+        debug("---after free\n");
+        so.emit("hello");
 
         //----------------------------
         TexturePhysicNode* tpn=scene->create_scene_node<TexturePhysicNode>();
