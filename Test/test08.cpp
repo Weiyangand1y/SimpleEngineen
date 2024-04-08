@@ -166,6 +166,7 @@ public:
 
 
         MyImGui::static_end();
+        drawer.draw_test();
     }
 };
 

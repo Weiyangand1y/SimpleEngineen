@@ -28,3 +28,24 @@ VBO::VBO(std::vector<float>& vertices_data) {
 void VBO::bind() {
     GL_CALL(glBindBuffer(GL_ARRAY_BUFFER,id));
 }
+
+EBO::EBO() {
+    std::vector<unsigned int> indices_data={0,1,2,1,2,3};
+    GL_CALL(glGenBuffers(1,&id));
+    GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,id));
+    GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                        indices_data.size()*sizeof(unsigned int),indices_data.data(),
+                        GL_STATIC_DRAW));
+}
+
+EBO::EBO(std::vector<unsigned int>& indices_data) {
+    GL_CALL(glGenBuffers(1,&id));
+    GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,id));
+    GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                        indices_data.size()*sizeof(unsigned int),indices_data.data(),
+                        GL_STATIC_DRAW));
+}
+
+void EBO::bind() {
+    GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id));
+}

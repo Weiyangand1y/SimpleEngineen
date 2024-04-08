@@ -67,3 +67,11 @@ scene.make_enter_scene(node)
 ```
 
 These methods help in making the code cleaner and more manageable.
+
+## Node2D
+
+Node in 2d world, has position, rotation, scale, size, and can set follow node2d.
+
+### Methods
+
+`set_transform`

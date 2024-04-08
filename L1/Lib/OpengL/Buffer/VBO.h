@@ -8,3 +8,12 @@ public:
     int get_id()const{return id;}
     void bind();
 };
+
+class EBO{
+    unsigned int id;
+public:
+    EBO();
+    EBO(std::vector<unsigned int>& indices_data);
+    int get_id()const{return id;}
+    void bind();
+};

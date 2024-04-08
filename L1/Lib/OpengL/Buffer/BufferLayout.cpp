@@ -30,6 +30,6 @@ void BufferLayout::submit_float_layout(){
 }
 
 void BufferLayout::bind() {
-    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER,vbo_id));
+    //GL_CALL(glBindBuffer(GL_ARRAY_BUFFER,vbo_id));
     GL_CALL(glBindVertexArray(vao));
 }

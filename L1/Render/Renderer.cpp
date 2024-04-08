@@ -140,16 +140,21 @@ void Render::init_vertex_db() {
         1.0f, -1.0f, 0.0f,  1.0f, 0.0f, // bottom right
         -1.0f, -1.0f, 0.0f,  0.0f, 0.0f, // bottom left
 
-        1.0f,  1.0f, 0.0f,  1.0f, 1.0f, // top right
-        -1.0f, -1.0f, 0.0f,  0.0f, 0.0f, // bottom left
+        // 1.0f,  1.0f, 0.0f,  1.0f, 1.0f, // top right
+        //  -1.0f, -1.0f, 0.0f,  0.0f, 0.0f, // bottom left
         -1.0f,  1.0f, 0.0f,  0.0f, 1.0f  // top left 
     };
+    std::vector<unsigned int> texture_rect_indice={
+        0,1,2,  0,2,3
+    };
     VBO texture_rect_vbo(texture_rect_vertices);
+    
     BufferLayout texture_rect_bufferLayout;
     texture_rect_bufferLayout.add_float_layout(3);
     texture_rect_bufferLayout.add_float_layout(2);
     texture_rect_bufferLayout.add_vbo(texture_rect_vbo.get_id());
     texture_rect_bufferLayout.submit_float_layout();
+    EBO texture_rect_ebo(texture_rect_indice);
     vertex_db.emplace(VertexType::TEX_RECT,texture_rect_bufferLayout.get_id());
 
     //circle

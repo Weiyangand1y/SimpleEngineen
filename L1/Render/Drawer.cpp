@@ -2,9 +2,14 @@
 #include "L1/Lib/Math/math.h"
 #include <glad/glad.h>
 
+#include "L1/Debug/CheckGL.h"
+#include "L1/Lib/OpengL/Buffer/VBO.h"
+#include "L1/Lib/OpengL/Buffer/BufferLayout.h"
 Drawer::Drawer() {
     
 }
+
+void Drawer::draw_test() {}
 
 void Drawer::set_render(Render& p_renderer) {
     renderer=&p_renderer;
@@ -21,8 +26,8 @@ void Drawer::draw_triangle(float x, float y, float sx, float sy) {
     translate(t,vec3(x,y,0.0));
     scale(t,vec3(sx,sy,0));
     renderer->use_vertex(Render::VertexType::TRIANGLE);
-    renderer->use_shader("can_transform");
     Shader& shader=renderer->get_shader("can_transform");
+    shader.use();
     shader.setMat4("transform",value_ptr(t));
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
@@ -63,7 +68,7 @@ void Drawer::draw_texture(std::string id,float x,float y) {
     shader.use();
     shader.setInt("texture1",0);
     shader.setMat4("transform",value_ptr(t));
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void Drawer::draw_texture(int id, const float* mat4_data) {
@@ -73,7 +78,7 @@ void Drawer::draw_texture(int id, const float* mat4_data) {
     shader.use();
     shader.setInt("texture1",0);
     shader.setMat4("transform",mat4_data);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void Drawer::draw_texture(std::string id,const float* mat4_data) {
@@ -84,7 +89,7 @@ void Drawer::draw_texture(std::string id,const float* mat4_data) {
     shader.use();
     shader.setInt("texture1",0);
     shader.setMat4("transform",mat4_data);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void Drawer::draw_texture(int texture_id, std::string shader_name) {
@@ -97,7 +102,8 @@ void Drawer::draw_texture(int texture_id, std::string shader_name) {
     
     shader.setInt("texture1",0);
     shader.setMat4("transform",value_ptr(t));
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    //glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void Drawer::draw_circle(const float* mat4_data,float r,float g,float b,float a) {
