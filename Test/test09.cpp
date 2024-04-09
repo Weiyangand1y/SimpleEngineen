@@ -9,6 +9,7 @@ Drawer3D drawer3d;
 public:
     void _init(){
         drawer3d.set_renderer(renderer);
+        camera.set_position({0.f,0.f,15.f});
     }
     void _run(){
         glEnable(GL_DEPTH_TEST);
@@ -25,12 +26,17 @@ public:
             glm::vec3( 1.5f,  0.2f, -1.5f),
             glm::vec3(-1.3f,  1.0f, -1.5f)
         };
-        camera.set_position({0.f,0.f,15.f});
+        if(camera.view_dirty){
+            debug("...v\n");
+            drawer3d.change_view_matrix(value_ptr(camera.get_view_matrix()));
+        }
+        if(camera.projection_dirty){
+            debug("...p\n");
+            drawer3d.change_projection_matrix(value_ptr(camera.get_projection_matrix()));
+        }
 
-        mat4 view=camera.get_view_matrix();
-        mat4 projection = camera.get_projection_matrix();
-        drawer3d.change_projection_matrix(value_ptr(projection));
-        drawer3d.change_view_matrix(value_ptr(view));
+        
+        
 
         for (unsigned int i = 0; i < 10; i++)
         {

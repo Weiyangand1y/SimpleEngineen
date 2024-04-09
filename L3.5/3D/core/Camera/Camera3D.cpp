@@ -18,13 +18,15 @@
 //     updateCameraVectors();
 // }
 
-mat4 Camera3D::get_projection_matrix() {
-    return mat4();
+mat4& Camera3D::get_projection_matrix() {
+    return projection_matrix;
 }
 
-mat4 Camera3D::get_view_matrix() {
+mat4& Camera3D::get_view_matrix() {
     vec3 front=cross(m_up,m_right);
-    return lookAt(m_position, m_position + front, m_up);
+    view_matrix=lookAt(m_position, m_position + front, m_up);
+    view_dirty=false;
+    return view_matrix;
 }
 
 // void Camera3D::process_keyboard(Camera_Movement direction, float deltaTime) {
@@ -66,6 +68,7 @@ mat4 Camera3D::get_view_matrix() {
 
 void Camera3D::set_position(vec3 pos) {
     m_position=pos;
+    view_dirty=true;
 }
 
 // void Camera3D::updateCameraVectors() {
