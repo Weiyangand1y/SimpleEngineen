@@ -6,6 +6,7 @@ Drawer3D::Drawer3D(){
 
 void Drawer3D::draw_cube(float* model_matrix) {
     simple_cube_shader->use();
+    simple_cube_shader->setMat4("model",model_matrix);
     renderer->use_vertex(Render::VertexType::TEX_CUBE);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }

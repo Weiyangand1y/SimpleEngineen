@@ -1,23 +1,5 @@
 #include "Camera3D.h"
-
-// Camera3D::Camera3D(vec3 position, vec3 up, float yaw, float pitch)
-//     : Front(vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(2.5f), MouseSensitivity(0.1f), Zoom(45.0f) {
-//     Position = position;
-//     WorldUp = up;
-//     Yaw = yaw;
-//     Pitch = pitch;
-//     updateCameraVectors();
-// }
-
-// Camera3D::Camera3D(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch)
-//     : Front(vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(2.5f), MouseSensitivity(0.1f), Zoom(45.0f) {
-//     Position = vec3(posX, posY, posZ);
-//     WorldUp = vec3(upX, upY, upZ);
-//     Yaw = yaw;
-//     Pitch = pitch;
-//     updateCameraVectors();
-// }
-
+#include "L1/Debug/Log.h"
 mat4& Camera3D::get_projection_matrix() {
     return projection_matrix;
 }
@@ -29,55 +11,47 @@ mat4& Camera3D::get_view_matrix() {
     return view_matrix;
 }
 
-// void Camera3D::process_keyboard(Camera_Movement direction, float deltaTime) {
-//     float velocity = MovementSpeed * deltaTime;
-//     if (direction == FORWARD)
-//         Position += Front * velocity;
-//     if (direction == BACKWARD)
-//         Position -= Front * velocity;
-//     if (direction == LEFT)
-//         Position -= Right * velocity;
-//     if (direction == RIGHT)
-//         Position += Right * velocity;
-// }
-
-// void Camera3D::proces_mouse_movement(float xoffset, float yoffset, bool constrainPitch) {
-//     xoffset *= MouseSensitivity;
-//     yoffset *= MouseSensitivity;
-
-//     Yaw += xoffset;
-//     Pitch += yoffset;
-
-//     if (constrainPitch) {
-//         if (Pitch > 89.0f)
-//             Pitch = 89.0f;
-//         if (Pitch < -89.0f)
-//             Pitch = -89.0f;
-//     }
-
-//     updateCameraVectors();
-// }
-
-// void Camera3D::process_mouse_scroll(float yoffset) {
-//     Zoom -= static_cast<float>(yoffset);
-//     if (Zoom < 1.0f)
-//         Zoom = 1.0f;
-//     if (Zoom > 45.0f)
-//         Zoom = 45.0f;
-// }
 
 void Camera3D::set_position(vec3 pos) {
     m_position=pos;
     view_dirty=true;
 }
 
-// void Camera3D::updateCameraVectors() {
-//     vec3 front;
-//     front.x = cos(radians(Yaw)) * cos(radians(Pitch));
-//     front.y = sin(radians(Pitch));
-//     front.z = sin(radians(Yaw)) * cos(radians(Pitch));
-//     Front = normalize(front);
+void Camera3D::move(vec3 delta_move) {
+    set_position(m_position+delta_move);
+}
 
-//     Right = normalize(cross(Front, WorldUp));
-//     Up = normalize(cross(Right, Front));
-// }
+void Camera3D::move_ralative_camera(Direction direction, float delta_move) {
+    vec3 front=cross(m_up,m_right);
+    switch (direction){
+    case Direction::FORWARD:
+        m_position += front * delta_move;
+        break;
+    case Direction::BACKWARD:
+        m_position -= front * delta_move;
+        break;
+    case Direction::LEFT:
+        m_position -= m_right * delta_move;
+        break;
+    case Direction::RIGHT:
+        m_position += m_right * delta_move;
+        break;    
+    }
+    view_dirty=true;
+
+}
+
+void Camera3D::rotate_pitch_yaw(float yaw, float pitch, float delta_move) {
+    view_dirty=true;
+    m_yaw+=yaw*delta_move;
+    m_pitch+=pitch*delta_move;
+    vec3 front;
+    front.x = cos(radians(m_yaw)) * cos(radians(m_pitch));
+    front.y = sin(radians(m_pitch));
+    front.z = sin(radians(m_yaw)) * cos(radians(m_pitch));
+    front = normalize(front);
+    Logger::log(1,"[{},{},{}]",front.x,front.y,front.z);
+    m_right = normalize(cross(front, vec3(0.f,1.f,0.f)));
+    m_up = normalize(cross(m_right, front));
+}
+
