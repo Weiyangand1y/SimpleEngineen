@@ -29,7 +29,7 @@ void SignalObject::disconnect(std::string signal_name, int id) {
 
 void SignalObject::emit(std::string signal_name, const Info& info) {
     if(signal_map.find(signal_name)==signal_map.end()){
-        debug("no: { }\n",signal_name);
+        debug("no: {}\n",signal_name);
         return;
     }
     auto& list = signal_map[signal_name];

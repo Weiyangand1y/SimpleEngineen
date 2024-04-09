@@ -73,6 +73,11 @@ void PhysicNode::add_impulse(float x, float y) {
     body->ApplyLinearImpulse({x,y},body->GetWorldCenter(),true);
 }
 
+void PhysicNode::before_free() {
+    SceneNode::before_free();
+    scene->handle_requst("delete_physic_body",this);
+}
+
 void CircleNode::init_body() {
     assert(body);
     set_body_type(body_type);

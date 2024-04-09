@@ -23,6 +23,7 @@ public:
     void set_body_type(BodyType p_body_type);
 
     void add_impulse(float x,float y);
+    void before_free()override;
 };
 
 class CircleNode : public PhysicNode{

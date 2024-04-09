@@ -148,7 +148,6 @@ public:
         ImFont* imFont = MyImGui::get_imfont(0);
         ImGui::Begin("操作区域");
         ImGui::PushFont(imFont);
-        
         if (RoundedButton("按下",{100,40})) {
             so.emit("jump");
         }
@@ -161,10 +160,7 @@ public:
         ImGui::TextColored(ImVec4(0.5f,0.3f,0.8f,1.f),"------");
         RoundedButton("OK");
         ImGui::GetWindowDrawList()->AddCircle({50,50},100,0xff1122ff);
-        ImGui::PopFont();
-        ImGui::End();
-        auto& io=ImGui::GetIO();
-                
+        ImGuiIO& io = ImGui::GetIO();               
         if(io.InputQueueCharacters.Size>0){
             char buf[64]={0};
             ImGui::ImTextStrToUtf8(buf,64,io.InputQueueCharacters.begin(),io.InputQueueCharacters.end());
@@ -177,9 +173,9 @@ public:
 
         add_ui.show();
 
-
+        
         MyImGui::static_end();
-        drawer.draw_test();
+        
     }
 };
 
