@@ -26,7 +26,8 @@ public:
     void setBool(const std::string& name, bool value) ;
     void setInt(const std::string& name, int value) ;
     void setFloat(const std::string& name, float value) ;
-    void setFloat4(const std::string& name, float v1,float v2,float v3,float v4) ;
+    void setFloat4(const std::string& name, float v1,float v2,float v3,float v4);
+    void setFloat3(const std::string& name, float v1,float v2,float v3);
     void setMat4(const std::string& name, const float* value) ;
     void compile_shader_from_string(const std::string& vertexCode,
                                     const std::string& fragmentCode);

@@ -45,9 +45,9 @@ void CameraController::on_key_release(int key) {
 }
 
 void CameraController::on_drag(float x, float y) {
-    float speed=0.08f;
+    float speed=0.2f;
     float len=sqrtf(x*x+y*y);
-    m_camera->rotate_pitch_yaw(-x/len,-y/len,speed);
+    m_camera->rotate_pitch_yaw(-x/len,y/len,speed);
 }
 
 void CameraController::on_scroll(float scroll_y) {}

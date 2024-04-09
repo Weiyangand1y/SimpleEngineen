@@ -83,6 +83,11 @@ void Shader::setFloat4(const std::string& name,float v1,float v2,float v3,float 
     GL_CALL(glUniform4f(get_uniform_loc(name), v1,v2,v3,v4));
 }
 
+void Shader::setFloat3(const std::string& name, float v1, float v2, float v3) {
+    int loc=get_uniform_loc(name);
+    GL_CALL(glUniform3f(loc, v1,v2,v3));
+}
+
 void Shader::setMat4(const std::string& name, const float* value) {
     GL_CALL(glUniformMatrix4fv(get_uniform_loc(name),1,GL_FALSE, value));
 }

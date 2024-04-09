@@ -9,9 +9,10 @@ class TDApp : public Application{
 PerspectiveCamera camera;
 CameraController camera_controller;
 Drawer3D drawer3d;
-int count=500;
 public:
     void _init(){
+        auto [x,y]=Config::getInstance().get_windows_size();
+        camera.m_aspect=float(x)/y;
         MyImGui::static_init(window.get_window());
         glEnable(GL_DEPTH_TEST);
         drawer3d.set_renderer(renderer);
@@ -56,6 +57,10 @@ public:
             model = glm::rotate(model, glm::radians(angle+time*15.f), glm::vec3(1.0f, 0.3f, 0.5f));
             drawer3d.draw_cube(value_ptr(model));
         }
+        glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        model = glm::translate(model, cubePositions[2]+vec3(5.f,0.f,0.f));
+        drawer3d.draw_light_cube(value_ptr(model));
+
         MyImGui::static_begin();
         auto [dx,dy]=ImGui::GetMouseDragDelta(0);
         if(dx!=0.f || dy!=0.f){

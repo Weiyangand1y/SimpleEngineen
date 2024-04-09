@@ -12,7 +12,7 @@ public:
     enum class VertexType{
         TRIANGLE,RECT,
         TEX_CUBE,COLOR_TRIANGLE,
-        TEX_RECT,CIRCLE
+        TEX_RECT,CIRCLE,NORMAL_TEX_CUBE
         };
 private:
     std::unordered_map<std::string, FrameBuffer> frame_buffers;

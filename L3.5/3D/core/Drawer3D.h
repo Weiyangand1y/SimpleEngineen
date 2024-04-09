@@ -7,6 +7,7 @@ class Drawer3D{
 private:
     Render* renderer;
     Shader* simple_cube_shader;
+    Shader light_cube_shader;
 public:
     Drawer3D();   
     void set_renderer(Render& render);
@@ -15,5 +16,6 @@ public:
     void change_projection_matrix(float* model_matrix);
     void change_transform_matrix(float* transform_matrix);
     void draw_cube(float* model_matrix);
+    void draw_light_cube(float* model_matrix);
 };
 
