@@ -1,12 +1,13 @@
 #pragma once
 #ifdef DEBUG
+#include <assert.h>
 #include <glad/glad.h>
 #define GL_CALL(X) \
         glGetError();\
         X;\
-        check_and_print_error();
+        if(!check_and_print_error())assert(false);
 #else
 #define GL_CALL(X) X;
 #endif        
         
-void check_and_print_error();
+bool check_and_print_error();

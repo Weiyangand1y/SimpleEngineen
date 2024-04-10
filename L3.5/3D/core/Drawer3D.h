@@ -1,6 +1,6 @@
 #pragma once
 #include "L1/Render/Renderer.h"
-
+#include "L1/Lib/OpengL/Buffer/UBO.h"
 
 /// @brief 该类是3D drawer， 可以让shader的一些uniform进行共享，减少数据传输的量，对比较有限的shader进行硬编码
 class Drawer3D{
@@ -8,6 +8,7 @@ private:
     Render* renderer;
     Shader* simple_cube_shader;
     Shader light_cube_shader;
+    UBO ubo;
 public:
     Drawer3D();   
     void set_renderer(Render& render);

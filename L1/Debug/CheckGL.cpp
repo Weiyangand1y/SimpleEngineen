@@ -2,7 +2,7 @@
 #ifdef DEBUG
 #include <iostream>
 #include <assert.h>
-void check_and_print_error(){
+bool check_and_print_error(){
     
     GLenum error_code=glGetError();
     if(error_code!=GL_NO_ERROR){
@@ -22,7 +22,8 @@ void check_and_print_error(){
             std::cout<<"OTHER ERROR"<<std::endl;
             break;
         }
-        assert(false);
+        return false;
     }
+    return true;
     }
 #endif   
