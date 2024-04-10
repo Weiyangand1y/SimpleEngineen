@@ -1,6 +1,6 @@
 #include "test08.h"
 #include <chrono>
-
+#include "L1/Render/extension/ShaderDrawer.h"
 #define MEASURE_TIME(code) \
     do { \
         auto start = std::chrono::high_resolution_clock::now(); \
@@ -47,6 +47,7 @@ ScriptObject script;
 ImViewport iv;
 AddUI add_ui;
 bool running=true;
+ShaderDrawer sd;
 
 void script_binding(){
     script.script["add_tpn_node"]=[&](float x,float y){
@@ -68,6 +69,7 @@ void script_execute(){
     script.execute(Config::getInstance().get("lua_script_file")+"test2.lua");
 }
 void init_window() {
+    sd.set_render(renderer);
     Window* window = get_window();
     MyImGui::static_init(window->get_window());
     window->m_key_callback = [&](int key, int scancode, int action, int mods) {
@@ -82,7 +84,7 @@ void init_window() {
 }
 
 public:
-    void _init()override{   
+    void _init()override{
 
     MEASURE_TIME(
         init_window();
@@ -160,6 +162,8 @@ public:
         ImGui::TextColored(ImVec4(0.5f,0.3f,0.8f,1.f),"------");
         RoundedButton("OK");
         ImGui::GetWindowDrawList()->AddCircle({50,50},100,0xff1122ff);
+        ImGui::PopFont();
+        ImGui::End();
         ImGuiIO& io = ImGui::GetIO();               
         if(io.InputQueueCharacters.Size>0){
             char buf[64]={0};
@@ -175,7 +179,8 @@ public:
 
         
         MyImGui::static_end();
-        
+        mat4 m=mat4(1.f);
+        sd.draw(value_ptr(m),time);
     }
 };
 

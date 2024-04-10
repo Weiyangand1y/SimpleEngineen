@@ -9,7 +9,9 @@ Drawer::Drawer() {
     
 }
 
-void Drawer::draw_test() {}
+void Drawer::draw_test() {
+    
+}
 
 void Drawer::set_render(Render& p_renderer) {
     renderer=&p_renderer;

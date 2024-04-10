@@ -8,6 +8,7 @@ mat4& Camera3D::get_view_matrix() {
     vec3 front=cross(m_up,m_right);
     view_matrix=lookAt(m_position, m_position + front, m_up);
     view_dirty=false;
+    pos_dirty=false;
     return view_matrix;
 }
 
@@ -38,7 +39,7 @@ void Camera3D::move_ralative_camera(Direction direction, float delta_move) {
         break;    
     }
     view_dirty=true;
-
+    pos_dirty=true;
 }
 
 void Camera3D::rotate_pitch_yaw(float yaw, float pitch, float delta_move) {

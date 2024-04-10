@@ -15,7 +15,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_definitions(-DNO_CONSOLE)
     # 这里可以添加一些只在Release模式下需要的代码
 endif()
-# ---
+# --
 file(GLOB IMGUI_FILE D:/又一个文件夹/imgui_in_use/*.cpp)
 file(GLOB_RECURSE L1_SRC ./L1/*.cpp)
 file(GLOB_RECURSE L2_SRC ./L2/*.cpp)

@@ -13,9 +13,13 @@ public:
     Drawer3D();   
     void set_renderer(Render& render);
     void init_shader();
+
     void change_view_matrix(float* model_matrix);
     void change_projection_matrix(float* model_matrix);
     void change_transform_matrix(float* transform_matrix);
+    void chnage_view_pos(float x,float y,float z);
+    void change_light_pos(float x,float y,float z);
+
     void draw_cube(float* model_matrix);
     void draw_light_cube(float* model_matrix);
 };
