@@ -19,6 +19,7 @@ public:
     void change_transform_matrix(float* transform_matrix);
     void chnage_view_pos(float x,float y,float z);
     void change_light_pos(float x,float y,float z);
+    void change_light_color(float r,float g,float b);
 
     void draw_cube(float* model_matrix);
     void draw_light_cube(float* model_matrix);

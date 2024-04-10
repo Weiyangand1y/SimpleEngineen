@@ -58,6 +58,7 @@ public:
         vec4 lpos=vec4(vec3(0.f),1.f)*light_model;
         drawer3d.change_light_pos(lpos.x,lpos.y,lpos.z);
         drawer3d.draw_cube(value_ptr(light_model));
+        drawer3d.change_light_color(1.f+0.5f*sinf(time),1.f+0.5f*cos(time),0.f);
         
         for (unsigned int i = 0; i < 10; i++){
             // calculate the model matrix for each object and pass it to shader before drawing
@@ -69,7 +70,7 @@ public:
         }
         glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
         model = glm::translate(model, cubePositions[2]+vec3(5.f,0.f,0.f));
-        model = glm::rotate(model, glm::radians(time*15.f), glm::vec3(1.0f, 0.3f, 0.5f));
+        //model = glm::rotate(model, glm::radians(time*15.f), glm::vec3(1.0f, 0.3f, 0.5f));
         drawer3d.draw_light_cube(value_ptr(model));
 
 

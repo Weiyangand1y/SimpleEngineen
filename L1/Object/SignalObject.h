@@ -47,7 +47,8 @@ public:
 
     template<typename T>
     T get_next_value();
-
+    template<typename T>
+    InfoWrapper& next(T& arg);
 };
 
 template<typename T>
@@ -56,6 +57,12 @@ T get_value(std::vector<std::any>& info, int index);
 template<typename T>
 T InfoWrapper::get_next_value() {
     return std::any_cast<T>(info[index++]);
+}
+
+template <typename T>
+inline InfoWrapper& InfoWrapper::next(T& arg) {
+    arg=std::any_cast<T>(info[index++]);
+    return *this;
 }
 
 template<typename T>

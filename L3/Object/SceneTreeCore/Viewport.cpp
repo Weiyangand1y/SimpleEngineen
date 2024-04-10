@@ -10,8 +10,8 @@ Viewport::Viewport() {
     viewport=this;
     signal.connect("click",[](Info info){
         InfoWrapper info_wrap(info);
-        float nx=info_wrap.get_next_value<float>();
-        float ny=info_wrap.get_next_value<float>();
+        float nx,ny;
+        info_wrap.next(nx).next(ny);
         debug("click: {:.4f} {:.4f}\t Normalized-Coord\n",nx,ny);
     });
 }

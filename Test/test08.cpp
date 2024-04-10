@@ -1,14 +1,7 @@
 #include "test08.h"
 #include <chrono>
 #include "L1/Render/extension/ShaderDrawer.h"
-#define MEASURE_TIME(code) \
-    do { \
-        auto start = std::chrono::high_resolution_clock::now(); \
-        code; \
-        auto end = std::chrono::high_resolution_clock::now(); \
-        std::chrono::duration<double> elapsed = end - start; \
-        std::cout << "Elapsed time: " << elapsed.count() << " seconds" << std::endl; \
-    } while(0)
+#include "L1/Debug/TimeMeasure.h"
 
 std::string UnicodeToUTF8(unsigned int codepoint) {
     std::string out;

@@ -1,3 +1,4 @@
+#pragma once
 #define FMT_HEADER_ONLY 
 #include "fmt/core.h"
 #include "fmt/color.h"
@@ -22,6 +23,9 @@ class Logger {
           break;
         case 1:
           fmt::print(fg(fmt::color::gold),args...);
+          break;
+        case 2:
+          fmt::print(fg(fmt::color::lime_green),args...);
           break;
         default:
           break;

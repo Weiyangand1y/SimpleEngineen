@@ -41,8 +41,14 @@ void Drawer3D::init_shader() {
         base_path+"light/light_material.frag");
     light_cube_shader=renderer->get_shader("light_cube");
     light_cube_shader.use();
-    light_cube_shader.setFloat3("objectColor",1.0f, 0.5f, 0.31f);
-    light_cube_shader.setFloat3("lightColor",  1.0f, 1.0f, 1.0f);
+
+    light_cube_shader.setFloat3("light.ambient",  1.0f, 1.0f, 1.0f);
+    light_cube_shader.setFloat3("light.diffuse",  1.0f, 1.0f, 1.0f);
+    light_cube_shader.setFloat3("light.specular",  1.0f, 1.0f, 1.0f);
+    light_cube_shader.setFloat3("material.ambient", 1.0f, 0.5f, 0.31f);
+    light_cube_shader.setFloat3("material.diffuse", 1.0f, 0.5f, 0.31f);
+    light_cube_shader.setFloat3("material.specular", 0.5f, 0.5f, 0.5f); // specular lighting doesn't have full effect on this object's material
+    light_cube_shader.setFloat("material.shininess", 32.0f);
     
 
     std::vector<Shader*> shader_list={
@@ -70,5 +76,10 @@ void Drawer3D::chnage_view_pos(float x, float y, float z) {
 }
 
 void Drawer3D::change_light_pos(float x, float y, float z) {
-    light_cube_shader.setFloat3("lightPos",3.f,-10.f,5.f);
+    light_cube_shader.setFloat3("light.position",3.f,-10.f,5.f);
+}
+
+void Drawer3D::change_light_color(float r, float g, float b) {
+    light_cube_shader.use();
+    light_cube_shader.setFloat3("light.diffuse",  r,g,b);
 }

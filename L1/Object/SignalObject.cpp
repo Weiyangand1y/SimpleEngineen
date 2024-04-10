@@ -47,8 +47,7 @@ void SignalObject::emit(std::string signal_name) {
 }
 
 int SignalObject::connect_to_emit(std::string signal_name,
-                                   SignalObject& other_signal_object,
-                                   std::string other_signal_name) {
+                SignalObject& other_signal_object,std::string other_signal_name) {
     int return_id = connect(signal_name, [&other_signal_object, other_signal_name](const Info& info) {
         other_signal_object.emit(other_signal_name, info);
     });
