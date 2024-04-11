@@ -7,6 +7,7 @@ class Drawer3D{
 private:
     Render* renderer;
     Shader* simple_cube_shader;
+    Shader* simple_color_cube_shader;  
     Shader light_cube_shader;
     UBO ubo;
 public:
@@ -23,5 +24,6 @@ public:
 
     void draw_cube(float* model_matrix);
     void draw_light_cube(float* model_matrix);
+    void draw_ruler(float* model_matrix,float r=0.7f,float g=0.3f,float b=0.4f);
 };
 

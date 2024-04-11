@@ -18,6 +18,14 @@ void Drawer3D::draw_light_cube(float* model_matrix) {
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
+void Drawer3D::draw_ruler(float* model_matrix,float r,float g,float b) {
+    simple_color_cube_shader->use();
+    simple_color_cube_shader->setMat4("model",model_matrix);
+    simple_color_cube_shader->setFloat3("color",r,g,b);
+    renderer->use_vertex(Render::VertexType::NORMAL_TEX_CUBE);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
 void Drawer3D::set_renderer(Render& p_render) {
     renderer=&p_render;
     init_shader();
@@ -50,9 +58,14 @@ void Drawer3D::init_shader() {
     light_cube_shader.setFloat3("material.specular", 0.5f, 0.5f, 0.5f); // specular lighting doesn't have full effect on this object's material
     light_cube_shader.setFloat("material.shininess", 32.0f);
     
+    renderer->get_shader_db().load_from_file("light_cube",
+        base_path+"box/box_normal.vert",
+        base_path+"box/simple_color.frag");
+    simple_color_cube_shader=&renderer->get_shader("light_cube");
+    simple_color_cube_shader->use();
 
     std::vector<Shader*> shader_list={
-        simple_cube_shader,&light_cube_shader
+        simple_cube_shader,&light_cube_shader,simple_color_cube_shader
     };
     std::for_each(shader_list.begin(),shader_list.end(),[&](Shader* s){
         ubo.bind_shader_uniform(s->id,"Matrices");
@@ -68,14 +81,17 @@ void Drawer3D::change_projection_matrix(float* projection_matrix) {
 }
 
 void Drawer3D::change_transform_matrix(float* transform_matrix) {
+    simple_cube_shader->use();
     simple_cube_shader->setMat4("model",transform_matrix);
 }
 
 void Drawer3D::chnage_view_pos(float x, float y, float z) {
+    light_cube_shader.use();
     light_cube_shader.setFloat3("viewPos",x,y,z);
 }
 
 void Drawer3D::change_light_pos(float x, float y, float z) {
+    light_cube_shader.use();
     light_cube_shader.setFloat3("light.position",3.f,-10.f,5.f);
 }
 

@@ -16,7 +16,7 @@ public:
         MyImGui::static_init(window.get_window());
         glEnable(GL_DEPTH_TEST);
         drawer3d.set_renderer(renderer);
-        camera.set_position({0.f,0.f,15.f});
+        camera.set_position({2.f,2.f,15.f});
         camera_controller.set_camera(&camera);
         window.m_key_callback=[&](int key, int scancode, int action, int mods){
             if(action==1)camera_controller.on_key_down(key);
@@ -51,7 +51,15 @@ public:
             debug("...p\n");
             drawer3d.change_projection_matrix(value_ptr(camera.get_projection_matrix()));
         }
-        
+        mat4 rm(1.f);
+        float len=50.f,width=0.1f;
+        mat4 a=scale(rm,vec3(len,width,width));
+        drawer3d.draw_ruler(value_ptr(a),1.F,0.F,0.F);
+        mat4 a2=scale(rm,vec3(width,len,width));
+        drawer3d.draw_ruler(value_ptr(a2),0.F,1.F,0.F);
+        mat4 a3=scale(rm,vec3(width,width,len));
+        drawer3d.draw_ruler(value_ptr(a3),0.F,0.F,1.F);
+
         glm::mat4 light_model = glm::mat4(1.0f); 
         light_model = glm::translate(light_model, {3.f,-4.f,5.f});
         light_model=glm::scale(light_model, {.25f,.25f,.25f});

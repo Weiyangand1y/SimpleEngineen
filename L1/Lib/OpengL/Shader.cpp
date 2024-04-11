@@ -62,7 +62,8 @@ int Shader::get_uniform_loc(const std::string& name){
     if (uniform_db.find(name) == uniform_db.end()) {
         GLint location = glGetUniformLocation(id, name.c_str());
         if (location == -1) {
-            throw std::runtime_error("Uniform " + name + " not found in shader.");
+            std::cout<<"Uniform [" + name + "] not found in shader."<<std::endl;
+            assert(false);
         }
         uniform_db[name] = static_cast<int>(location);
     }
