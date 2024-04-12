@@ -5,6 +5,7 @@
 #include "L1/Debug/CheckGL.h"
 #include "L1/Lib/OpengL/Buffer/VBO.h"
 #include "L1/Lib/OpengL/Buffer/BufferLayout.h"
+#include "L1/Lib/Math/Transform2D.h"
 Drawer::Drawer() {
     
 }
@@ -24,13 +25,13 @@ void Drawer::draw_triangle() {
 }
 
 void Drawer::draw_triangle(float x, float y, float sx, float sy) {
-    math::mat4 t(1.f);
-    translate(t,vec3(x,y,0.0));
-    scale(t,vec3(sx,sy,0));
+    Transform2D tf;
+    tf.translate_local({x,y});
+    tf.scale_local({sx,sy});
     renderer->use_vertex(Render::VertexType::TRIANGLE);
     Shader& shader=renderer->get_shader("can_transform");
     shader.use();
-    shader.setMat4("transform",value_ptr(t));
+    shader.setMat4("transform",tf.get_matrix_ptr());
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
@@ -59,8 +60,8 @@ void Drawer::draw_rect(const float* mat4_data, float r,float g,float b,float a) 
 }
 
 void Drawer::draw_texture(std::string id,float x,float y) {
-    math::mat4 t(1.f);
-    translate(t,vec3(x,y,0.0));
+    Transform2D t;
+    t.translate_local({x,y});
 
     renderer->use_vertex(Render::VertexType::TEX_RECT);
     renderer->use_texture(id);
@@ -69,7 +70,7 @@ void Drawer::draw_texture(std::string id,float x,float y) {
     Shader& shader=renderer->get_shader("rect_texture");
     shader.use();
     shader.setInt("texture1",0);
-    shader.setMat4("transform",value_ptr(t));
+    shader.setMat4("transform",t.get_matrix_ptr());
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 

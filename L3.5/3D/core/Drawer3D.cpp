@@ -1,6 +1,7 @@
 #include "Drawer3D.h"
 #include "L1/App/Config.h"
 #include "L1/Lib/Math/math.h"
+#include "L3.5/3D/core/Object/Geometry.h"
 Drawer3D::Drawer3D(){
     
 }
@@ -29,12 +30,18 @@ void Drawer3D::draw_ruler(float* model_matrix,float r,float g,float b) {
 void Drawer3D::draw_ruler() {
     math::mat4 rm(1.f);
     float len=50.f,width=0.05f;
-    math::mat4 a=scale(rm,vec3(len,width,width));
-    draw_ruler(value_ptr(a),1.F,0.F,0.F);
-    math::mat4 a2=scale(rm,vec3(width,len,width));
-    draw_ruler(value_ptr(a2),0.F,1.F,0.F);
-    math::mat4 a3=scale(rm,vec3(width,width,len));
-    draw_ruler(value_ptr(a3),0.F,0.F,1.F);
+    Transform3D ta;
+    ta.scale_local({len,width,width});
+    draw_ruler(ta.get_matrix_ptr(),1.F,0.F,0.F);
+
+    Transform3D tb;
+    tb.scale_local({width,len,width});
+    draw_ruler(tb.get_matrix_ptr(),0.F,1.F,0.F);
+
+    Transform3D tc;
+    tc.scale_local({width,width,len});
+    draw_ruler(tc.get_matrix_ptr(),0.F,0.F,1.F);
+
 }
 
 void Drawer3D::set_renderer(Render& p_render) {
@@ -64,8 +71,8 @@ void Drawer3D::init_shader() {
     light_cube_shader.setFloat3("light.ambient",  1.0f, 1.0f, 1.0f);
     light_cube_shader.setFloat3("light.diffuse",  1.0f, 1.0f, 1.0f);
     light_cube_shader.setFloat3("light.specular",  1.0f, 1.0f, 1.0f);
-    light_cube_shader.setFloat3("material.ambient", 1.0f, 0.5f, 0.31f);
-    light_cube_shader.setFloat3("material.diffuse", 1.0f, 0.5f, 0.31f);
+    light_cube_shader.setFloat3("material.ambient", 0.5f, 0.5f, 0.5f);
+    light_cube_shader.setFloat3("material.diffuse", 0.5f, 0.5f, 0.5f);
     light_cube_shader.setFloat3("material.specular", 0.5f, 0.5f, 0.5f); // specular lighting doesn't have full effect on this object's material
     light_cube_shader.setFloat("material.shininess", 32.0f);
     

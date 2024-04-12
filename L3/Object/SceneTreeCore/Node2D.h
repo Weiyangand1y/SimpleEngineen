@@ -6,10 +6,10 @@ class Node2D: public SceneNode{
 protected:
     
 public:
-    vec2 m_relative_pos=vec2(0.f);
-    vec2 m_position=vec2(0.f);
-    vec2 m_scale=vec2(1.f);
-    vec2 m_size=vec2(1.f);
+    math::vec2 m_relative_pos=math::vec2(0.f);
+    math::vec2 m_position=math::vec2(0.f);
+    math::vec2 m_scale=math::vec2(1.f);
+    math::vec2 m_size=math::vec2(1.f);
     float m_rotation=0.f;//radians
 
     Node2D();

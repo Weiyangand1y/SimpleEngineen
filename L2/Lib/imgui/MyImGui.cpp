@@ -2,6 +2,16 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 #include "L1/App/Config.h"
+#include <thread>
+void load_font_file(){
+    ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
+                                20, nullptr,
+                                io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
+    // io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
+    //                             40, nullptr,
+    //                             io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
+}
 void set_style(){
     ImVec4* colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_Text]                   = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
@@ -44,13 +54,8 @@ void MyImGui::static_init(GLFWwindow* window) {
     set_style();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
-    io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
-                                24, nullptr,
-                                io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
-    io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
-                                48, nullptr,
-                                io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
-    
+    std::thread thread(load_font_file);   
+    thread.detach();
 }
 
 ImFont* MyImGui::get_imfont(int index){

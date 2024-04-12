@@ -7,6 +7,8 @@ Application::Application(){
     window.create(w,h,Config::getInstance().get("title").c_str());
     renderer.init();
     drawer.set_render(renderer);
+    drawer.draw_texture(Config::getInstance().get("start_screen_image"));
+    window.swap_buffers();
 }
 
 void Application::init() {

@@ -1,6 +1,5 @@
 #pragma once
 #include "DrawableNode.h"
-#include "L1/Lib/Math/math.h"
 #include <string>
 class Sprite2D : public DrawableNode{
     unsigned int texture_id;

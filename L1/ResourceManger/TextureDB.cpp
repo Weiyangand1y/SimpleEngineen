@@ -22,6 +22,7 @@ void TextureDB::unload(std::string name) {
 
 Texture& TextureDB::get_texture(std::string name) {
     if(db.find(name)==db.end()){
+        std::cout<<name<<std::endl;
         assert(false);
     }
     return db[name];

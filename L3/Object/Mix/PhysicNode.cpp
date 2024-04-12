@@ -28,7 +28,7 @@ void PhysicNode::init_body() {
     assert(body);
     set_body_type(body_type);
     body->SetTransform({m_position.x,m_position.y},m_rotation);
-    vec2 v=m_size*m_scale;
+    math::vec2 v=m_size*m_scale;
     b2PolygonShape shape;
     shape.SetAsBox(v.x,v.y);
     b2FixtureDef fixtureDef;
@@ -82,7 +82,7 @@ void CircleNode::init_body() {
     assert(body);
     set_body_type(body_type);
     body->SetTransform({m_position.x,m_position.y},m_rotation);
-    vec2 v=m_size*m_scale;
+    math::vec2 v=m_size*m_scale;
     b2CircleShape shape;
     shape.m_radius=v.y;
     b2FixtureDef fixtureDef;

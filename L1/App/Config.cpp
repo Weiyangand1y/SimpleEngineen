@@ -11,7 +11,8 @@ void Config::init() {
     lua.script_file(data["lua_script_file"]+"config.lua");
     data["title"]=lua.get_or<std::string>("title","Simple Game Engineen");
     data["icon_path"]=lua.get_or<std::string>("icon_path","C:/Users/21wyc/Pictures/Camera Roll/searchPicture.png");
-    data["font_path"]=lua.get_or<std::string>("font_path","C:/Users/21wyc/Desktop/STZHONGS.TTF");
+    data["font_path"]=lua.get_or<std::string>("font_path","C:/Users/21wyc/Pictures/font/tiny_font-master/Alibaba-PuHuiTi-Heavy.ttf");
+    data["start_screen_image"]=lua.get_or<std::string>("start_screen_image","");
 }
 
 Config::Config() {

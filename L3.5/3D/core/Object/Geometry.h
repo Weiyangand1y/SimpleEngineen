@@ -8,13 +8,14 @@ public:
     void translate_local(math::vec3 t);
     void scale(math::vec3 t);
     void scale_local(math::vec3 t);
-    void rotate(math::vec3 axis,float angle);
-    void rotate_local(math::vec3 axis,float angle);
+    void rotate(math::vec3 axis,float degree);
+    void rotate_local(math::vec3 axis,float degree);
+    math::vec3 to_vector(math::vec3 vec);
     float* get_matrix_ptr();
 };
 class Cube{
 public:
-    Transform3D t3d;
+    Transform3D transform;
     Cube();
     float* matrix_ptr();
 };
