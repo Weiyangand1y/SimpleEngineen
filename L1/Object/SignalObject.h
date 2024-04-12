@@ -1,5 +1,4 @@
 #pragma once
-
 #include <iostream>
 #include <any>
 #include <vector>
@@ -7,25 +6,21 @@
 #include <functional>
 #include <string>
 
-
-using Info = std::vector<std::any>;
-using Callback = std::function<void(const Info&)>;
-using Callbackn = std::function<void(void)>;
+using Info      = std::vector<std::any>;
+using Callback  = std::function<void(const Info&)>;
 
 struct PairIdCallback{
     int id=0;
     Callback callbak;
 };
-
+using SignalMap=std::unordered_map<std::string, std::vector<PairIdCallback>>;
 class SignalObject {
-    std::unordered_map<std::string, std::vector<PairIdCallback>> signal_map;
+    SignalMap signal_map;
     int get_next_id(std::string signal_name);
 public:
     SignalObject();
 
     int connect(std::string signal_name, Callback callback);
-
-
 
     void disconnect(std::string signal_name, int id);
 
@@ -39,7 +34,6 @@ public:
 
 class InfoWrapper {
     int index = 0;
-
 public:
     Info& info;
 
@@ -48,7 +42,7 @@ public:
     template<typename T>
     T get_next_value();
     template<typename T>
-    InfoWrapper& next(T& arg);
+    InfoWrapper& next_value(T& arg);
 };
 
 template<typename T>
@@ -60,12 +54,7 @@ T InfoWrapper::get_next_value() {
 }
 
 template <typename T>
-inline InfoWrapper& InfoWrapper::next(T& arg) {
+inline InfoWrapper& InfoWrapper::next_value(T& arg) {
     arg=std::any_cast<T>(info[index++]);
     return *this;
-}
-
-template<typename T>
-T get_value(std::vector<std::any>& info, int index) {
-    return std::any_cast<T>(info[index]);
 }

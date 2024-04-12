@@ -1,7 +1,7 @@
 #pragma once
 #include "L1/Object/ScriptObject.h"
 #include "L3/Object/SceneTreeCore/Sprite2D.h"
-
+#include "L3/Object/SceneTreeCore/Scene.h"
 
 
 std::any build_info(const sol::object& obj) {
@@ -56,7 +56,9 @@ void script_bind_class(sol::state& script){
         "emit",     static_cast<void(SignalObject::*)(std::string signal_name,const Info&)>(&SignalObject::emit)
     );
     script.new_usertype<SceneNode>("SceneNode",
-        "signal",   &SceneNode::signal
+        "signal",           &SceneNode::signal,
+        "queue_free",       &SceneNode::queue_free,
+        "connect_signal",   &SceneNode::make_signal_record 
     );
     script.new_usertype<Node2D>("Node2D",
         "set_position",     &Node2D::set_position,
@@ -69,6 +71,9 @@ void script_bind_class(sol::state& script){
     "set_texture",      &Sprite2D::set_texture,    
     "set_scale",        static_cast<void(Sprite2D::*)(float)>(&Sprite2D::set_scale),
     sol::base_classes, sol::bases<Node2D,SceneNode>()
+    );
+    script.new_usertype<Scene>("Scene",
+    "do_queue_free",    &Scene::do_queue_free
     );
 }
 

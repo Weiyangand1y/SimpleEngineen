@@ -5,6 +5,9 @@ class Scene;
 class Viewport;
 using SignalRecode = std::vector<std::tuple<SignalObject*,std::string,int>>;
 class SceneNode : public Node{
+private:
+    enum State{run,stop};
+    State state;
 protected:
     Scene* scene;
     Viewport* viewport=nullptr;

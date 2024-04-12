@@ -16,7 +16,11 @@ void Scene::add_free_node(SceneNode* node){
     free_queue.push_back(node);
     node->get_all_children(free_queue);
 }
-void Scene::do_queue_free(){
+void Scene::run(float delta_time) {
+    root_node->_process(delta_time);
+    root_node->_after_process(delta_time);
+}
+void Scene::do_queue_free() {
     for(auto c: free_queue)c->before_free();
     for(auto c: free_queue)delete c;
 }

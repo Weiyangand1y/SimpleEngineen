@@ -7,11 +7,11 @@ class Viewport: public DrawableNode{
     Camera* camera;
     FrameBuffer fb;
 public:
-    //void ready() override;
     Viewport();
-    void set_camera(Camera* p_camera);
-    Camera* get_camera();
-    math::mat4& get_transform_mat4();
-    void add_child(SceneNode* node)override;
-    void _after_process(float delta)override;
+    void        set_camera(Camera* p_camera);
+    Camera*     get_camera();
+    math::mat4& get_view_projection_matrix();
+
+    void        add_child(SceneNode* node)override;
+    void        _after_process(float delta)override;
 };

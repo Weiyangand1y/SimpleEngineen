@@ -9,5 +9,5 @@ float timeStep = 1.0f / 144.0f;
 public:
     PhysicScene(Application* p_app);
     void init(float gravity_y=-10.f,float gravity_x=0.f);
-    void run(float delta_time);
+    void run(float delta_time)override;
 };

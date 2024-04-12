@@ -13,9 +13,13 @@ public:
     math::vec3 to_vector(math::vec3 vec);
     float* get_matrix_ptr();
 };
-class Cube{
+class Geometry{
 public:
     Transform3D transform;
+    virtual float* matrix_ptr()=0;
+};
+class Cube:public Geometry{
+public:
     Cube();
     float* matrix_ptr();
 };

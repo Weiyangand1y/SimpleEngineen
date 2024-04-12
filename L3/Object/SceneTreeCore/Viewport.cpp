@@ -11,7 +11,7 @@ Viewport::Viewport() {
     signal.connect("click",[](Info info){
         InfoWrapper info_wrap(info);
         float nx,ny;
-        info_wrap.next(nx).next(ny);
+        info_wrap.next_value(nx).next_value(ny);
         debug("click: {:.4f} {:.4f}\t Normalized-Coord\n",nx,ny);
     });
 }
@@ -23,9 +23,9 @@ Camera* Viewport::get_camera() {
     return camera;
 }
 
-math::mat4& Viewport::get_transform_mat4() {
+math::mat4& Viewport::get_view_projection_matrix() {
     assert(camera);
-    return camera->get_transform_mat4();
+    return camera->get_view_projection_matrix();
 }
 
 void Viewport::add_child(SceneNode* node) {

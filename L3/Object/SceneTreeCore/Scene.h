@@ -20,6 +20,7 @@ public:
     void make_enter_scene(SceneNode* scene_node);
     void* handle_requst(std::string what, void* data);
     void add_to_root_node(SceneNode* scene_node);
+    virtual void run(float delta_time);
     
     void add_free_node(SceneNode* node);
     void do_queue_free();

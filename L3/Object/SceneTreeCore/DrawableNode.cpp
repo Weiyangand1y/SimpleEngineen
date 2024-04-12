@@ -14,7 +14,5 @@ void DrawableNode::after_process(float delta) {
 
 void DrawableNode::draw() {
     assert(viewport);
-    //drawer->draw_triangle(0.f,0.f);
-    //drawer->draw_texture("Pippi_Carter",value_ptr(viewport->get_transform_mat4()) );
 }
 

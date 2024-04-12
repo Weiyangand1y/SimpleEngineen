@@ -2,16 +2,17 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 #include "L1/App/Config.h"
-#include <thread>
+#include "L1/Debug/Log.h"
+int MyImGui::count =10;
 void load_font_file(){
     ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->Clear();
     io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
                                 20, nullptr,
                                 io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
-    // io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
-    //                             40, nullptr,
-    //                             io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
+    io.Fonts->Build();
 }
+
 void set_style(){
     ImVec4* colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_Text]                   = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
@@ -32,9 +33,14 @@ void set_style(){
     colors[ImGuiCol_SliderGrab]             = ImVec4(0.19f, 0.46f, 0.82f, 1.00f);
     colors[ImGuiCol_Button]                 = ImVec4(0.91f, 1.00f, 0.66f, 0.77f);
     colors[ImGuiCol_Separator]              = ImVec4(0.47f, 0.47f, 0.92f, 0.50f);
-    colors[ImGuiCol_Tab]                    = ImVec4(0.71f, 0.99f, 0.84f, 0.86f);
+
+    colors[ImGuiCol_Tab]                    = ImVec4(0.91f, 0.99f, 0.84f, 0.86f);
     colors[ImGuiCol_TabHovered]             = ImVec4(0.72f, 0.98f, 0.77f, 0.80f);
+    colors[ImGuiCol_TabUnfocused]           = ImVec4(0.50f, 0.82f, 0.99f, 1.00f);
+    colors[ImGuiCol_TabUnfocusedActive]     = ImVec4(0.50f, 0.72f, 0.89f, 1.00f);
+
     colors[ImGuiCol_TabActive]              = ImVec4(0.50f, 0.82f, 0.99f, 1.00f);
+
 }
 void MyImGui::static_init(GLFWwindow* window) {    
     const char* glsl_version = "#version 130";
@@ -49,13 +55,11 @@ void MyImGui::static_init(GLFWwindow* window) {
         ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-    ImGui::StyleColorsLight();
-
+    
     set_style();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
-    std::thread thread(load_font_file);   
-    thread.detach();
+    load_font_file();
 }
 
 ImFont* MyImGui::get_imfont(int index){
@@ -66,14 +70,18 @@ ImFont* MyImGui::get_imfont(int index){
 }
 
 void MyImGui::static_begin() {
+    
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+    
 }
 void MyImGui::static_end() {
     // Rendering
+    
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    
     //
     ImGuiIO& io = ImGui::GetIO();
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable){
@@ -82,6 +90,7 @@ void MyImGui::static_end() {
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);
     }
+
 
 }
 MyImGui::MyImGui() {}

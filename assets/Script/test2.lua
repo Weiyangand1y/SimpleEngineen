@@ -1,6 +1,3 @@
-
-
-
 add_sprite("p1",-80.0,30.0)
 add_sprite("Sugar_Kairo", -30.0,90.0, 1.0)
 add_sprite("Sugar_Kairo",80.0,30.0)

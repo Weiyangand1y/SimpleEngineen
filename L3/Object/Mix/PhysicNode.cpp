@@ -1,15 +1,26 @@
 #include "PhysicNode.h"
 #include "L3/Object/SceneTreeCore/Scene.h"
 #include "L1/Debug/Log.h"
-PhysicNode::PhysicNode() {
-    
+void PhysicNode::set_default_fixture() {
+    math::vec2 v=m_size*m_scale;
+    b2PolygonShape shape;
+    shape.SetAsBox(v.x,v.y);
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &shape;
+    fixtureDef.density = 0.1f;
+    fixtureDef.friction =0.1f;
+    fixtureDef.restitution = 0.5f; 
+    body->CreateFixture(&fixtureDef);
 }
+PhysicNode::PhysicNode() {}
 
 PhysicNode::PhysicNode(float sx, float sy) {
+    //size
     m_scale={sx,sy};
 }
 
 void PhysicNode::_process(float delta_time) {
+    //update transform before process
     m_position={body->GetPosition().x,body->GetPosition().y};
     m_rotation=body->GetAngle();
     Node::_process(delta_time);  
@@ -21,22 +32,11 @@ void PhysicNode::enter_scene(Scene* scene) {
     init_body();
 }
 
-// need to call after enter_scene
-// I want to subclass to make it different
-//   ... Make default ...
 void PhysicNode::init_body() {    
     assert(body);
     set_body_type(body_type);
     body->SetTransform({m_position.x,m_position.y},m_rotation);
-    math::vec2 v=m_size*m_scale;
-    b2PolygonShape shape;
-    shape.SetAsBox(v.x,v.y);
-    b2FixtureDef fixtureDef;
-    fixtureDef.shape = &shape;
-    fixtureDef.density = 0.1f;
-    fixtureDef.friction =0.1f;
-    fixtureDef.restitution = 0.5f; 
-    body->CreateFixture(&fixtureDef);
+    set_default_fixture();
 }
 
 void PhysicNode::set_transform(float px, float py, float r) {

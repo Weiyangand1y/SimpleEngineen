@@ -7,7 +7,7 @@ class PhysicNode : public Node2D{
 public:
     enum class BodyType {STATIC, DYNAMIC};
 private:
-       
+    void set_default_fixture();
 protected:
     b2Body* body;
 public:

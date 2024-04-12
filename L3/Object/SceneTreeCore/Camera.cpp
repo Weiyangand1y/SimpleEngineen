@@ -5,12 +5,12 @@ void Camera::update_mat() {
     float _right  =  center_position.x+right;
     float _bottom =  center_position.y-bottom;
     float _top    =  center_position.y+top;
-    transform_mat4=glm::ortho(_left,_right,_bottom,_top);
+    view_projection_matrix=glm::ortho(_left,_right,_bottom,_top);
 }
 
-math::mat4& Camera::get_transform_mat4() {
+math::mat4& Camera::get_view_projection_matrix() {
     //debug("*** camera pos: {} {}\n",center_position.x,center_position.y);
-    return transform_mat4;
+    return view_projection_matrix;
 }
 
 Camera::Camera() {   
@@ -30,7 +30,6 @@ Camera::Camera(math::vec2 p_center_position, math::vec2 p_half_wh)
 
 void Camera::set_center_position(math::vec2 p_center_position) {
     center_position=p_center_position;
-    //debug("### camera pos: {} {}\n",center_position.x,center_position.y);
     update_mat();
 }
 

@@ -38,6 +38,14 @@ public:
                 };
         ImGui::SameLine();
         ImGui::SmallButton("send");
+        if(ImGui::IsItemHovered()){
+            ImGui::BeginTooltip();
+            ImGui::PushStyleColor(ImGuiCol_Button,ImVec4(1.0,0.5,0.8,1.0));
+            ImGui::Button("tool");
+            ImGui::PopStyleColor();
+            ImGui::EndTooltip();
+        }
+        
         ImGui::End();
     }
 };
