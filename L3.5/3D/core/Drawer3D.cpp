@@ -9,12 +9,22 @@ Drawer3D::Drawer3D(){
 void Drawer3D::draw_cube(float* model_matrix) {
     simple_cube_shader->use();
     simple_cube_shader->setMat4("model",model_matrix);
+    simple_cube_shader->use();
+    renderer->use_texture("p1",0);
+    renderer->use_texture("Pippi_Carter",1);
+    simple_cube_shader->setInt("texture1",0);
+    simple_cube_shader->setInt("texture2",1);
     renderer->use_vertex(Render::VertexType::TEX_CUBE);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 void Drawer3D::draw_light_cube(float* model_matrix) {
     light_cube_shader.use();
     light_cube_shader.setMat4("model",model_matrix);
+    light_cube_shader.use();
+    Texture& container_texture=renderer->get_texture("container");
+    container_texture.use(0);
+    Texture& container_specular_texture=renderer->get_texture("container_specular");
+    container_specular_texture.use(1);
     renderer->use_vertex(Render::VertexType::NORMAL_TEX_CUBE);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
@@ -67,14 +77,38 @@ void Drawer3D::init_shader() {
         base_path+"light/light_material.frag");
     light_cube_shader=renderer->get_shader("light_cube");
     light_cube_shader.use();
-
-    light_cube_shader.setFloat3("light.ambient",  1.0f, 1.0f, 1.0f);
-    light_cube_shader.setFloat3("light.diffuse",  1.0f, 1.0f, 1.0f);
-    light_cube_shader.setFloat3("light.specular",  1.0f, 1.0f, 1.0f);
-    light_cube_shader.setFloat3("material.ambient", 0.5f, 0.5f, 0.5f);
-    light_cube_shader.setFloat3("material.diffuse", 0.5f, 0.5f, 0.5f);
-    light_cube_shader.setFloat3("material.specular", 0.5f, 0.5f, 0.5f); // specular lighting doesn't have full effect on this object's material
+    Texture& container_texture=renderer->get_texture("container");
+    container_texture.use(0);
+    Texture& container_specular_texture=renderer->get_texture("container_specular");
+    container_specular_texture.use(1);
+    light_cube_shader.setInt("material.diffuse",0);
+    light_cube_shader.setInt("material.specular",1);
     light_cube_shader.setFloat("material.shininess", 32.0f);
+
+    light_cube_shader.setFloat3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+    light_cube_shader.setFloat3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+    light_cube_shader.setFloat3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+    light_cube_shader.setFloat3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+    // point light 1
+    light_cube_shader.setFloat3("pointLight.position", 0.f,0.f,0.f);
+    light_cube_shader.setFloat3("pointLight.ambient", 0.05f, 0.05f, 0.05f);
+    light_cube_shader.setFloat3("pointLight.diffuse", 0.8f, 0.8f, 0.8f);
+    light_cube_shader.setFloat3("pointLight.specular", 1.0f, 1.0f, 1.0f);
+    light_cube_shader.setFloat("pointLight.constant", 1.0f);
+    light_cube_shader.setFloat("pointLight.linear", 0.09f);
+    light_cube_shader.setFloat("pointLight.quadratic", 0.032f);
+
+    light_cube_shader.setFloat3("spotLight.position", 0.f,0.f,0.f);
+    light_cube_shader.setFloat3("spotLight.direction", 0,-1,0);
+    light_cube_shader.setFloat3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+    light_cube_shader.setFloat3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+    light_cube_shader.setFloat3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+    light_cube_shader.setFloat("spotLight.constant", 1.0f);
+    light_cube_shader.setFloat("spotLight.linear", 0.09f);
+    light_cube_shader.setFloat("spotLight.quadratic", 0.032f);
+    light_cube_shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+    light_cube_shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f))); 
+    
     
     renderer->get_shader_db().load_from_file("light_cube",
         base_path+"box/box_normal.vert",
@@ -110,10 +144,10 @@ void Drawer3D::chnage_view_pos(float x, float y, float z) {
 
 void Drawer3D::change_light_pos(float x, float y, float z) {
     light_cube_shader.use();
-    light_cube_shader.setFloat3("light.position",x,y,z);
+    light_cube_shader.setFloat3("spotLight.position",x,y,z);
 }
 
 void Drawer3D::change_light_color(float r, float g, float b) {
     light_cube_shader.use();
-    light_cube_shader.setFloat3("light.diffuse",  r,g,b);
+    light_cube_shader.setFloat3("spotLight.diffuse",  r,g,b);
 }

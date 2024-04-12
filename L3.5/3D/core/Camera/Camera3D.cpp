@@ -4,7 +4,7 @@ math::mat4& Camera3D::get_projection_matrix() {
     return projection_matrix;
 }
 
-math::mat4& Camera3D::get_view_projection_matrix() {
+math::mat4& Camera3D::get_view_matrix() {
     math::vec3 front=glm::cross(m_up,m_right);
     view_matrix=glm::lookAt(m_position, m_position + front, m_up);
     view_dirty=false;

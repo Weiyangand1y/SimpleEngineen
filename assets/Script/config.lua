@@ -12,7 +12,9 @@ image_path={
     cake            ="C:/Users/21wyc/Pictures/character/cake.png", 
     p1              ="C:/Users/21wyc/Pictures/Screenshots/aPicture.png",
     Sugar_Kairo     =icon_path,
-    js              ="C:/Users/21wyc/Pictures/js1.png"
+    js              ="C:/Users/21wyc/Pictures/js1.png",
+    container       ="C:/Users/21wyc/Pictures/assets/container.png",
+    container_specular       ="C:/Users/21wyc/Pictures/assets/container_specular.png"
 }
 start_screen_image="js"
 shader_path={

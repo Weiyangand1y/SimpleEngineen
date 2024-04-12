@@ -23,7 +23,7 @@ public:
         }
         if(camera.view_dirty){
             debug("...v\n");
-            drawer3d.change_view_matrix(value_ptr(camera.get_view_matrix()));
+            drawer3d.change_view_matrix(glm::value_ptr(camera.get_view_matrix()));
         }
         if(camera.projection_dirty){
             debug("...p\n");
@@ -49,7 +49,12 @@ public:
 
         Cube materia_cube;
         materia_cube.transform.translate_local({5,-5,5});
-        materia_cube.transform.scale_local({2,2,2});
+        materia_cube.transform.scale_local({5,5,5});        
+        drawer3d.draw_light_cube(materia_cube.matrix_ptr());
+
+        materia_cube.transform.model_matrix=glm::mat4(1.f);
+        materia_cube.transform.translate_local({0,-5,0});
+        materia_cube.transform.scale_local({50,1,50});        
         drawer3d.draw_light_cube(materia_cube.matrix_ptr());
 
         MyImGui::static_begin();

@@ -13,7 +13,7 @@ public:
     bool pos_dirty=true;
 
     virtual math::mat4& get_projection_matrix();
-    math::mat4& get_view_projection_matrix();
+    math::mat4& get_view_matrix();
     void set_position(math::vec3 pos);
     void move(math::vec3 delta_move);
     void move_ralative_camera(Direction direnction,float delta_move);
