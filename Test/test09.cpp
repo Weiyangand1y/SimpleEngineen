@@ -1,6 +1,7 @@
 #include "L3.5/3D/core/Camera/PerspectiveCamera.h"
 #include "L3.5/3D/core/Drawer3D.h"
 #include "L3.5/3D/core/Camera/CameraController.h"
+#include "L3.5/3D/core/Object/Geometry.h"
 #include "L1/Debug/Log.h"
 #include "L1/App/Application.h"
 #include "L1/App/Config.h"
@@ -9,6 +10,7 @@ class TDApp : public Application{
 PerspectiveCamera camera;
 CameraController camera_controller;
 Drawer3D drawer3d;
+std::vector<Cube> cube_list;
 public:
     void _init(){
         auto [x,y]=Config::getInstance().get_windows_size();
@@ -22,22 +24,29 @@ public:
             if(action==1)camera_controller.on_key_down(key);
             else if(action==0)camera_controller.on_key_release(key);
         };
+        cube_list.resize(10);
+        math::vec3 cubePositions[] = {
+            math::vec3( 0.0f,  0.0f,  0.0f),
+            math::vec3( 2.0f,  5.0f, -15.0f),
+            math::vec3(-1.5f, -2.2f, -2.5f),
+            math::vec3(-3.8f, -2.0f, -12.3f),
+            math::vec3( 2.4f, -0.4f, -3.5f),
+            math::vec3(-1.7f,  3.0f, -7.5f),
+            math::vec3( 1.3f, -2.0f, -2.5f),
+            math::vec3( 1.5f,  2.0f, -2.5f),
+            math::vec3( 1.5f,  0.2f, -1.5f),
+            math::vec3(-1.3f,  1.0f, -1.5f)
+        };
+        for (int i = 0; i < cube_list.size(); i++){
+            float angle = 20.0f * i;
+            cube_list[i].t3d.translate_local(cubePositions[i]);
+            cube_list[i].t3d.rotate_local(math::vec3(1.0f, 0.3f, 0.5f),angle);
+        }
+        
     }
     void _run(){
-        
+        //Logger::log(2,"fps: {}",1/delta_time);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-        glm::vec3 cubePositions[] = {
-            glm::vec3( 0.0f,  0.0f,  0.0f),
-            glm::vec3( 2.0f,  5.0f, -15.0f),
-            glm::vec3(-1.5f, -2.2f, -2.5f),
-            glm::vec3(-3.8f, -2.0f, -12.3f),
-            glm::vec3( 2.4f, -0.4f, -3.5f),
-            glm::vec3(-1.7f,  3.0f, -7.5f),
-            glm::vec3( 1.3f, -2.0f, -2.5f),
-            glm::vec3( 1.5f,  2.0f, -2.5f),
-            glm::vec3( 1.5f,  0.2f, -1.5f),
-            glm::vec3(-1.3f,  1.0f, -1.5f)
-        };
         camera_controller.update();
         if(camera.pos_dirty){
             debug("...p22\n");
@@ -51,36 +60,27 @@ public:
             debug("...p\n");
             drawer3d.change_projection_matrix(value_ptr(camera.get_projection_matrix()));
         }
-        mat4 rm(1.f);
-        float len=50.f,width=0.1f;
-        mat4 a=scale(rm,vec3(len,width,width));
-        drawer3d.draw_ruler(value_ptr(a),1.F,0.F,0.F);
-        mat4 a2=scale(rm,vec3(width,len,width));
-        drawer3d.draw_ruler(value_ptr(a2),0.F,1.F,0.F);
-        mat4 a3=scale(rm,vec3(width,width,len));
-        drawer3d.draw_ruler(value_ptr(a3),0.F,0.F,1.F);
+        
+        drawer3d.draw_ruler();
+        Cube light_cube;
+        light_cube.t3d.translate_local({-3,0,-3});
+        light_cube.t3d.scale_local({.25f,.25f,.25f});
 
-        glm::mat4 light_model = glm::mat4(1.0f); 
-        light_model = glm::translate(light_model, {3.f,-4.f,5.f});
-        light_model=glm::scale(light_model, {.25f,.25f,.25f});
-        vec4 lpos=vec4(vec3(0.f),1.f)*light_model;
+        vec4 lpos=light_cube.t3d.model_matrix*vec4(vec3(0.f),1.f);
+
         drawer3d.change_light_pos(lpos.x,lpos.y,lpos.z);
-        drawer3d.draw_cube(value_ptr(light_model));
+        drawer3d.draw_cube(light_cube.matrix_ptr());
         drawer3d.change_light_color(1.f+0.5f*sinf(time),1.f+0.5f*cos(time),0.f);
         
         for (unsigned int i = 0; i < 10; i++){
-            // calculate the model matrix for each object and pass it to shader before drawing
-            glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-            model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle+time*15.f), glm::vec3(1.0f, 0.3f, 0.5f));
-            drawer3d.draw_cube(value_ptr(model));
+            cube_list[i].t3d.rotate_local(math::vec3(.0f, 0.f, 0.5f),glm::radians(delta_time*15.f));
+            drawer3d.draw_cube(cube_list[i].matrix_ptr());
         }
-        glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        model = glm::translate(model, cubePositions[2]+vec3(5.f,0.f,0.f));
-        //model = glm::rotate(model, glm::radians(time*15.f), glm::vec3(1.0f, 0.3f, 0.5f));
-        drawer3d.draw_light_cube(value_ptr(model));
+        
 
+        Cube materia_cube;
+        materia_cube.t3d.translate_local({3,-3,3});
+        drawer3d.draw_light_cube(materia_cube.matrix_ptr());
 
         MyImGui::static_begin();
         auto [dx,dy]=ImGui::GetMouseDragDelta(0);

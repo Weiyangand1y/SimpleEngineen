@@ -1,6 +1,6 @@
 #include "Drawer3D.h"
 #include "L1/App/Config.h"
-
+#include "L1/Lib/Math/math.h"
 Drawer3D::Drawer3D(){
     
 }
@@ -19,11 +19,22 @@ void Drawer3D::draw_light_cube(float* model_matrix) {
 }
 
 void Drawer3D::draw_ruler(float* model_matrix,float r,float g,float b) {
-    simple_color_cube_shader->use();
+    simple_color_cube_shader->use();    
     simple_color_cube_shader->setMat4("model",model_matrix);
     simple_color_cube_shader->setFloat3("color",r,g,b);
     renderer->use_vertex(Render::VertexType::NORMAL_TEX_CUBE);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void Drawer3D::draw_ruler() {
+    math::mat4 rm(1.f);
+    float len=50.f,width=0.05f;
+    math::mat4 a=scale(rm,vec3(len,width,width));
+    draw_ruler(value_ptr(a),1.F,0.F,0.F);
+    math::mat4 a2=scale(rm,vec3(width,len,width));
+    draw_ruler(value_ptr(a2),0.F,1.F,0.F);
+    math::mat4 a3=scale(rm,vec3(width,width,len));
+    draw_ruler(value_ptr(a3),0.F,0.F,1.F);
 }
 
 void Drawer3D::set_renderer(Render& p_render) {
@@ -92,7 +103,7 @@ void Drawer3D::chnage_view_pos(float x, float y, float z) {
 
 void Drawer3D::change_light_pos(float x, float y, float z) {
     light_cube_shader.use();
-    light_cube_shader.setFloat3("light.position",3.f,-10.f,5.f);
+    light_cube_shader.setFloat3("light.position",x,y,z);
 }
 
 void Drawer3D::change_light_color(float r, float g, float b) {

@@ -11,7 +11,7 @@ public:
     Viewport();
     void set_camera(Camera* p_camera);
     Camera* get_camera();
-    mat4& get_transform_mat4();
+    math::mat4& get_transform_mat4();
     void add_child(SceneNode* node)override;
     void _after_process(float delta)override;
 };

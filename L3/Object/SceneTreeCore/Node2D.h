@@ -13,8 +13,8 @@ public:
     float m_rotation=0.f;//radians
 
     Node2D();
-    mat4 get_transform();
-    mat4 get_transform2();
+    math::mat4 get_transform();
+    math::mat4 get_transform2();
     void set_position(float x,float y);
     void set_position_and_angle(float x,float y,float angle);
     void set_scale(float x,float y);

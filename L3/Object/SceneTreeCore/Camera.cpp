@@ -8,7 +8,7 @@ void Camera::update_mat() {
     transform_mat4=ortho(_left,_right,_bottom,_top);
 }
 
-mat4& Camera::get_transform_mat4() {
+math::mat4& Camera::get_transform_mat4() {
     //debug("*** camera pos: {} {}\n",center_position.x,center_position.y);
     return transform_mat4;
 }

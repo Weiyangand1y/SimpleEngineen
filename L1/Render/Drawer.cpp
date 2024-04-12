@@ -24,7 +24,7 @@ void Drawer::draw_triangle() {
 }
 
 void Drawer::draw_triangle(float x, float y, float sx, float sy) {
-    mat4 t(1.f);
+    math::mat4 t(1.f);
     translate(t,vec3(x,y,0.0));
     scale(t,vec3(sx,sy,0));
     renderer->use_vertex(Render::VertexType::TRIANGLE);
@@ -59,7 +59,7 @@ void Drawer::draw_rect(const float* mat4_data, float r,float g,float b,float a) 
 }
 
 void Drawer::draw_texture(std::string id,float x,float y) {
-    mat4 t(1.f);
+    math::mat4 t(1.f);
     translate(t,vec3(x,y,0.0));
 
     renderer->use_vertex(Render::VertexType::TEX_RECT);
@@ -95,7 +95,7 @@ void Drawer::draw_texture(std::string id,const float* mat4_data) {
 }
 
 void Drawer::draw_texture(int texture_id, std::string shader_name) {
-    mat4 t(1.f);
+    math::mat4 t(1.f);
     renderer->use_vertex(Render::VertexType::TEX_RECT);
 
     Shader& shader=renderer->get_shader(shader_name);

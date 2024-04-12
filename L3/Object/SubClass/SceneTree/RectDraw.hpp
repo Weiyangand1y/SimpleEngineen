@@ -14,7 +14,7 @@ public:
         m_rotation=angle;
     }
     void draw()override{
-        mat4 result=viewport->get_transform_mat4()*get_transform();
+        math::mat4 result=viewport->get_transform_mat4()*get_transform();
         drawer->draw_rect(value_ptr(result),m_color.r,m_color.g,m_color.b,m_color.a);
     }
     void make_many(){

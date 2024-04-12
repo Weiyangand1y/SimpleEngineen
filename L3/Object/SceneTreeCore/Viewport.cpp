@@ -23,7 +23,7 @@ Camera* Viewport::get_camera() {
     return camera;
 }
 
-mat4& Viewport::get_transform_mat4() {
+math::mat4& Viewport::get_transform_mat4() {
     assert(camera);
     return camera->get_transform_mat4();
 }

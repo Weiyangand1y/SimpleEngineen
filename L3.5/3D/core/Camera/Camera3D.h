@@ -3,8 +3,8 @@
 
 class Camera3D {
 protected:
-    mat4 projection_matrix;
-    mat4 view_matrix;
+    math::mat4 projection_matrix;
+    math::mat4 view_matrix;
 public:
     enum class Direction {IDLE,FORWARD, BACKWARD, LEFT, RIGHT};
 
@@ -12,8 +12,8 @@ public:
     bool view_dirty=true;
     bool pos_dirty=true;
 
-    virtual mat4& get_projection_matrix();
-    mat4& get_view_matrix();
+    virtual math::mat4& get_projection_matrix();
+    math::mat4& get_view_matrix();
     void set_position(vec3 pos);
     void move(vec3 delta_move);
     void move_ralative_camera(Direction direnction,float delta_move);

@@ -1,10 +1,10 @@
 #include "Camera3D.h"
 #include "L1/Debug/Log.h"
-mat4& Camera3D::get_projection_matrix() {
+math::mat4& Camera3D::get_projection_matrix() {
     return projection_matrix;
 }
 
-mat4& Camera3D::get_view_matrix() {
+math::mat4& Camera3D::get_view_matrix() {
     vec3 front=cross(m_up,m_right);
     view_matrix=lookAt(m_position, m_position + front, m_up);
     view_dirty=false;
