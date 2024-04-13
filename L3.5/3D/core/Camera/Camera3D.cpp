@@ -37,6 +37,12 @@ void Camera3D::move_ralative_camera(Direction direction, float delta_move) {
     case Direction::RIGHT:
         m_position += m_right * delta_move;
         break;    
+    case Direction::UP:
+        m_position += m_up * delta_move;
+        break;
+    case Direction::DOWN:
+        m_position -= m_up * delta_move;
+        break;   
     }
     view_dirty=true;
     pos_dirty=true;

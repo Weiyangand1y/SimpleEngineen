@@ -24,6 +24,12 @@ void CameraController::on_key_down(int key) {
     case 'D':
         key_state[Camera3D::Direction::RIGHT]=true;
         break;
+    case 'Q':
+        key_state[Camera3D::Direction::UP]=true;
+        break;
+    case 'E':
+        key_state[Camera3D::Direction::DOWN]=true;
+        break;
     }
 }
 
@@ -40,6 +46,12 @@ void CameraController::on_key_release(int key) {
         break;
     case 'D':
         key_state[Camera3D::Direction::RIGHT]=false;
+        break;
+    case 'Q':
+        key_state[Camera3D::Direction::UP]=false;
+        break;
+    case 'E':
+        key_state[Camera3D::Direction::DOWN]=false;
         break;
     }
 }

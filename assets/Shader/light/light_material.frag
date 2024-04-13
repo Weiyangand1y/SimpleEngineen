@@ -66,7 +66,7 @@ void main()
   	
     // diffuse 
     vec3 result1 = CalcDirLight(dirLight, norm, viewDir);
-    result1=vec3(0.0);
+    //result1=vec3(0.0);
     // phase 2: point lights
     vec3 result2= CalcPointLight(pointLight, norm, FragPos, viewDir);    
     //result2=vec3(0.0);

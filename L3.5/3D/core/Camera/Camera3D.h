@@ -6,7 +6,7 @@ protected:
     math::mat4 projection_matrix;
     math::mat4 view_matrix;
 public:
-    enum class Direction {IDLE,FORWARD, BACKWARD, LEFT, RIGHT};
+    enum class Direction {IDLE,FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN};
 
     bool projection_dirty=true;
     bool view_dirty=true;

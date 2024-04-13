@@ -2,6 +2,7 @@
 #include "L1/App/Config.h"
 #include "L1/Lib/Math/math.h"
 #include "L3.5/3D/core/Object/Geometry.h"
+#include "L1/Debug/Log.h"
 Drawer3D::Drawer3D(){
     
 }
@@ -150,4 +151,15 @@ void Drawer3D::change_light_pos(float x, float y, float z) {
 void Drawer3D::change_light_color(float r, float g, float b) {
     light_cube_shader.use();
     light_cube_shader.setFloat3("spotLight.diffuse",  r,g,b);
+}
+
+void Drawer3D::change_light(const std::string& light_atrr_name,float value) {
+    light_cube_shader.use();
+    light_cube_shader.setFloat(light_atrr_name,value);
+}
+
+void Drawer3D::change_light(const std::string& light_atrr_name, math::vec3 value) {
+    light_cube_shader.use();
+    
+    light_cube_shader.setFloat3(light_atrr_name,value.x,value.y,value.z);
 }
