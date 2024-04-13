@@ -22,6 +22,7 @@ file(GLOB_RECURSE L2_SRC ./L2/*.cpp)
 file(GLOB_RECURSE L3_SRC ./L3/*.cpp)
 
 file(GLOB_RECURSE L3_5_SRC ./L3.5/*.cpp)
+set(ASSIMP_PATH D:/a_folder/Assimp/)
 
 project(SimpleEngineen)
 
@@ -41,6 +42,7 @@ include_directories(
     D:/a_folder/sol2-develop/sol2-develop/single/single/include
     D:/a_folder/fmt-master/fmt-master/include
     D:/a_folder/box2d-main/box2d-main/include
+    ${ASSIMP_PATH}/include
 )
 
 add_executable(test01 
@@ -107,13 +109,13 @@ add_executable(test06
 target_link_directories(test06 PRIVATE
     D:/一个文件夹/aLib/glfw-3.3.8.bin.WIN64/lib-vc2022
     D:/一个文件夹/aLib/lua
+    
 )
 
 
 target_link_libraries(test06 PRIVATE 
                         glfw3 
-                        LuaLib
-                                    
+                        LuaLib           
                         )
 # -----------------------------------
 add_executable(test07
@@ -176,10 +178,12 @@ add_executable(test09
 target_link_directories(test09 PRIVATE
     D:/一个文件夹/aLib/glfw-3.3.8.bin.WIN64/lib-vc2022
     D:/一个文件夹/aLib/lua
+    ${ASSIMP_PATH}/lib/x64
 )
 
 
 target_link_libraries(test09 PRIVATE 
                         glfw3 
-                        LuaLib         
+                        LuaLib   
+                        assimp-vc143-mt.lib       
                         )

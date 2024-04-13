@@ -6,8 +6,11 @@
 
 封装OpenGL，意味着在/Lib/OpenGL之外几乎不用再使用glXXX函数了，要用也是一些clear等简单的函数。
 
+
 常用Object，分为Node, SignalObject, ScriptObject，其中SignalObject用得最多，Node在L3是基础，ScriptObject好像就只是封装，也许未来Lua绑定的话会重写。
 
 应用层，分为Application，Window，Config，用于快速创建应用、获取事件的封装、集中获取设置数据。
 
 Debug，用于调试。fmt的颜色非常好用。分为Log，测量时间，GL的check error。
+
+资源加载，文本和图片在L1，3D模型在L3.5

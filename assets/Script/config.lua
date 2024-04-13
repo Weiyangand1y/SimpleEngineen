@@ -17,6 +17,12 @@ image_path={
     container_specular       ="C:/Users/21wyc/Pictures/assets/container_specular.png"
 }
 start_screen_image="js"
+use_model="nanosuit"
+m1_path="C:/Users/21wyc/Pictures/assets/nanosuit/nanosuit.obj"
+m2_path="C:/Users/21wyc/Pictures/assets/backpack/backpack.obj"
+m3_path="C:/Users/21wyc/Pictures/assets/OBJ/Shop-0-ShopBuilding_1.obj"
+model_path=m3_path
+-- model_path=string.format("C:/Users/21wyc/Pictures/assets/%s/%s.obj",use_model,use_model)
 shader_path={
 
 }

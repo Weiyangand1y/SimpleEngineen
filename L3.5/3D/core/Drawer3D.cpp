@@ -73,12 +73,14 @@ void Drawer3D::init_shader() {
     simple_cube_shader->setInt("texture2",1);
     //
     std::string base_path=Config::getInstance().get("shader_base_path");
+    
+    //light cube
     renderer->get_shader_db().load_from_file("light_cube",
         base_path+"box/box_normal.vert",
         base_path+"light/light_material.frag");
     light_cube_shader=renderer->get_shader("light_cube");
     light_cube_shader.use();
-    Texture& container_texture=renderer->get_texture("container");
+{    Texture& container_texture=renderer->get_texture("container");
     container_texture.use(0);
     Texture& container_specular_texture=renderer->get_texture("container_specular");
     container_specular_texture.use(1);
@@ -108,7 +110,7 @@ void Drawer3D::init_shader() {
     light_cube_shader.setFloat("spotLight.linear", 0.09f);
     light_cube_shader.setFloat("spotLight.quadratic", 0.032f);
     light_cube_shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-    light_cube_shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f))); 
+    light_cube_shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f))); }
     
     
     renderer->get_shader_db().load_from_file("light_cube",
@@ -117,8 +119,16 @@ void Drawer3D::init_shader() {
     simple_color_cube_shader=&renderer->get_shader("light_cube");
     simple_color_cube_shader->use();
 
+    //model
+    renderer->get_shader_db().load_from_file("model",
+        base_path+"box/box_normal.vert",
+        base_path+"model/model.frag"
+    );
+    model_shader=&renderer->get_shader("model");
+
     std::vector<Shader*> shader_list={
-        simple_cube_shader,&light_cube_shader,simple_color_cube_shader
+        simple_cube_shader,&light_cube_shader,simple_color_cube_shader,
+        model_shader
     };
     std::for_each(shader_list.begin(),shader_list.end(),[&](Shader* s){
         ubo.bind_shader_uniform(s->id,"Matrices");

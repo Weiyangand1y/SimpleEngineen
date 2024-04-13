@@ -8,6 +8,11 @@
 #include "L1/App/Application.h"
 #include "L1/App/Config.h"
 #include "L2/Lib/imgui/MyImGui.h"
+#include "L3.5/3D/core/model/Model.h"
+
+#include <thread>
+#include <chrono>
+
 class TDApp : public Application{
 PerspectiveCamera camera;
 CameraController camera_controller;
@@ -15,8 +20,11 @@ Drawer3D drawer3d;
 std::vector<Cube> cube_list;
 LightData light_data;
 math::vec3 a_cube_position={0,0,0};
+Model model;
+int id=0;
 public:
     void _run(){
+        //std::this_thread::sleep_for(std::chrono::milliseconds(50));
         //Logger::log(2,"fps: {}",1/delta_time);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -110,15 +118,22 @@ public:
         }
         Transform3D t;
         t.translate_local(a_cube_position);
-        drawer3d.draw_ruler(t.get_matrix_ptr());
+        drawer3d.draw_ruler(t.get_matrix_ptr(),1.f,0.f);
+        ImGui::InputInt("id",&id);
+        if(id>5)ImGui::Image((ImTextureID)id,{100,100});
         ImGui::End();
-
+        Shader& s=renderer.get_shader("model");
+        s.use();
+        t.translate({0,5,0});
+        s.setMat4("model",t.get_matrix_ptr());
+        model.Draw(s);
 
         MyImGui::static_end();
     }
 
     void _init(){        
         auto [x,y]=Config::getInstance().get_windows_size();
+        model.start(Config::getInstance().get("model_path"));
         camera.m_aspect=float(x)/y;
         MyImGui::static_init(window.get_window());
         ImGui::GetIO().IniFilename="test09.ini";

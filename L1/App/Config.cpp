@@ -13,6 +13,7 @@ void Config::init() {
     data["icon_path"]=lua.get_or<std::string>("icon_path","C:/Users/21wyc/Pictures/Camera Roll/searchPicture.png");
     data["font_path"]=lua.get_or<std::string>("font_path","C:/Users/21wyc/Pictures/font/tiny_font-master/Alibaba-PuHuiTi-Heavy.ttf");
     data["start_screen_image"]=lua.get_or<std::string>("start_screen_image","");
+    data["model_path"]=lua.get_or<std::string>("model_path","");
 }
 
 Config::Config() {
