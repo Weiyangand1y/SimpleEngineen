@@ -14,7 +14,8 @@ image_path={
     Sugar_Kairo     =icon_path,
     js              ="C:/Users/21wyc/Pictures/js1.png",
     container       ="C:/Users/21wyc/Pictures/assets/container.png",
-    container_specular       ="C:/Users/21wyc/Pictures/assets/container_specular.png"
+    container_specular       ="C:/Users/21wyc/Pictures/assets/container_specular.png",
+    transparent_window  ="C:/Users/21wyc/Pictures/blending_transparent_window.png"
 }
 start_screen_image="js"
 use_model="nanosuit"

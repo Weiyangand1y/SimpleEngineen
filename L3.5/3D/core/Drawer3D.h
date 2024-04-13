@@ -29,6 +29,7 @@ public:
 
     void draw_cube(float* model_matrix);
     void draw_light_cube(float* model_matrix);
+    void draw_texture_plane(const std::string& texture_name,float* model_matrix);
     void draw_ruler(float* model_matrix,float r=0.7f,float g=0.3f,float b=0.4f);
     void draw_ruler();
 };

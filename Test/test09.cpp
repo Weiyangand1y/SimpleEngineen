@@ -124,9 +124,30 @@ public:
         ImGui::End();
         Shader& s=renderer.get_shader("model");
         s.use();
-        t.translate({0,5,0});
+        t.translate({20,5,20});
         s.setMat4("model",t.get_matrix_ptr());
         model.Draw(s);
+        Transform3D t2;
+        t2.translate_local({5,5,0});
+        drawer3d.draw_texture_plane("transparent_window",t2.get_matrix_ptr());
+
+        vector<glm::vec3> windows{
+        glm::vec3(-1.5f, 0.0f, -0.48f),
+        glm::vec3( 1.5f, 0.0f, 0.51f),
+        glm::vec3( 0.0f, 0.0f, 0.7f),
+        glm::vec3(-0.3f, 0.0f, -2.3f),
+        glm::vec3( 0.5f, 0.0f, -0.6f)};
+        std::map<float, glm::vec3> sorted;
+        for (unsigned int i = 0; i < windows.size(); i++){
+            float distance = glm::length(camera.m_position - windows[i]);
+            sorted[distance] = windows[i];
+        }
+        for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it){
+            Transform3D t;
+            t.translate_local(it->second);
+            t.translate({0,5,0});
+            drawer3d.draw_texture_plane("transparent_window",t.get_matrix_ptr());
+        }
 
         MyImGui::static_end();
     }

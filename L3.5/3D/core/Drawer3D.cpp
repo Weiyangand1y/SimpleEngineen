@@ -10,11 +10,8 @@ Drawer3D::Drawer3D(){
 void Drawer3D::draw_cube(float* model_matrix) {
     simple_cube_shader->use();
     simple_cube_shader->setMat4("model",model_matrix);
-    simple_cube_shader->use();
     renderer->use_texture("p1",0);
-    renderer->use_texture("Pippi_Carter",1);
     simple_cube_shader->setInt("texture1",0);
-    simple_cube_shader->setInt("texture2",1);
     renderer->use_vertex(Render::VertexType::TEX_CUBE);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
@@ -29,6 +26,15 @@ void Drawer3D::draw_light_cube(float* model_matrix) {
     renderer->use_vertex(Render::VertexType::NORMAL_TEX_CUBE);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
+
+void Drawer3D::draw_texture_plane(const std::string& texture_name,float* model_matrix) {
+    renderer->use_vertex(Render::VertexType::TEX_RECT);
+    simple_cube_shader->use();
+    renderer->use_texture(texture_name,0);
+    simple_cube_shader->setInt("texture1",0);
+    simple_cube_shader->setMat4("model",model_matrix);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    }
 
 void Drawer3D::draw_ruler(float* model_matrix,float r,float g,float b) {
     simple_color_cube_shader->use();    
@@ -68,9 +74,7 @@ void Drawer3D::init_shader() {
     simple_cube_shader=&renderer->get_shader("simple_cube");
     simple_cube_shader->use();
     renderer->use_texture("p1",0);
-    renderer->use_texture("Pippi_Carter",1);
     simple_cube_shader->setInt("texture1",0);
-    simple_cube_shader->setInt("texture2",1);
     //
     std::string base_path=Config::getInstance().get("shader_base_path");
     
