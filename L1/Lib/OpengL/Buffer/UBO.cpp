@@ -33,7 +33,7 @@ void UBO::update(int size,int offset,void* data) {
 
 void UBO::wrap_update(int index, void* data) {
     GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, id);)
-    Logger::log(1,"*******{},  {},  {}",index, offset[index], elements[index]);
+    //Logger::log(1,"*******{},  {},  {}",index, offset[index], elements[index]);
     GL_CALL(glBufferSubData(GL_UNIFORM_BUFFER, offset[index], elements[index], data);)
     GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, 0);)
 }

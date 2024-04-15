@@ -20,8 +20,9 @@ file(GLOB IMGUI_FILE D:/又一个文件夹/imgui_in_use/*.cpp)
 file(GLOB_RECURSE L1_SRC ./L1/*.cpp)
 file(GLOB_RECURSE L2_SRC ./L2/*.cpp)
 file(GLOB_RECURSE L3_SRC ./L3/*.cpp)
-
+file(GLOB_RECURSE L4_SRC ./L4/*.cpp)
 file(GLOB_RECURSE L3_5_SRC ./L3.5/*.cpp)
+
 set(ASSIMP_PATH D:/a_folder/Assimp/)
 
 project(SimpleEngineen)
@@ -50,7 +51,7 @@ add_executable(test01
                 D:/一个文件夹/aLib/glad/src/glad.c
                 ${L1_SRC}
                 ${L2_SRC}
-                # ${L3_SRC}
+                ${L4_SRC}
                 ${IMGUI_FILE}
                 )
 

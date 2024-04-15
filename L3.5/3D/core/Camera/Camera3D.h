@@ -18,6 +18,7 @@ public:
     void move(math::vec3 delta_move);
     void move_ralative_camera(Direction direnction,float delta_move);
     void rotate_pitch_yaw(float yaw, float pitch, float delta_move);
+    virtual void scale_view(float value);
     math::vec3 m_position{0.f,0.f,1.f};
 private:
     float m_yaw = -90.0f;

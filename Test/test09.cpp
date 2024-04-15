@@ -30,15 +30,12 @@ public:
 
         camera_controller.update();//action -> change
         if(camera.pos_dirty){
-            debug("...p22\n");
             drawer3d.chnage_view_pos(camera.m_position.x,camera.m_position.y,camera.m_position.z);
         }
         if(camera.view_dirty){
-            debug("...v\n");
             drawer3d.change_view_matrix(glm::value_ptr(camera.get_view_matrix()));
         }
         if(camera.projection_dirty){
-            debug("...p\n");
             drawer3d.change_projection_matrix(value_ptr(camera.get_projection_matrix()));
         }
         
@@ -73,9 +70,10 @@ public:
         if(ImGui::GetIO().WantCaptureMouse==false){
             auto [dx,dy]=ImGui::GetMouseDragDelta(0);
             if(dx!=0.f || dy!=0.f){
-                debug("dx: {}, dy:{}\n",dx,dy);
                 camera_controller.on_drag(dx,dy);
             }
+            auto scroll_y=ImGui::GetIO().MouseWheel;
+            if(scroll_y!=0.f)camera_controller.on_scroll(scroll_y);
         }
         
         ImGui::Begin("Control SpotLight");
@@ -112,6 +110,16 @@ public:
             drawer3d.change_light("dirLight.diffuse",light_data.dir_light.diffuse);
         }
         ImGui::End();
+        ImGui::Begin("Point Light");
+        ImGui::Text("Diffuse");
+        if(ImGui::DragFloat3("##Point.diffuse",&light_data.point_light.diffuse.x,0.1f,0.0f,1.f)){
+            drawer3d.change_light("pointLight.diffuse",light_data.point_light.diffuse);
+        }
+        ImGui::Text("Position");
+        if(ImGui::DragFloat3("##Point.position",&light_data.point_light.position.x,1.f,0.1f,50.f)){
+            drawer3d.change_light("pointLight.position",light_data.point_light.position);
+        }
+        ImGui::End();
         ImGui::Begin("Cube");
         if(ImGui::DragFloat3("#cube",&a_cube_position.x)){
             
@@ -120,11 +128,13 @@ public:
         t.translate_local(a_cube_position);
         drawer3d.draw_ruler(t.get_matrix_ptr(),1.f,0.f);
         ImGui::InputInt("id",&id);
-        if(id>5)ImGui::Image((ImTextureID)id,{100,100});
+        if(id<=0)id=1;
+        ImGui::Image((ImTextureID)id,{200,200});
         ImGui::End();
         Shader& s=renderer.get_shader("model");
         s.use();
-        t.translate({20,5,20});
+        t.translate({20,0,-20});
+        t.rotate_local({0,1,0},180);
         s.setMat4("model",t.get_matrix_ptr());
         model.Draw(s);
         Transform3D t2;
@@ -148,7 +158,7 @@ public:
             t.translate({0,5,0});
             drawer3d.draw_texture_plane("transparent_window",t.get_matrix_ptr());
         }
-
+        
         MyImGui::static_end();
     }
 
@@ -166,6 +176,7 @@ public:
             if(action==1)camera_controller.on_key_down(key);
             else if(action==0)camera_controller.on_key_release(key);
         };
+        
         cube_list.resize(10);
         math::vec3 cubePositions[] = {
             math::vec3( 0.0f,  0.0f,  0.0f),

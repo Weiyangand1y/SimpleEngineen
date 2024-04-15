@@ -62,7 +62,10 @@ void CameraController::on_drag(float x, float y) {
     m_camera->rotate_pitch_yaw(-x/len,y/len,speed);
 }
 
-void CameraController::on_scroll(float scroll_y) {}
+void CameraController::on_scroll(float scroll_y) {
+    float speed=5.f;   
+    m_camera->scale_view(scroll_y*speed);
+}
 
 void CameraController::update() {
     float speed=0.05f;

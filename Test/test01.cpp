@@ -5,37 +5,32 @@
 #include "L1/Object/ScriptObject.h"
 #include "L1/Object/SignalObject.h"
 #include "L1/Debug/Log.h"
+#include "L4/Editor/ImageLoad.h"
 
 
 class TestApplication:public Application{
+    struct Context{
+        char image_key[64]={0};
+        char text[64]={0};
+        char input_image_key[64]={0};
+        int texture_id=-1;
+        char t3[128]={0};
+    };
+    Context context;
+    ImgageLoad image_load;
 public:
-    SignalObject so;
     void _init() override{
         std::cout<<"==============="<<std::endl;
-
         Window* window=get_window();
-        int id=so.connect("mouse_move",[](Info info){
-            InfoWrapper info_wrap(info);
-                double x=std::any_cast<double>(info[0]);
-                double y=std::any_cast<double>(info[1]);
-                //fmt::print(fg(fmt::color::aqua),"cursor pos: [ {}, {} ]\n",x,y);
-        });
-        debug("signal object's id: {}\n",id);
-
-        window->m_cursor_pos_callback=[&](double xpos,double ypos){
-            so.emit("mouse_move",{xpos,ypos});
-        };
         MyImGui::static_init(window->get_window());
-        ScriptObject so;
-        renderer.get_texture_db().load("kairo",R"(C:\Users\21wyc\Pictures\Sugar_Kairo.png)");          
+        ImGui::GetIO().IniFilename="test09.ini";
+        renderer.get_texture_db().load("bg",R"(C:\Users\21wyc\Pictures\KritaProject\bg.png)");   
+        image_load.set_renderer(&renderer);       
     }
     void _run() override{
         //debug("{}\n",1/delta_time);
         renderer.start_framebuffer("f1");  //--------------------
         renderer.clear_color();
-        
-
-        drawer.draw_texture("kairo");
 
         renderer.end_framebuffer();  //-------------------------
 
@@ -43,18 +38,45 @@ public:
                             "screen");
 
         MyImGui::static_begin();
+        auto& io=ImGui::GetIO();
+{        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,{0,0});
+        ImGui::Begin("Image",nullptr,ImGuiWindowFlags_NoTitleBar);
+        ImVec2 windowPos = ImGui::GetWindowPos();
+        ImVec2 windowSize = ImGui::GetWindowSize();
+        auto* wdl=ImGui::GetWindowDrawList();
+        wdl->AddImage((void*)(intptr_t)renderer.get_texture("bg").get_id(),
+        windowPos, ImVec2(windowPos.x + windowSize.x, windowPos.y + windowSize.y),
+        {0,1},{1,0}
+        );
+        float offset_y=16,height=80;
+        wdl->AddRectFilled({windowPos.x+20,windowPos.y+offset_y},ImVec2(windowPos.x + windowSize.x/3, windowPos.y + height),ImColor(203,207,86));
+        wdl->AddRectFilled(ImVec2(windowPos.x + windowSize.x/3, windowPos.y+offset_y),ImVec2(windowPos.x + windowSize.x*2/3, windowPos.y + height),IM_COL32(150,176,139,255));
+        wdl->AddRectFilled(ImVec2(windowPos.x + windowSize.x*2/3, windowPos.y+offset_y),ImVec2(windowPos.x + windowSize.x-18, windowPos.y + height),IM_COL32(206,126,111,255));
+        
+        ImGui::SetCursorPos({50,100});
+        ImGui::SetNextItemWidth(160);
+        if(ImGui::InputText("image_key",context.image_key,64,ImGuiInputTextFlags_EnterReturnsTrue)){
+            renderer.get_texture_db().load(std::string(context.image_key),std::string(context.text));
+        }
+        ImGui::SetCursorPosX(50);
+        ImGui::SetNextItemWidth(260);
+        if(ImGui::InputText("text",context.text,64,ImGuiInputTextFlags_EnterReturnsTrue)){
+            
+        }
+        ImGui::SetCursorPosX(50);
+        ImGui::SetNextItemWidth(160);
+        if(ImGui::InputText("in_image_key",context.input_image_key,64,ImGuiInputTextFlags_EnterReturnsTrue)){
+            context.texture_id=renderer.get_texture(std::string(context.input_image_key)).get_id();
+        }
+        ImGui::SetCursorPosX(50);
+        if(context.texture_id!=-1){
+            ImGui::Image((void*)(intptr_t)context.texture_id,{200,200},{0,1},{1,0});
+        }
+        ImGui::PopStyleVar();
 
-        ImGui::Begin("Image");
-
-        ImGui::Image((ImTextureID)renderer.get_framebuffer_color_texture_id("f1"),
-                         ImVec2{300.f,300.f}, ImVec2{0,1}, ImVec2{1,0});
-        ImGui::End();
-        ImFont* imFont = MyImGui::get_imfont(1);
-        ImVec2 text_pos=ImGui::GetWindowPos()+ImVec2{100,100};
-        ImGui::GetForegroundDrawList()
-                        ->AddText(imFont,48.0f,text_pos,0xffffffff,
-                        "将所绘制的文字都\n放到一个较大的纹理上去");
-        ImGui::GetForegroundDrawList()->AddCircle(text_pos,10,0xff1166ff);
+        ImGui::End();}
+        
+        image_load.render();
         MyImGui::static_end();
     }
 };

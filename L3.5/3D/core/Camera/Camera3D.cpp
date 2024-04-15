@@ -57,8 +57,8 @@ void Camera3D::rotate_pitch_yaw(float yaw, float pitch, float delta_move) {
     front.y = sin(glm::radians(m_pitch));
     front.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
     front = normalize(front);
-    Logger::log(1,"[{},{},{}]",front.x,front.y,front.z);
     m_right = normalize(cross(front, math::vec3(0.f,1.f,0.f)));
     m_up = normalize(cross(m_right, front));
 }
 
+void Camera3D::scale_view(float value) {}
