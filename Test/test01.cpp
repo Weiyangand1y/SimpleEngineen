@@ -2,12 +2,16 @@
 #include "L1/App/Application.h"
 #include "L1/Lib/Math/math.h"
 #include "L2/Lib/imgui/MyImGui.h"
+#include "L2/Object/MyDataBase.h"
 #include "L1/Object/ScriptObject.h"
 #include "L1/Object/SignalObject.h"
 #include "L1/Debug/Log.h"
 #include "L4/Editor/ImageLoad.h"
 
-
+struct Record{
+    int id;
+    std::string name;
+};
 class TestApplication:public Application{
     struct Context{
         char image_key[64]={0};
@@ -18,6 +22,7 @@ class TestApplication:public Application{
     };
     Context context;
     ImgageLoad image_load;
+    ScriptObject so;
 public:
     void _init() override{
         std::cout<<"==============="<<std::endl;
@@ -25,7 +30,22 @@ public:
         MyImGui::static_init(window->get_window());
         ImGui::GetIO().IniFilename="test09.ini";
         renderer.get_texture_db().load("bg",R"(C:\Users\21wyc\Pictures\KritaProject\bg.png)");   
-        image_load.set_renderer(&renderer);       
+        image_load.set_renderer(&renderer);     
+         so.script.do_string("count=0");
+         so.script.do_string("count=count+20");
+         so.script.do_string("print(count)");
+        MyDatabase<Record> db;
+        db.insert([](Record& r){
+            r.id=5;
+            r.name="aaa";
+        });
+        db.insert([](Record& r){
+            r.id=6;
+            r.name="aab";
+        });
+        db.select_where([](Record& r){
+            return r.id==5;
+        });
     }
     void _run() override{
         //debug("{}\n",1/delta_time);
@@ -39,7 +59,7 @@ public:
 
         MyImGui::static_begin();
         auto& io=ImGui::GetIO();
-{        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,{0,0});
+    {   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,{0,0});
         ImGui::Begin("Image",nullptr,ImGuiWindowFlags_NoTitleBar);
         ImVec2 windowPos = ImGui::GetWindowPos();
         ImVec2 windowSize = ImGui::GetWindowSize();
