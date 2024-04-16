@@ -11,10 +11,11 @@ void TextureDB::init() {
 TextureDB::TextureDB() {
 }
 
-void TextureDB::load(std::string name, std::string file_path) {
-    if(db.find(name)!=db.end())return;//让key值不覆盖
+Texture* TextureDB::load(std::string name, std::string file_path,std::string* message) {
+    if(db.find(name)!=db.end())return &db[name];//让key值不覆盖
     //也许可以覆盖并删除原有的
-    db[name]=Texture(file_path);
+    db[name]=Texture(file_path,message);
+    return &db[name];
 }
 
 void TextureDB::unload(std::string name) {

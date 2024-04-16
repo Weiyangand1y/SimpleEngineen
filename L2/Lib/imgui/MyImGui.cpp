@@ -10,7 +10,9 @@ void load_font_file(){
     io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
                                 20, nullptr,
                                 io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
-    io.Fonts->Build();
+    io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
+                                40, nullptr,
+                                io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
 }
 
 void set_style(){
@@ -55,7 +57,6 @@ void MyImGui::static_init(GLFWwindow* window) {
         ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-    
     set_style();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);

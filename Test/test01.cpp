@@ -2,16 +2,15 @@
 #include "L1/App/Application.h"
 #include "L1/Lib/Math/math.h"
 #include "L2/Lib/imgui/MyImGui.h"
-#include "L2/Object/MyDataBase.h"
+
 #include "L1/Object/ScriptObject.h"
 #include "L1/Object/SignalObject.h"
 #include "L1/Debug/Log.h"
-#include "L4/Editor/ImageLoad.h"
 
-struct Record{
-    int id;
-    std::string name;
-};
+#include "L4/Editor/Image/ImageLoad.h"
+#include "L4/Editor/Image/ImageCut.h"
+#include "L4/Editor/Image/ImageDB.h"
+
 class TestApplication:public Application{
     struct Context{
         char image_key[64]={0};
@@ -22,30 +21,25 @@ class TestApplication:public Application{
     };
     Context context;
     ImgageLoad image_load;
+    ImageCut image_cut;
     ScriptObject so;
+    ImageDB image_db;
 public:
     void _init() override{
-        std::cout<<"==============="<<std::endl;
-        Window* window=get_window();
+        std::cout << "===============" << std::endl;
+        Window* window = get_window();
         MyImGui::static_init(window->get_window());
-        ImGui::GetIO().IniFilename="test09.ini";
-        renderer.get_texture_db().load("bg",R"(C:\Users\21wyc\Pictures\KritaProject\bg.png)");   
-        image_load.set_renderer(&renderer);     
-         so.script.do_string("count=0");
-         so.script.do_string("count=count+20");
-         so.script.do_string("print(count)");
-        MyDatabase<Record> db;
-        db.insert([](Record& r){
-            r.id=5;
-            r.name="aaa";
-        });
-        db.insert([](Record& r){
-            r.id=6;
-            r.name="aab";
-        });
-        db.select_where([](Record& r){
-            return r.id==5;
-        });
+        ImGui::GetIO().IniFilename = "test09.ini";
+        renderer.get_texture_db().load(
+            "bg", R"(C:\Users\21wyc\Pictures\KritaProject\bg.png)");
+
+        image_load.set_renderer(&renderer);
+        image_load.set_db(&image_db);
+        so.script.do_string("count=0");
+        so.script.do_string("count=count+20");
+        so.script.do_string("print(count)");
+        image_cut.init(&image_db);
+    
     }
     void _run() override{
         //debug("{}\n",1/delta_time);
@@ -97,6 +91,7 @@ public:
         ImGui::End();}
         
         image_load.render();
+        image_cut.render();
         MyImGui::static_end();
     }
 };

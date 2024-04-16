@@ -8,7 +8,7 @@ private:
     unsigned int id;
 public:
     int w,h;
-    Texture(std::string filename);
+    Texture(std::string filename,std::string* message=nullptr);
     Texture();
     ~Texture();
     void use();

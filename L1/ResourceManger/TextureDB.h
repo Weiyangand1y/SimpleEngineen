@@ -8,7 +8,7 @@ private:
 public:
     TextureDB();
     void init();
-    void load(std::string name,std::string file_path);
+    Texture* load(std::string name,std::string file_path,std::string* message=nullptr);
     void unload(std::string name);
     Texture& get_texture(std::string name);
     Texture& operator[](std::string name);

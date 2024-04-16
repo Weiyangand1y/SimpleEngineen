@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -7,8 +8,6 @@ class MyDatabase {
 private:
     std::vector<T> records;
 public:
-    void save(){}
-    void load(){}
     // 创建记录
     template<typename Func>
     void insert(Func initializer) {
@@ -23,9 +22,14 @@ public:
     void select_where(Condition condition, std::vector<T>* result_ptr=nullptr) {
         std::for_each(records.begin(), records.end(), [&](auto& record) {
             if (condition(record)) {
-                std::cout << "Record found: " << record.id << " - " << record.name << std::endl;
                 if(result_ptr)result_ptr->push_back(record);
             }
+        });
+    }
+
+    void select_all(std::function<void(T& record)> callback) {
+        std::for_each(records.begin(), records.end(), [&](auto& record) {
+            callback(record);
         });
     }
 
@@ -48,17 +52,7 @@ public:
         });
         records.erase(it, records.end());
     }
-    template<typename OuterCondition, typename InnerCondition>
-    void select_where(  OuterCondition outerCondition,
-                        InnerCondition innerCondition,
-                        std::vector<T>& result
-                        ) {   
-        for (const auto& record : records) {
-            if (outerCondition(record) && innerCondition(record)) {
-                result.push_back(record);
-            }
-        }
-    }
+    
     // 联表查询
     // template<typename Func>
     // void join(Func predicate, std::function<void(const Record&, const Record&, JoinRecord&)> resultBuilder) {

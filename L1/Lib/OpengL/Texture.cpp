@@ -2,7 +2,7 @@
 #include "../IO/imageLoader.h"
 #include "L1/Debug/CheckGL.h"
 
-Texture::Texture(std::string filename){
+Texture::Texture(std::string filename,std::string* message){
     GL_CALL(glActiveTexture(GL_TEXTURE0);)
     GL_CALL(glGenTextures(1,&id);)
     GL_CALL(glBindTexture(GL_TEXTURE_2D,id);)
@@ -15,6 +15,7 @@ Texture::Texture(std::string filename){
     ImageLoader image_loader;
     unsigned char* data=image_loader.loadImage(filename.c_str(),&w,&h,&c);
     if (!data){
+        if(message)*message=std::string("can't load image") ;
         std::cout<<"can't load image"<<std::endl;
     }else{
         if(c==3){
