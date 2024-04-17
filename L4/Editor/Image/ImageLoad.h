@@ -40,10 +40,11 @@ public:
             float right=imageTable[4];
             float top=imageTable[5];
             float bottom=imageTable[6];
-            image_db->insert_sub_texture(subkey,key,texture->get_id(),left,right,top,bottom);
+            image_db->insert_sub_texture(subkey,key,texture->get_id(),left,right,top,bottom,(float)texture->w/texture->h);
         }
         }
     void save_and_flush(){
+        if(std::string(data.key_text)!=""){
         renderer->get_texture_db().load(std::string(data.key_text),std::string(data.path_text));
         Texture& texture=renderer->get_texture(std::string(data.key_text));
         data.texture_id=texture.get_id();
@@ -51,7 +52,7 @@ public:
         image_db->insert_main_texture(
             std::string(data.key_text),texture.get_id(),
             data.texture_aspect_radio,std::string(data.path_text)
-            );
+            );}
         image_db->save_to_file();
     }
     void update_key_from_path(){

@@ -6,7 +6,6 @@
 int MyImGui::count =10;
 void load_font_file(){
     ImGuiIO& io = ImGui::GetIO();
-    io.Fonts->Clear();
     io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
                                 20, nullptr,
                                 io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
@@ -71,7 +70,6 @@ ImFont* MyImGui::get_imfont(int index){
 }
 
 void MyImGui::static_begin() {
-    
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
@@ -97,3 +95,29 @@ void MyImGui::static_end() {
 MyImGui::MyImGui() {}
 
 void MyImGui::render() {}
+
+void ImGui::ImageRotated(ImTextureID tex_id, ImVec2 center, ImVec2 size, float angle,ImVec4 uv) {
+    
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+    float cos_a = cosf(-angle*(3.14159f/180.f));
+    float sin_a = sinf(-angle*(3.14159f/180.f));
+    ImVec2 pos[4] =
+    {
+        center + ImRotate(ImVec2(-size.x * 0.5f, -size.y * 0.5f), cos_a, sin_a),
+        center + ImRotate(ImVec2(+size.x * 0.5f, -size.y * 0.5f), cos_a, sin_a),
+        center + ImRotate(ImVec2(+size.x * 0.5f, +size.y * 0.5f), cos_a, sin_a),
+        center + ImRotate(ImVec2(-size.x * 0.5f, +size.y * 0.5f), cos_a, sin_a)
+    };
+    ImVec2 uvs[4] = 
+    { 
+        ImVec2(uv.x, uv.z), 
+        ImVec2(uv.y, uv.z), 
+        ImVec2(uv.y, uv.w), 
+        ImVec2(uv.x, uv.w) 
+    };
+
+    draw_list->AddImageQuad(tex_id, pos[0], pos[1], pos[2], pos[3], uvs[0], uvs[1], uvs[2], uvs[3], IM_COL32_WHITE);
+
+}
+

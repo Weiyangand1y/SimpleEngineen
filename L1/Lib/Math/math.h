@@ -10,4 +10,3 @@ namespace math{
     using mat4=glm::mat4;   
 } 
 
-

@@ -4,10 +4,12 @@
 #include <algorithm>
 #include <functional>
 template<typename T>
+
 class MyDatabase {
 private:
     std::vector<T> records;
 public:
+    using Func=std::function<void(T&)>;
     // 创建记录
     template<typename Func>
     void insert(Func initializer) {
@@ -31,6 +33,15 @@ public:
         std::for_each(records.begin(), records.end(), [&](auto& record) {
             callback(record);
         });
+    }
+    template<typename Condition>
+    void select_one(Condition condition,Func callback){
+        for(auto& record:records){
+            if(condition(record)){
+                callback(record);
+                break;
+            }
+        }
     }
 
     // 更新记录

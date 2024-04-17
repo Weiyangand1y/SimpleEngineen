@@ -10,6 +10,8 @@
 #include "L4/Editor/Image/ImageLoad.h"
 #include "L4/Editor/Image/ImageCut.h"
 #include "L4/Editor/Image/ImageDB.h"
+#include "L4/Editor/Image/ImagePlatter.h"
+#include "L4/Editor/Console/ImConsole.h"
 
 class TestApplication:public Application{
     struct Context{
@@ -22,8 +24,10 @@ class TestApplication:public Application{
     Context context;
     ImgageLoad image_load;
     ImageCut image_cut;
+    ImagePlatter image_platter;
     ScriptObject so;
     ImageDB image_db;
+    ImConsole console;
 public:
     void _init() override{
         std::cout << "===============" << std::endl;
@@ -39,6 +43,7 @@ public:
         so.script.do_string("count=count+20");
         so.script.do_string("print(count)");
         image_cut.init(&image_db);
+        image_platter.init(&image_db);
     
     }
     void _run() override{
@@ -53,7 +58,8 @@ public:
 
         MyImGui::static_begin();
         auto& io=ImGui::GetIO();
-    {   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,{0,0});
+    {   
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,{0,0});
         ImGui::Begin("Image",nullptr,ImGuiWindowFlags_NoTitleBar);
         ImVec2 windowPos = ImGui::GetWindowPos();
         ImVec2 windowSize = ImGui::GetWindowSize();
@@ -92,6 +98,8 @@ public:
         
         image_load.render();
         image_cut.render();
+        image_platter.render();
+        console.render();
         MyImGui::static_end();
     }
 };

@@ -16,6 +16,7 @@ public:
         std::string key;
         int texture_id;
         float left,right,top,bottom;//uv
+        float aspect_ratio;
     };
     MyDatabase<MainTexture> main_texture_table;
     MyDatabase<SubTexture> sub_texture_table;
@@ -25,9 +26,9 @@ public:
         });
     }
     void insert_sub_texture(std::string subkey,std::string key,int texture_id,
-                    float left,float right,float top,float bottom){
+                    float left,float right,float top,float bottom,float aspect_radio=1.f){
             sub_texture_table.insert([=](SubTexture& record){
-            record={subkey,key,texture_id,left,right,top,bottom};
+            record={subkey,key,texture_id,left,right,top,bottom,aspect_radio};
         });
     }
     void save_to_file(){
