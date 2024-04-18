@@ -7,7 +7,8 @@ private:
     int nextAvailableIndex;
 
 public:
-    IDPool(int size) {
+    IDPool() {}
+    void init(int size) {
         pool.resize(size);
         available.resize(size, true);
         for (int i = 0; i < size; ++i) {
@@ -37,6 +38,6 @@ public:
     }
 
     int size() const {
-        return pool.size();
+        return (int)pool.size();
     }
 };

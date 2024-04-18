@@ -5,6 +5,7 @@ window_size={
     h=800
 }
 -- font_path="C:/Users/21wyc/Pictures/font/tiny_font-master/kaiti_GB2312.ttf"
+-- font_path="C:/Users/21wyc/Downloads/Virgil.ttf"
 font_path="C:/Users/21wyc/Pictures/font/small_font2.ttf"
 image_path={
     Claudette_Huy   ="C:/Users/21wyc/Pictures/character/Claudette_Huy.png",

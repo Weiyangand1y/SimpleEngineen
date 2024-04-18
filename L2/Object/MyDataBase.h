@@ -3,40 +3,40 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
+#include <map>
 template<typename T>
-
 class MyDatabase {
 private:
-    std::vector<T> records;
+    std::map<std::string, T> records;
 public:
     using Func=std::function<void(T&)>;
     // 创建记录
     template<typename Func>
-    void insert(Func initializer) {
+    void insert(std::string key,Func initializer) {
         T newRecord;
         initializer(newRecord);
-        records.push_back(newRecord);
+        records[key]=newRecord;
     }
 
-    // 读取记录
-    // SELECT * FROM records WHERE condition
-    template<typename Condition>
-    void select_where(Condition condition, std::vector<T>* result_ptr=nullptr) {
-        std::for_each(records.begin(), records.end(), [&](auto& record) {
-            if (condition(record)) {
-                if(result_ptr)result_ptr->push_back(record);
-            }
-        });
+
+    void select_by_key(const std::string& id,std::function<void(T& record)> callback){
+        if(records.find(id)==records.end()){
+            T empty;
+            callback(empty);
+            return;
+        }
+        callback(records[id]);
     }
+
 
     void select_all(std::function<void(T& record)> callback) {
         std::for_each(records.begin(), records.end(), [&](auto& record) {
-            callback(record);
+            callback(record.second);
         });
     }
     template<typename Condition>
     void select_one(Condition condition,Func callback){
-        for(auto& record:records){
+        for(auto& [key,record]:records){
             if(condition(record)){
                 callback(record);
                 break;
@@ -55,13 +55,16 @@ public:
     }
 
     // 删除记录
-    // 删除记录
     template<typename Condition>
     void delete_where(Condition condition) {
         auto it = std::remove_if(records.begin(), records.end(), [&](const auto& record) {
             return condition(record);
         });
         records.erase(it, records.end());
+    }
+
+    void delete_by_id(const std::string& key) {
+        records.erase(key);
     }
     
     // 联表查询

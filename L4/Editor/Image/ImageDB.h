@@ -3,6 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
+enum class ImageType{MainImage, SubImage};
 class ImageDB{
 public:
     struct MainTexture{
@@ -17,17 +18,23 @@ public:
         int texture_id;
         float left,right,top,bottom;//uv
         float aspect_ratio;
+        float get_sub_aspect_ratio(){
+            return ((right-left)*aspect_ratio)/(top-bottom);
+        }
+        float get_sub_inv_ratio(){
+            return (top-bottom)/((right-left)*aspect_ratio);
+        }
     };
     MyDatabase<MainTexture> main_texture_table;
     MyDatabase<SubTexture> sub_texture_table;
     void insert_main_texture(std::string key,int texture_id,float aspect_radio=1.f,std::string path=""){
-        main_texture_table.insert([=](MainTexture& record){
+        main_texture_table.insert(key,[=](MainTexture& record){
             record={key,texture_id,aspect_radio,path};
         });
     }
     void insert_sub_texture(std::string subkey,std::string key,int texture_id,
                     float left,float right,float top,float bottom,float aspect_radio=1.f){
-            sub_texture_table.insert([=](SubTexture& record){
+            sub_texture_table.insert(subkey,[=](SubTexture& record){
             record={subkey,key,texture_id,left,right,top,bottom,aspect_radio};
         });
     }

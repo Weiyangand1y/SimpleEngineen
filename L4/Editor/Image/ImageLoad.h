@@ -54,6 +54,7 @@ public:
             data.texture_aspect_radio,std::string(data.path_text)
             );}
         image_db->save_to_file();
+
     }
     void update_key_from_path(){
         std::string path=std::string(data.path_text);

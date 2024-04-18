@@ -33,7 +33,7 @@ public:
         std::cout << "===============" << std::endl;
         Window* window = get_window();
         MyImGui::static_init(window->get_window());
-        ImGui::GetIO().IniFilename = "test09.ini";
+        ImGui::GetIO().IniFilename = "test01.ini";
         renderer.get_texture_db().load(
             "bg", R"(C:\Users\21wyc\Pictures\KritaProject\bg.png)");
 
