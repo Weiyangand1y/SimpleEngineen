@@ -42,6 +42,13 @@ class ImageCut{
             ImGui::EndTooltip();
         }
     }
+    void set_drag(const char* type,const std::string& data){
+        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+            ImGui::Text(data.c_str());
+            ImGui::SetDragDropPayload(type, data.c_str(), data.size());
+            ImGui::EndDragDropSource();
+        }
+    }
     void draw_main_image_list(){
         ImGui::Text("Image Key");
         ImGui::InputTextWithHint("##key","Input image key",data.input_text,sizeof(data.input_text));
@@ -52,15 +59,13 @@ class ImageCut{
             image_db->main_texture_table.select_all([&](ImageDB::MainTexture& r){
                 bool is_selected=false;               
                 draw_small_image(r.texture_id,30);
+                
                 make_image_tool_tip(r.texture_id,1/r.aspect_ratio,200);
+                set_drag("key",r.key);
                 ImGui::SameLine();                
                 ImGui::Selectable(r.key.c_str(),&is_selected);
                 if(is_selected)load_main_image(r);  
-                if(ImGui::BeginDragDropSource()){
-                    ImGui::Text(r.key.c_str());                    
-                    ImGui::SetDragDropPayload("key",r.key.c_str(),r.key.size());
-                    ImGui::EndDragDropSource();
-                }
+                set_drag("key",r.key);
                                                  
             });
         ImGui::EndListBox();}
@@ -130,9 +135,11 @@ class ImageCut{
             float inv_ratio=r.get_sub_inv_ratio();
             draw_image(r.texture_id,{30,30*inv_ratio},{r.left,r.top},{r.right,r.bottom});
             make_image_tool_tip(r.texture_id,inv_ratio,200,{r.left,r.top},{r.right,r.bottom});
+            set_drag("subkey",r.sub_key);  
             ImGui::SameLine();
             bool is_selected=false;
-            ImGui::Selectable(r.sub_key.c_str(),&is_selected);             
+            ImGui::Selectable(r.sub_key.c_str(),&is_selected);   
+            set_drag("subkey",r.sub_key);          
             if(is_selected)load_sub_image(r.sub_key);
 
         });

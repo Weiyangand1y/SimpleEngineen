@@ -13,6 +13,7 @@ private:
         ImVec2 position={50,50};
         ImVec2 size={100,100};
         float rotation=0.f;
+        int z_index=0;
     };
     struct UnitData{
         int id;
@@ -44,6 +45,18 @@ private:
                 debug("{}   ----{}------",(const char*)payload->Data,payload->DataSize);
                 strncpy(state.input_text,(const char*)payload->Data,payload->DataSize);
                 debug("{}\n",state.input_text);
+            }
+            ImGui::EndDragDropTarget();
+        }
+    }
+    void drop_to_here(const ImVec2& start_pos){
+        auto mouse_pos=ImGui::GetMousePos();
+        auto center_pos=mouse_pos-start_pos;
+        if(ImGui::BeginDragDropTarget()){
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("key")){
+                add_unit(std::string((const char*)payload->Data,payload->DataSize),ImageType::MainImage,center_pos);
+            }else if(const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("subkey")){
+                add_unit(std::string((const char*)payload->Data,payload->DataSize),ImageType::SubImage,center_pos);
             }
             ImGui::EndDragDropTarget();
         }
@@ -84,15 +97,20 @@ private:
                     unit.transform.size.x,unit.transform.size.y,
                     unit.transform.rotation);
     }
-    
-    void add_unit(const std::string& key, ImageType type){
+    void save_to_db(){
+
+    }
+    void load_scene_from_db(){
+        
+    }
+    void add_unit(const std::string& key, ImageType type,const ImVec2& center_pos={350,150},int z_index=0,float rotation=0.f){
         if(type==ImageType::MainImage){
             image_db->main_texture_table.select_by_key(key,
         [&](ImageDB::MainTexture& r){
             if(r.key==""){Logger::log(8,"Database_MainImage don't have [{}]",key); return;}
             int id=id_pool.allocateID();
-            list[id]={id,r.key,"",r.texture_id,{{350,150},{150,150/r.aspect_ratio},10}};
-            list2.push_back({0,id});
+            list[id]={id,r.key,"",r.texture_id,{center_pos,{150,150/r.aspect_ratio},10,z_index}};
+            list2.push_back({z_index,id});
         }
         );
         }else if(type==ImageType::SubImage){
@@ -101,9 +119,9 @@ private:
             if(r.key==""){Logger::log(8,"Database_SubImage don't have [{}]",key); return;}
             int id=id_pool.allocateID();
             float inv_ratio=r.get_sub_inv_ratio();
-            list[id]={id,r.key,"",r.texture_id,{{150,150},{50,50*inv_ratio},45},
+            list[id]={id,r.key,"",r.texture_id,{center_pos,{50,50*inv_ratio},45,z_index},
             r.left,r.right,r.top,r.bottom};
-            list2.push_back({0,id});
+            list2.push_back({z_index,id});
         }
         );
         }
@@ -130,7 +148,7 @@ public:
         start_pos.y+=50;
         start_pos.x+=30;
         bool some_clicked=false;
-        std::stable_sort(list2.begin(),list2.end(),[](const ZindexPair&a, const ZindexPair& b){return a.z_index>b.z_index;});
+        std::stable_sort(list2.begin(),list2.end(),[](const ZindexPair&a, const ZindexPair& b){return a.z_index<b.z_index;});
         for(auto it=list2.begin();it!=list2.end();++it){
             auto& unit=list[it->id];
             ImGui::Text("%s",unit.key.c_str());
@@ -161,7 +179,7 @@ public:
         }
         draw_list->AddLine(start_pos,{start_pos.x+350,start_pos.y+150},0x998866ff,3.f);
         ImGui::EndChild();
-        set_drop_area();
+        drop_to_here(start_pos);
         ImGui::Text("Input image key to add");
         
         if(ImGui::InputText("image_key",state.input_text,64,ImGuiInputTextFlags_EnterReturnsTrue)){

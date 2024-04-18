@@ -3,6 +3,9 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
+#include "L1/Render/Renderer.h"
+#include "L1/Object/SignalObject.h"
+#include "L1/App/Config.h"
 enum class ImageType{MainImage, SubImage};
 class ImageDB{
 public:
@@ -25,8 +28,43 @@ public:
             return (top-bottom)/((right-left)*aspect_ratio);
         }
     };
+    struct ImageScene{
+        std::string key,sub_key;
+        float px,py,sx,sy,r;
+        int z;
+    };
     MyDatabase<MainTexture> main_texture_table;
     MyDatabase<SubTexture> sub_texture_table;
+    MyDatabase<ImageScene> image_scene_table;
+    Render* renderer=nullptr;
+    void set_renderer(Render* p_renderer){
+        renderer=p_renderer;
+    }
+    void load_from_file(){
+        ScriptObject so;
+        so.execute(Config::getInstance().get("lua_script_file")+"/data/image2.lua");
+        sol::table image_list=so.script["main_images"];
+        TextureDB& texture_db=renderer->get_texture_db();
+        for(auto& r:image_list){
+            sol::table& imageTable = r.second.as<sol::table>();
+            std::string name = imageTable[1];
+            std::string path = imageTable[2];
+            Texture* texture = texture_db.load(name,path);
+            insert_main_texture(name,texture->get_id(),(float)texture->w/texture->h,path);
+        }
+        sol::table sub_image_list=so.script["sub_images"];
+            for(auto& r:sub_image_list){
+            sol::table& imageTable = r.second.as<sol::table>();
+            std::string subkey = imageTable[1];
+            std::string key = imageTable[2];
+            Texture* texture = &texture_db.get_texture(key);
+            float left=imageTable[3];
+            float right=imageTable[4];
+            float top=imageTable[5];
+            float bottom=imageTable[6];
+            insert_sub_texture(subkey,key,texture->get_id(),left,right,top,bottom,(float)texture->w/texture->h);
+        }
+    }
     void insert_main_texture(std::string key,int texture_id,float aspect_radio=1.f,std::string path=""){
         main_texture_table.insert(key,[=](MainTexture& record){
             record={key,texture_id,aspect_radio,path};

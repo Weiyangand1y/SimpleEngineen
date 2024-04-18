@@ -19,29 +19,29 @@ public:
     void set_renderer(Render* p_renderer){renderer=p_renderer;}
     void set_db(ImageDB* p_image_db){
         image_db=p_image_db;
-        ScriptObject so;
-        so.execute(Config::getInstance().get("lua_script_file")+"/data/image2.lua");
-        sol::table image_list=so.script["main_images"];
-        TextureDB& texture_db=renderer->get_texture_db();
-        for(auto& r:image_list){
-            sol::table& imageTable = r.second.as<sol::table>();
-            std::string name = imageTable[1];
-            std::string path = imageTable[2];
-            Texture* texture = texture_db.load(name,path);
-            image_db->insert_main_texture(name,texture->get_id(),(float)texture->w/texture->h,path);
-        }
-        sol::table sub_image_list=so.script["sub_images"];
-            for(auto& r:sub_image_list){
-            sol::table& imageTable = r.second.as<sol::table>();
-            std::string subkey = imageTable[1];
-            std::string key = imageTable[2];
-            Texture* texture = &texture_db.get_texture(key);
-            float left=imageTable[3];
-            float right=imageTable[4];
-            float top=imageTable[5];
-            float bottom=imageTable[6];
-            image_db->insert_sub_texture(subkey,key,texture->get_id(),left,right,top,bottom,(float)texture->w/texture->h);
-        }
+        // ScriptObject so;
+        // so.execute(Config::getInstance().get("lua_script_file")+"/data/image2.lua");
+        // sol::table image_list=so.script["main_images"];
+        // TextureDB& texture_db=renderer->get_texture_db();
+        // for(auto& r:image_list){
+        //     sol::table& imageTable = r.second.as<sol::table>();
+        //     std::string name = imageTable[1];
+        //     std::string path = imageTable[2];
+        //     Texture* texture = texture_db.load(name,path);
+        //     image_db->insert_main_texture(name,texture->get_id(),(float)texture->w/texture->h,path);
+        // }
+        // sol::table sub_image_list=so.script["sub_images"];
+        //     for(auto& r:sub_image_list){
+        //     sol::table& imageTable = r.second.as<sol::table>();
+        //     std::string subkey = imageTable[1];
+        //     std::string key = imageTable[2];
+        //     Texture* texture = &texture_db.get_texture(key);
+        //     float left=imageTable[3];
+        //     float right=imageTable[4];
+        //     float top=imageTable[5];
+        //     float bottom=imageTable[6];
+        //     image_db->insert_sub_texture(subkey,key,texture->get_id(),left,right,top,bottom,(float)texture->w/texture->h);
+        // }
         }
     void save_and_flush(){
         if(std::string(data.key_text)!=""){

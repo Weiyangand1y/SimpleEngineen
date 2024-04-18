@@ -36,7 +36,8 @@ public:
         ImGui::GetIO().IniFilename = "test01.ini";
         renderer.get_texture_db().load(
             "bg", R"(C:\Users\21wyc\Pictures\KritaProject\bg.png)");
-
+        image_db.set_renderer(&renderer);
+        image_db.load_from_file();
         image_load.set_renderer(&renderer);
         image_load.set_db(&image_db);
         so.script.do_string("count=0");
