@@ -110,18 +110,27 @@ private:
                     unit.transform.rotation);
     }
     void save_to_db(){
-
+        for(auto& e:list){
+            auto& element=e.second;
+            std::string key=element.key+"_"+element.sub_key;
+            auto& t=element.transform;
+            image_db->image_scene_table.insert(key,[&](ImageDB::ImageScene& record){
+                auto [px,py]=t.position;
+                auto [sx,sy]=t.size;
+                record={element.key,element.sub_key,
+                        px,py,sx,sy,t.rotation,t.z_index};
+        });
+        }
+        image_db->save_scene();    
     }
-    void load_scene_from_db(){
-        
-    }
-    void add_unit(const std::string& key, ImageType type,const ImVec2& center_pos={350,150},int z_index=0,float rotation=0.f){
+        void add_unit(const std::string& key, ImageType type,const ImVec2& center_pos={350,150},int z_index=0,float rotation=0.f,const ImVec2& p_size={-1,-1}){
         if(type==ImageType::MainImage){
             image_db->main_texture_table.select_by_key(key,
         [&](ImageDB::MainTexture& r){
             if(r.key==""){Logger::log(8,"Database_MainImage don't have [{}]",key); return;}
             int id=id_pool.allocateID();
-            list[id]={id,r.key,"",r.texture_id,{center_pos,{150,150/r.aspect_ratio},10,z_index}};
+            ImVec2 size=p_size.x<0?ImVec2{150,150/r.aspect_ratio}:p_size;
+            list[id]={id,r.key,"",r.texture_id,{center_pos,size,rotation,z_index}};
             list2.push_back({z_index,id});
         }
         );
@@ -131,13 +140,24 @@ private:
             if(r.key==""){Logger::log(8,"Database_SubImage don't have [{}]",key); return;}
             int id=id_pool.allocateID();
             float inv_ratio=r.get_sub_inv_ratio();
-            list[id]={id,r.key,"",r.texture_id,{center_pos,{150,150*inv_ratio},45,z_index},
+            ImVec2 size=p_size.x<0?ImVec2{150,150*inv_ratio}:p_size;
+            list[id]={id,r.key,r.sub_key,r.texture_id,{center_pos,size,rotation,z_index},
             r.left,r.right,r.top,r.bottom};
             list2.push_back({z_index,id});
         }
         );
         }
     }
+    void load_scene_from_db(){
+        image_db->load_scene_from_file();
+        image_db->image_scene_table.select_all([&](ImageDB::ImageScene& r){
+            int id=id_pool.allocateID();
+            ImageType type=r.sub_key==""?ImageType::MainImage:ImageType::SubImage;
+            std::string key=r.sub_key==""?r.key:r.sub_key;
+            add_unit(key,type,{r.px,r.py},r.z,r.r,{r.sx,r.sy});
+        });
+    }
+
 public:
     void init(ImageDB* p_image_db){
         image_db=p_image_db;       
@@ -147,9 +167,9 @@ public:
         id_pool.init(30);
     }
     void load_from_db(){
-        //add_unit("Cream_Puff2",ImageType::MainImage);
-        add_unit("Cream_Puff",ImageType::MainImage);
-        add_unit("Basic Charakter Actions2",ImageType::SubImage);
+        // add_unit("Cream_Puff",ImageType::MainImage);
+        // add_unit("Basic Charakter Actions2",ImageType::SubImage);
+        load_scene_from_db();
     }
 
     void render(){
@@ -194,7 +214,7 @@ public:
             if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
                 ImGui::BeginTooltip();
                 auto& t = state.current_unit->transform;
-                ImGui::Text("%s", state.current_unit->key.c_str());
+                ImGui::Text("%s_%s", state.current_unit->key.c_str(), state.current_unit->sub_key.c_str());
                 ImGui::Text("id:       %d", state.current_unit->id);
                 ImGui::Text("pos:      %.1f %.1f", t.position.x, t.position.x);
                 ImGui::Text("size:     %.1f %.1f", t.size.x, t.size.x);
@@ -218,6 +238,9 @@ public:
         if(ImGui::InputText("scene key",state.input_text,64,ImGuiInputTextFlags_EnterReturnsTrue)){     
         }
         set_drop_area();
+        if(ImGui::Button("Save")){
+            save_to_db();
+        }
         ImGui::End();
     }
 };

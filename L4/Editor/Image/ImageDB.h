@@ -6,6 +6,8 @@
 #include "L1/Render/Renderer.h"
 #include "L1/Object/SignalObject.h"
 #include "L1/App/Config.h"
+#include "L1/Debug/TimeMeasure.h"
+
 enum class ImageType{MainImage, SubImage};
 class ImageDB{
 public:
@@ -40,11 +42,27 @@ public:
     void set_renderer(Render* p_renderer){
         renderer=p_renderer;
     }
+    // std::unordered_map<std::string,std::vector<std::string>> image_tasks;
+    // void async_load_image(){
+    //     ScriptObject so;
+    //     so.execute(Config::getInstance().get("lua_script_file")+"/data/image2.lua");
+    //     sol::table image_list=so.script["main_images"];
+    //     int n=5;
+    //     for(int i=0;i<n;i++){
+    //         sol::table& imageTable = image_list[i]second.as<sol::table>();
+    //         std::string name = imageTable[1];
+    //         image_tasks[name].push_back()
+    //     }
+    // }
     void load_from_file(){
+        //异步图像加载功能
+        MEASURE_TIME(
         ScriptObject so;
         so.execute(Config::getInstance().get("lua_script_file")+"/data/image2.lua");
         sol::table image_list=so.script["main_images"];
+
         TextureDB& texture_db=renderer->get_texture_db();
+        ) 
         for(auto& r:image_list){
             sol::table& imageTable = r.second.as<sol::table>();
             std::string name = imageTable[1];
@@ -52,6 +70,7 @@ public:
             Texture* texture = texture_db.load(name,path);
             insert_main_texture(name,texture->get_id(),(float)texture->w/texture->h,path);
         }
+        
         sol::table sub_image_list=so.script["sub_images"];
             for(auto& r:sub_image_list){
             sol::table& imageTable = r.second.as<sol::table>();
@@ -64,6 +83,8 @@ public:
             float bottom=imageTable[6];
             insert_sub_texture(subkey,key,texture->get_id(),left,right,top,bottom,(float)texture->w/texture->h);
         }
+
+               
     }
     void insert_main_texture(std::string key,int texture_id,float aspect_radio=1.f,std::string path=""){
         main_texture_table.insert(key,[=](MainTexture& record){
@@ -93,6 +114,42 @@ public:
         oss << "\n}";
 
         std::ofstream outputFile("C:/Users/21wyc/Documents/Project/SimpleEngine/assets/Script/data/image2.lua");
+        if (!outputFile.is_open()) {
+            std::cerr << "Error: Unable to open the file." << std::endl;
+            return; // 退出程序，表示出错
+        }
+        outputFile << oss.str();
+        outputFile.close();
+    }
+    void load_scene_from_file(){
+        ScriptObject so;
+        so.execute(Config::getInstance().get("lua_script_file")+"/data/image_scene.lua");
+        sol::table image_list=so.script["image_scene"];
+        for(auto& r:image_list){
+            sol::table& imageTable = r.second.as<sol::table>();
+            std::string key = imageTable[1];
+            std::string sub_key = imageTable[2];
+            float px = imageTable[3];
+            float py = imageTable[4];
+            float sx = imageTable[5];
+            float sy = imageTable[6];
+            float r = imageTable[7];
+            int z = imageTable[8];
+            image_scene_table.insert(key+"_"+sub_key,[=](ImageScene& record){
+                record={key,sub_key,px,py,sx,sy,r,z};
+            });
+        }
+    }
+    void save_scene(){
+        std::ostringstream oss;
+        oss << "image_scene={\n";
+        image_scene_table.select_all([&](ImageScene& record){
+            oss<<"\t{\n\t\t\""<<record.key<<"\",\n\t\t\""<<record.sub_key
+            <<"\",\n\t\t"<<std::fixed << std::setprecision(1)<<record.px
+            <<","<<record.py<<","<<record.sx<<","<<record.sy<<","<<record.r<<","<<record.z<<"\n\t},\n";
+        });
+        oss << "\n}";
+        std::ofstream outputFile("C:/Users/21wyc/Documents/Project/SimpleEngine/assets/Script/data/image_scene.lua");
         if (!outputFile.is_open()) {
             std::cerr << "Error: Unable to open the file." << std::endl;
             return; // 退出程序，表示出错
