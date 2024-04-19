@@ -28,9 +28,13 @@ bool is_point_inside_rectangle(ImVec2 point,ImVec2  rect_center, float rect_widt
     );
 }
 
-bool is_point_inside_rectangle2(ImVec2 point, ImVec2 topleft, ImVec2 bottomright) {
-    return (point.x >= topleft.x && point.x <= bottomright.x &&
-            point.y <= topleft.y && point.y >= bottomright.y);
+bool is_point_inside_rectangle(ImVec2 point, ImVec2 topleft, ImVec2 bottomright, bool top_big=true) {
+    if(top_big)
+        return (point.x >= topleft.x && point.x <= bottomright.x &&
+                point.y <= topleft.y && point.y >= bottomright.y);
+    else
+        return (point.x >= topleft.x && point.x <= bottomright.x &&
+                point.y >= topleft.y && point.y <= bottomright.y);
 }
 
 float distance(const ImVec2& p1, const ImVec2& p2) {

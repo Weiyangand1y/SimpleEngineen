@@ -30,6 +30,7 @@ private:
     struct State{
         UnitData* current_unit=nullptr;
         ImVec2 start_pos;
+        ImVec2 start_click_pos;
         ImVec2 object_start_pos;
         bool is_dragging=false;
         bool some_clicked=false;
@@ -39,6 +40,13 @@ private:
     std::vector<ZindexPair> list2;           //<z-index, id> need sort before
     ImageDB* image_db=nullptr;    
     State state;
+    void set_z_index(int id,int z_index){
+        for (auto& e : list2) {
+            if (e.id == id) {
+                e.z_index = z_index;
+            }
+        }
+    }
     void set_drop_area(){
         if(ImGui::BeginDragDropTarget()){
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("key")){
@@ -69,20 +77,24 @@ private:
                 {unit.left,unit.right,unit.top,unit.bottom}
             );
     }
-    void draw_border(UnitData& unit,const ImVec2& start_pos){
-        auto* draw_list=ImGui::GetWindowDrawList();       
-        auto& t=state.current_unit->transform;
-        ImVec2 target_pos=start_pos+t.position;
+    void calculate_rect(ImVec2 vertex[4],UnitData& unit){
+        auto& t=unit.transform;
+        ImVec2 target_pos=state.start_pos+t.position;
         float rr=glm::radians(t.rotation);
         ImVec2 f1={cosf(rr),sinf(rr)};
         ImVec2 f2={-sinf(rr),cosf(rr)};
         float d=10.f;
         ImVec2 r1=t.size*ImVec2{0.5f,0.5f}+ImVec2{d,d},r2=t.size*ImVec2{-0.5f,0.5f}+ImVec2{-d,d};
         ImVec2 r3=t.size*ImVec2{-0.5f,-0.5f}+ImVec2{-d,-d},r4=t.size*ImVec2{0.5f,-0.5f}+ImVec2{d,-d};
-        ImVec2  p[4]={target_pos+ImVec2{ dot(f1,r1),  dot(f2,r1) },
-                target_pos+ImVec2{ dot(f1,r2),  dot(f2,r2) },
-                target_pos+ImVec2{ dot(f1,r3),  dot(f2,r3) },
-                target_pos+ImVec2{ dot(f1,r4),  dot(f2,r4) }};
+        vertex[0]=target_pos+ImVec2{ dot(f1,r1),  dot(f2,r1) };
+        vertex[1]=target_pos+ImVec2{ dot(f1,r2),  dot(f2,r2) };
+        vertex[2]=target_pos+ImVec2{ dot(f1,r3),  dot(f2,r3) };
+        vertex[3]=target_pos+ImVec2{ dot(f1,r4),  dot(f2,r4) };
+    }
+    void draw_border(UnitData& unit,const ImVec2& start_pos){
+        auto* draw_list=ImGui::GetWindowDrawList();     
+        ImVec2  p[4];//4个顶点 (1,1) (-1,1) (-1,-1) (1,-1)
+        calculate_rect(p,*state.current_unit);
         draw_list->AddQuad(p[0],p[1],p[2],p[3],IM_COL32(0,0,0,255),2.f);
         ImVec2 small_size=ImVec2(5.f,5.f);
         for(auto& small_p:p){
@@ -119,7 +131,7 @@ private:
             if(r.key==""){Logger::log(8,"Database_SubImage don't have [{}]",key); return;}
             int id=id_pool.allocateID();
             float inv_ratio=r.get_sub_inv_ratio();
-            list[id]={id,r.key,"",r.texture_id,{center_pos,{50,50*inv_ratio},45,z_index},
+            list[id]={id,r.key,"",r.texture_id,{center_pos,{150,150*inv_ratio},45,z_index},
             r.left,r.right,r.top,r.bottom};
             list2.push_back({z_index,id});
         }
@@ -147,6 +159,7 @@ public:
         ImVec2 start_pos=ImGui::GetWindowPos();
         start_pos.y+=50;
         start_pos.x+=30;
+        state.start_pos=start_pos;
         bool some_clicked=false;
         std::stable_sort(list2.begin(),list2.end(),[](const ZindexPair&a, const ZindexPair& b){return a.z_index<b.z_index;});
         for(auto it=list2.begin();it!=list2.end();++it){
@@ -160,35 +173,49 @@ public:
                 if(is_inside_unit_rect(mouse_pos,target_pos,unit)){   
                     state.current_unit=&unit;
                     state.object_start_pos=unit.transform.position;
-                    state.start_pos=mouse_pos;
+                    state.start_click_pos=mouse_pos;
                     state.is_dragging=true;
                     debug("{}\n",unit.key);
-                    some_clicked=true;
+                    some_clicked=true;                   
                 }               
             }
             
         }//end for
-        if(!some_clicked&&ImGui::IsMouseClicked(ImGuiMouseButton_Left))state.current_unit=nullptr;
+        if(!some_clicked&&ImGui::IsMouseClicked(ImGuiMouseButton_Left)
+                &&is_point_inside_rectangle(ImGui::GetMousePos(),start_pos,{500,500},false))
+            state.current_unit=nullptr;
         if(state.current_unit){
             auto mouse_pos=ImGui::GetMousePos();
             if(ImGui::IsMouseReleased(ImGuiMouseButton_Left))state.is_dragging=false;
             if(state.is_dragging){
-                state.current_unit->transform.position=state.object_start_pos+mouse_pos-state.start_pos;
+                state.current_unit->transform.position=state.object_start_pos+mouse_pos-state.start_click_pos;
             }
             draw_border(*state.current_unit,start_pos);
+            if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
+                ImGui::BeginTooltip();
+                auto& t = state.current_unit->transform;
+                ImGui::Text("%s", state.current_unit->key.c_str());
+                ImGui::Text("id:       %d", state.current_unit->id);
+                ImGui::Text("pos:      %.1f %.1f", t.position.x, t.position.x);
+                ImGui::Text("size:     %.1f %.1f", t.size.x, t.size.x);
+                ImGui::Text("rotation: %.1f", t.rotation);
+                ImGui::Text("z-index : %d", t.z_index);
+                ImGui::EndTooltip();
+            }
         }
         draw_list->AddLine(start_pos,{start_pos.x+350,start_pos.y+150},0x998866ff,3.f);
         ImGui::EndChild();
         drop_to_here(start_pos);
-        ImGui::Text("Input image key to add");
-        
-        if(ImGui::InputText("image_key",state.input_text,64,ImGuiInputTextFlags_EnterReturnsTrue)){
-            std::string content=std::string(state.input_text);
-            if(content.substr(0,4)=="sub-"){
-                add_unit(content.substr(4),ImageType::SubImage);
-            }else{
-                add_unit(content,ImageType::MainImage);
-            }        
+        ImGui::Text("Information");
+        if(state.current_unit){
+            ImGui::DragFloat("rotation",&state.current_unit->transform.rotation,1.f,-180.f,180.f);
+            ImGui::DragFloat2("size",&state.current_unit->transform.size.x,1.f,0.f,600.f);
+            if(ImGui::InputInt("z-index",&state.current_unit->transform.z_index,1)){
+                set_z_index(state.current_unit->id,state.current_unit->transform.z_index);
+            }
+        }
+        ImGui::Text("Input Scene key");
+        if(ImGui::InputText("scene key",state.input_text,64,ImGuiInputTextFlags_EnterReturnsTrue)){     
         }
         set_drop_area();
         ImGui::End();
