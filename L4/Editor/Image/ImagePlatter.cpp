@@ -26,7 +26,7 @@ void ImagePlatter::drop_to_here(){
     if(ImGui::BeginDragDropTarget()){
         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("key")){
             add_unit(
-                std::string((const char*)payload->Data,payload->DataSize),
+                std::string((const char*)payload->Data),
                 ImageType::MainImage,
                 {center_pos}
                 );
@@ -96,8 +96,9 @@ void ImagePlatter::save_to_db(){
     }
     image_db->save_scene();    
 }
-    void ImagePlatter::add_unit(const std::string& key, ImageType type,const Transform& transform){
+int ImagePlatter::add_unit(const std::string& key, ImageType type,const Transform& transform){
     auto [center_pos,p_size,rotation,z_index]=transform;
+    int return_id=-1;
     if(type==ImageType::MainImage){
         image_db->main_texture_table.select_by_key(
             key,
@@ -110,6 +111,7 @@ void ImagePlatter::save_to_db(){
                 ImVec2 size=p_size.x<0?ImVec2{150,150/r.aspect_ratio}:p_size;
                 list[id]={id,r.key,"",r.texture_id,{center_pos,size,rotation,z_index}};
                 list2.push_back({z_index,id});
+                return_id=id;
             }
     );//lambda end
     }else if(type==ImageType::SubImage){
@@ -123,9 +125,11 @@ void ImagePlatter::save_to_db(){
                 list[id]={id,r.key,r.sub_key,r.texture_id,{center_pos,size,rotation,z_index},
                 r.left,r.right,r.top,r.bottom};
                 list2.push_back({z_index,id});
+                return_id=id;
             }
     );//lambda end
     }
+    return return_id;
 }
 void ImagePlatter::load_scene_from_db(){
     image_db->load_scene_from_file();
@@ -219,5 +223,43 @@ void ImagePlatter::render(){
     if(ImGui::Button("Save")){
         save_to_db();
     }
+
+    if (ImGui::Button("do")) {
+        undo_list.push_back(std::make_shared<AddCommand>("Cream_Puff", ImageType::MainImage, ImVec2(350, 150), this));
+        undo_list.back()->execute();
+    }
+    if (ImGui::Button("undo")) {
+        if (!undo_list.empty()) {
+            undo_list.back()->undo();
+            redo_list.push_back(std::move(undo_list.back()));
+            undo_list.pop_back();
+        }
+    }
+    if(ImGui::Button("redo")){
+        if(!redo_list.empty()){
+            redo_list.back()->execute();
+            undo_list.push_back(std::move(redo_list.back()));
+            redo_list.pop_back();
+        }
+    }
     ImGui::End();
+    
+}
+
+ImagePlatter::AddCommand::AddCommand(std::string key,ImageType type,ImVec2 pos,ImagePlatter* env)
+    :env(env),pos(pos),key(key),type(type){}
+
+void ImagePlatter::AddCommand::execute() {
+    int return_id=env->add_unit(key,type,{pos});
+    if(return_id==-1)Logger::log(8,"AddCommand failed");
+    id=return_id;
+}
+
+void ImagePlatter::AddCommand::undo() {
+    debug("undo\n");
+    env->list.erase(id);
+    env->list2.erase(std::remove_if(env->list2.begin(),env->list2.end(),
+                        [&](const auto& e){return e.id==id;})
+                    );
+    env->id_pool.releaseID(id);
 }
