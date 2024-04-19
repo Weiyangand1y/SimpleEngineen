@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iomanip>
 #include "L1/Render/Renderer.h"
-#include "L1/Object/SignalObject.h"
+#include "L1/Object/ScriptObject.h"
 #include "L1/App/Config.h"
 #include "L1/Debug/TimeMeasure.h"
 

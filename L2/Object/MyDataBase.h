@@ -20,12 +20,13 @@ public:
 
 
     void select_by_key(const std::string& id,std::function<void(T& record)> callback){
-        if(records.find(id)==records.end()){
+        auto it = records.find(id);
+        if(it == records.end()){
             T empty;
             callback(empty);
             return;
         }
-        callback(records[id]);
+        callback(it->second);
     }
 
 

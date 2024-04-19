@@ -45,7 +45,7 @@ class ImageCut{
     void set_drag(const char* type,const std::string& data){
         if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
             ImGui::Text(data.c_str());
-            ImGui::SetDragDropPayload(type, data.c_str(), data.size());
+            ImGui::SetDragDropPayload(type, data.c_str(), data.size()+1);
             ImGui::EndDragDropSource();
         }
     }
