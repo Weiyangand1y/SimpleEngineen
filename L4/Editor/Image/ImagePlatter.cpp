@@ -2,21 +2,15 @@
 #include "rect_math.h"
 #include <algorithm>
 
-void ImagePlatter::set_z_index(int id,int z_index){
+void ImagePlatter::sort_unit_by_z_index() {
+    std::stable_sort(list2.begin(),list2.end(),[](const ZindexPair&a, const ZindexPair& b){return a.z_index<b.z_index;});
+}
+
+void ImagePlatter::set_z_index(int id, int z_index) {
     for (auto& e : list2) {
         if (e.id == id) {
             e.z_index = z_index;
         }
-    }
-}
-void ImagePlatter::set_drop_area(){
-    if(ImGui::BeginDragDropTarget()){
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("key")){
-            debug("{}   ----{}------",(const char*)payload->Data,payload->DataSize);
-            strncpy(state.input_text,(const char*)payload->Data,payload->DataSize);
-            debug("{}\n",state.input_text);
-        }
-        ImGui::EndDragDropTarget();
     }
 }
 
@@ -64,16 +58,9 @@ void ImagePlatter::calculate_rect(ImVec2 vertex[4],UnitData& unit){
     vertex[3]=target_pos+ImVec2{ dot(f1,r4),  dot(f2,r4) };
 }
 
-void ImagePlatter::draw_border(UnitData& unit){
-    auto* draw_list=ImGui::GetWindowDrawList();     
-    ImVec2  p[4];//4个顶点 (1,1) (-1,1) (-1,-1) (1,-1)
-    calculate_rect(p,*state.current_unit);
-    draw_list->AddQuad(p[0],p[1],p[2],p[3],IM_COL32(0,0,0,255),2.f);
-    ImVec2 small_size=ImVec2(5.f,5.f);
-    for(auto& small_p:p){
-        draw_list->AddRectFilled(small_p-small_size,small_p+small_size,0xffffffff);
-        draw_list->AddRect(small_p-small_size,small_p+small_size,IM_COL32_BLACK,0.f,0,2.f);
-    }
+void ImagePlatter::handle_border(UnitData& unit){  
+    calculate_rect(state.rect_vertex,*state.current_unit);    
+    if(ImGui::IsMouseClicked(ImGuiMouseButton_Left))state.resize_state.some_clicked=false;
 }
 
 bool ImagePlatter::is_inside_unit_rect(const ImVec2& mouse_pos,const ImVec2& target_pos,UnitData& unit){
@@ -141,6 +128,33 @@ void ImagePlatter::load_scene_from_db(){
     });
 }
 
+void ImagePlatter::handle_control_point(const ImVec2& point) {
+    float r=5.f;
+    ImVec2 mouse_pos=ImGui::GetMousePos();
+    auto delta=mouse_pos-point;
+    if(dot(delta,delta)<r*r){
+        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+        if(ImGui::IsMouseClicked(ImGuiMouseButton_Left)){
+            debug("resize\n");
+            state.resize_state.some_clicked=true;
+        }
+    }
+}
+
+void ImagePlatter::draw_border() {
+    auto* draw_list=ImGui::GetWindowDrawList();   
+    draw_list->AddQuad(state.rect_vertex[0],state.rect_vertex[1],
+                       state.rect_vertex[2],state.rect_vertex[3],IM_COL32(0,0,0,255),2.f);
+    ImVec2 small_size=ImVec2(5.f,5.f);
+    for(auto& small_p:state.rect_vertex){
+        ImVec2 left_top=small_p-small_size;
+        ImVec2 right_bottom=small_p+small_size;
+        draw_list->AddRectFilled(left_top,right_bottom,0xffffffff);
+        draw_list->AddRect(left_top,right_bottom,IM_COL32_BLACK,0.f,0,2.f);
+        handle_control_point(small_p);
+    }
+}
+
 void ImagePlatter::init(ImageDB* p_image_db){
     image_db=p_image_db;       
     load_from_db();
@@ -159,40 +173,35 @@ void ImagePlatter::render(){
     ImGui::BeginChild("canvas",{500,500},ImGuiChildFlags_Border,ImGuiWindowFlags_NoMove);
     auto* draw_list=ImGui::GetWindowDrawList();        
     ImVec2 start_pos=ImGui::GetWindowPos();
-    start_pos.y+=50;
-    start_pos.x+=30;
+    start_pos+={30,50};
     state.start_pos=start_pos;
-    bool some_clicked=false;
-    std::stable_sort(list2.begin(),list2.end(),[](const ZindexPair&a, const ZindexPair& b){return a.z_index<b.z_index;});
+    state.move_state.some_clicked=false;
+    sort_unit_by_z_index();
+    //先处理边框，防止点击边框时实际为点击了其他元素或清空unit
+    if(state.current_unit){
+        handle_border(*state.current_unit);
+    }
     for(auto it=list2.begin();it!=list2.end();++it){
         auto& unit=list[it->id];
-        ImGui::Text("%s",unit.key.c_str());
-        ImGui::SetNextItemAllowOverlap();
         ImVec2 target_pos=start_pos+unit.transform.position;
         draw_image(unit,target_pos);
-        if(ImGui::IsMouseClicked(ImGuiMouseButton_Left)){   
-            auto mouse_pos=ImGui::GetMousePos();            
-            if(is_inside_unit_rect(mouse_pos,target_pos,unit)){   
-                state.current_unit=&unit;
-                state.object_start_pos=unit.transform.position;
-                state.start_click_pos=mouse_pos;
-                state.is_dragging=true;
-                debug("{}\n",unit.key);
-                some_clicked=true;                   
-            }               
-        }
-        
+        handle_canvas_clicked(target_pos, unit);
     }//end for
-    if(!some_clicked&&ImGui::IsMouseClicked(ImGuiMouseButton_Left)
-            &&is_point_inside_rectangle(ImGui::GetMousePos(),start_pos,{500,500},false))
+    draw_border();
+    if(!state.move_state.some_clicked&&ImGui::IsMouseClicked(ImGuiMouseButton_Left)
+            &&is_point_inside_rectangle(ImGui::GetMousePos(),start_pos,{500,500},false)
+            &&!state.resize_state.some_clicked)
         state.current_unit=nullptr;
     if(state.current_unit){
         auto mouse_pos=ImGui::GetMousePos();
-        if(ImGui::IsMouseReleased(ImGuiMouseButton_Left))state.is_dragging=false;
-        if(state.is_dragging){
-            state.current_unit->transform.position=state.object_start_pos+mouse_pos-state.start_click_pos;
+        if(ImGui::IsMouseReleased(ImGuiMouseButton_Left))state.move_state.is_dragging=false;
+        if(state.move_state.is_dragging){
+            state.current_unit->transform.position=
+                 state.move_state.object_start_pos
+                +mouse_pos
+                -state.move_state.start_click_pos;
         }
-        draw_border(*state.current_unit);
+        
         if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
             ImGui::BeginTooltip();
             auto& t = state.current_unit->transform;
@@ -205,7 +214,6 @@ void ImagePlatter::render(){
             ImGui::EndTooltip();
         }
     }
-    draw_list->AddLine(start_pos,{start_pos.x+350,start_pos.y+150},0x998866ff,3.f);
     ImGui::EndChild();
     drop_to_here();
     ImGui::Text("Information");
@@ -219,14 +227,20 @@ void ImagePlatter::render(){
     ImGui::Text("Input Scene key");
     if(ImGui::InputText("scene key",state.input_text,64,ImGuiInputTextFlags_EnterReturnsTrue)){     
     }
-    set_drop_area();
+
     if(ImGui::Button("Save")){
         save_to_db();
     }
 
-    if (ImGui::Button("do")) {
+    if (ImGui::Button("Add")) {
         undo_list.push_back(std::make_shared<AddCommand>("Cream_Puff", ImageType::MainImage, ImVec2(350, 150), this));
         undo_list.back()->execute();
+    }
+    if(ImGui::Button("Delete")){
+        if(state.current_unit){
+            undo_list.push_back(std::make_shared<DeleteCommand>(state.current_unit->id, this));
+            undo_list.back()->execute();
+        }
     }
     if (ImGui::Button("undo")) {
         if (!undo_list.empty()) {
@@ -243,7 +257,20 @@ void ImagePlatter::render(){
         }
     }
     ImGui::End();
-    
+}
+
+void ImagePlatter::handle_canvas_clicked(ImVec2& target_pos,ImagePlatter::UnitData& unit) {
+    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+        auto mouse_pos = ImGui::GetMousePos();
+        if (!state.resize_state.some_clicked && is_inside_unit_rect(mouse_pos, target_pos, unit)) {
+            state.current_unit = &unit;
+            state.move_state.object_start_pos = unit.transform.position;
+            state.move_state.start_click_pos = mouse_pos;
+            state.move_state.is_dragging = true;
+            debug("{}\n", unit.key);
+            state.move_state.some_clicked = true;
+        }
+    }
 }
 
 ImagePlatter::AddCommand::AddCommand(std::string key,ImageType type,ImVec2 pos,ImagePlatter* env)
@@ -262,4 +289,22 @@ void ImagePlatter::AddCommand::undo() {
                         [&](const auto& e){return e.id==id;})
                     );
     env->id_pool.releaseID(id);
+}
+
+ImagePlatter::DeleteCommand::DeleteCommand(int id, ImagePlatter* env) {
+    this->id = id;
+    this->env = env;
+    data = env->list[id];   
+}
+
+void ImagePlatter::DeleteCommand::execute() {
+    env->list.erase(id);
+    env->list2.erase(std::remove_if(env->list2.begin(),env->list2.end(),
+                        [&](const auto& e){return e.id==id;})
+                    );
+    env->id_pool.releaseID(id);
+}
+
+void ImagePlatter::DeleteCommand::undo() {
+    env->add_unit(data.key, data.sub_key == "" ? ImageType::MainImage : ImageType::SubImage, data.transform);
 }

@@ -29,50 +29,74 @@ private:
         int z_index;
         int id;
     };
-    struct State{
-        UnitData* current_unit=nullptr;
-        ImVec2 start_pos;
+    struct MoveState{
         ImVec2 start_click_pos;
         ImVec2 object_start_pos;
         bool is_dragging=false;
         bool some_clicked=false;
+    };
+    struct ReSizeState{
+        ImVec2 fixed_pos;
+        ImVec2 move_pos;
+        bool is_dragging=false;
+        bool some_clicked=false;
+    };
+    struct State{
+        ImVec2 start_pos;
+        UnitData* current_unit=nullptr;
+        MoveState move_state;
+        ReSizeState resize_state;
+        ImVec2  rect_vertex[4];
         char input_text[64]={0};
     };
     std::unordered_map <int,UnitData> list;//<id, unit_data>
     std::vector        <ZindexPair>   list2;        //<z-index, id> need sort before
     ImageDB* image_db=nullptr;    
     State state;
+    void sort_unit_by_z_index();
     void set_z_index(int id,int z_index);
-    void set_drop_area();
     void drop_to_here();
     void draw_image(UnitData& unit,const ImVec2& target_pos);
     void calculate_rect(ImVec2 vertex[4],UnitData& unit);
-    void draw_border(UnitData& unit);
+    void handle_border(UnitData& unit);
     bool is_inside_unit_rect(const ImVec2& mouse_pos,const ImVec2& target_pos,UnitData& unit);
     void save_to_db();
     int  add_unit(const std::string& key, ImageType type,const Transform& transform);
     void load_scene_from_db();
+    void handle_control_point(const ImVec2& point);
+    void draw_border();
 public:
     void init(ImageDB* p_image_db);
     ImagePlatter();
     void load_from_db();
     void render();
-private:
-class AddCommand:public Command{
-    std::string key;
-    ImageType type;
-    ImVec2 pos;
-    ImagePlatter* env;
+    void handle_canvas_clicked(ImVec2& target_pos,ImagePlatter::UnitData& unit);
 
-    int id;//to delete
-public:
-    AddCommand(std::string key,ImageType type, ImVec2 pos,ImagePlatter* env);
-    void execute()override;
-    void undo()override;
-};
+   private:
+    class AddCommand : public Command {
+        std::string key;
+        ImageType type;
+        ImVec2 pos;
+        ImagePlatter* env;
+
+        int id;  // to delete
+       public:
+        AddCommand(std::string key,
+                   ImageType type,
+                   ImVec2 pos,
+                   ImagePlatter* env);
+        void execute() override;
+        void undo() override;
+    };
 
 class DeleteCommand:public Command{
-
+    int id;
+    ImagePlatter* env;
+    UnitData data;
+public:
+    DeleteCommand(int id,ImagePlatter* env);
+    void execute()override;
+    void undo()override;
 };
 
 class MoveCommand:public Command{
