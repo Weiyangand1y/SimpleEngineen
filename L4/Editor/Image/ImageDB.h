@@ -126,6 +126,7 @@ public:
         ScriptObject so;
         so.execute(Config::getInstance().get("lua_script_file")+"/data/image_scene.lua");
         sol::table image_list=so.script["image_scene"];
+        int i=0;
         for(auto& r:image_list){
             sol::table& imageTable = r.second.as<sol::table>();
             std::string key = imageTable[1];
@@ -136,7 +137,7 @@ public:
             float sy = imageTable[6];
             float r = imageTable[7];
             int z = imageTable[8];
-            image_scene_table.insert(key+"_"+sub_key,[=](ImageScene& record){
+            image_scene_table.insert(key+"_"+sub_key+std::to_string(i++),[=](ImageScene& record){
                 record={key,sub_key,px,py,sx,sy,r,z};
             });
         }

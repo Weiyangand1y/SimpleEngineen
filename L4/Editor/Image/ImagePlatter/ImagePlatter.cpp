@@ -274,7 +274,7 @@ void ImagePlatter::init(ImageDB* p_image_db){
     load_from_db();
 }
 ImagePlatter::ImagePlatter(){
-    id_pool.init(30);
+    id_pool.init(60);
 }
 void ImagePlatter::load_from_db(){
     // add_unit("Cream_Puff",ImageType::MainImage);
