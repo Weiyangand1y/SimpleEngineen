@@ -13,7 +13,7 @@ void ImagePlatterCommand::AddCommand::execute() {
 void ImagePlatterCommand::AddCommand::undo() {
     debug("undo\n");
     env->list.erase(id);
-    env->list2.erase(std::remove_if(env->list2.begin(),env->list2.end(),
+    env->z_index_record.erase(std::remove_if(env->z_index_record.begin(),env->z_index_record.end(),
                         [&](const auto& e){return e.id==id;})
                     );
     env->id_pool.releaseID(id);
@@ -27,7 +27,7 @@ ImagePlatterCommand::DeleteCommand::DeleteCommand(int id, ImagePlatter* env) {
 
 void ImagePlatterCommand::DeleteCommand::execute() {
     env->list.erase(id);
-    env->list2.erase(std::remove_if(env->list2.begin(),env->list2.end(),
+    env->z_index_record.erase(std::remove_if(env->z_index_record.begin(),env->z_index_record.end(),
                         [&](const auto& e){return e.id==id;})
                     );
     env->id_pool.releaseID(id);
