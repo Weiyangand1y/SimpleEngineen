@@ -10,7 +10,7 @@
 #include "L4/Editor/Image/ImageLoad.h"
 #include "L4/Editor/Image/ImageCut.h"
 #include "L4/Editor/Image/ImageDB.h"
-#include "L4/Editor/Image/ImagePlatter.h"
+#include "L4/Editor/Image/ImagePlatter/ImagePlatter.h"
 #include "L4/Editor/Console/ImConsole.h"
 
 class TestApplication:public Application{

@@ -38,6 +38,7 @@ public:
     MyDatabase<MainTexture> main_texture_table;
     MyDatabase<SubTexture> sub_texture_table;
     MyDatabase<ImageScene> image_scene_table;
+    MyDatabase<ImageScene> image_scene_table2;
     Render* renderer=nullptr;
     void set_renderer(Render* p_renderer){
         renderer=p_renderer;
@@ -143,7 +144,7 @@ public:
     void save_scene(){
         std::ostringstream oss;
         oss << "image_scene={\n";
-        image_scene_table.select_all([&](ImageScene& record){
+        image_scene_table2.select_all([&](ImageScene& record){
             oss<<"\t{\n\t\t\""<<record.key<<"\",\n\t\t\""<<record.sub_key
             <<"\",\n\t\t"<<std::fixed << std::setprecision(1)<<record.px
             <<","<<record.py<<","<<record.sx<<","<<record.sy<<","<<record.r<<","<<record.z<<"\n\t},\n";

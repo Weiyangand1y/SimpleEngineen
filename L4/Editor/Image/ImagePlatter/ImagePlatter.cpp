@@ -58,11 +58,22 @@ void ImagePlatter::calculate_and_update_unit_rect_pos(ImVec2 vertex[4],UnitData&
     vertex[3]=target_pos+ImVec2{ dot(f1,r4),  dot(f2,r4) };
 }
 
+
 void ImagePlatter::handle_border(UnitData& unit){  
     update_border();
     if(ImGui::IsMouseClicked(ImGuiMouseButton_Left))state.resize_state.some_clicked=false;
+    int index=0;
     for(auto& small_p:state.rect_vertex){
-        handle_control_point(small_p);
+        bool result = on_control_point_pre(small_p);
+        if(result)break;
+        index++;
+    }
+    if(state.resize_state.some_clicked){
+        debug("vertex: {}\n",index)
+        state.resize_state.is_dragging=true;
+        state.resize_state.fixed_pos=state.rect_vertex[(index+2)%4];
+        state.resize_state.move_pos=state.rect_vertex[index];
+        state.resize_state.start_click_pos=ImGui::GetMousePos();
     }
 }
 
@@ -76,9 +87,9 @@ bool ImagePlatter::is_inside_unit_rect(const ImVec2& mouse_pos, UnitData& unit){
 void ImagePlatter::save_to_db(){
     for(auto& e:list){
         auto& element=e.second;
-        std::string key=element.key+"_"+element.sub_key;
+        std::string key=element.key+"_"+element.sub_key+std::string("_")+std::to_string(element.id);
         auto& t=element.transform;
-        image_db->image_scene_table.insert(key,[&](ImageDB::ImageScene& record){
+        image_db->image_scene_table2.insert(key,[&](ImageDB::ImageScene& record){
             auto [px,py]=t.position;
             auto [sx,sy]=t.size;
             record={element.key,element.sub_key,
@@ -132,21 +143,20 @@ void ImagePlatter::load_scene_from_db(){
     });
 }
 
-void ImagePlatter::handle_control_point(const ImVec2& point) {
+bool ImagePlatter::on_control_point_pre(const ImVec2& point) {
     float r=5.f;
     ImVec2 mouse_pos=ImGui::GetMousePos();
     auto delta=mouse_pos-point;
     if(dot(delta,delta)<r*r){
-        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-        if(ImGui::IsMouseClicked(ImGuiMouseButton_Left)){
-            debug("resize\n");
-            state.resize_state.some_clicked=true;
-        }
+        state.resize_state.some_clicked=true;
+        return true;      
     }
+    return false;
 }
 
 void ImagePlatter::draw_border() {
     if(!state.current_unit)return;
+    update_border();
     auto* draw_list=ImGui::GetWindowDrawList();   
     draw_list->AddQuad(state.rect_vertex[0],state.rect_vertex[1],
                        state.rect_vertex[2],state.rect_vertex[3],IM_COL32(0,0,0,255),2.f);
@@ -186,11 +196,13 @@ void ImagePlatter::on_canvas_pressed() {
     }
     // 2. 对每个unit处理点击事件
     state.move_state.some_clicked = false;
+    UnitData* tmp_unit_ptr = nullptr;
     for (auto it = list2.begin(); it != list2.end(); ++it) {
         auto& unit = list[it->id];
         bool is_on_click = on_unit_clicked_pre(unit);
-        if(is_on_click)on_unit_clicked(unit);
+        if(is_on_click)tmp_unit_ptr=&unit;
     }
+    if(tmp_unit_ptr)on_unit_clicked(*tmp_unit_ptr);
 
     
     // 3. 如果没有点击到任何unit和边框，清空current_unit
@@ -210,10 +222,19 @@ void ImagePlatter::on_canvas_released() {
 
 void ImagePlatter::on_canvas_dragging() {
     auto mouse_pos = ImGui::GetMousePos();
+    bool hover_on_border=false;
+    for(auto& small_p:state.rect_vertex){
+        bool result = on_control_point_pre(small_p);
+        if(result){hover_on_border=true;break;}
+    }
+    if(hover_on_border)
+        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+    else ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
     if(state.current_unit){
         // 1. resize
         if (state.resize_state.is_dragging) {
             //
+            do_resize();
         }
         // 2. move
         if (state.move_state.is_dragging) {
@@ -359,4 +380,16 @@ void ImagePlatter::update_border() {
     calculate_and_update_unit_rect_pos(state.rect_vertex,*state.current_unit); 
 }
 
-
+void ImagePlatter::do_resize() {
+    auto& t = state.current_unit->transform;
+    auto mouse_pos = ImGui::GetMousePos();
+    auto delta_mouse = mouse_pos - state.resize_state.start_click_pos;
+    auto fixed_pos = state.resize_state.fixed_pos;
+    ImVec2 delta = state.resize_state.move_pos+delta_mouse-fixed_pos;
+    float cc=cosf(t.rotation),ss=sinf(t.rotation);
+    ImVec2 f1={cc,ss},f2={-ss,cc};
+    ImVec2 new_size=ImVec2{ abs(dot(f1,delta)),abs(dot(f2,delta))}-ImVec2{10,10};
+    t.size=new_size;
+    t.position=ImVec2{(fixed_pos+mouse_pos)*ImVec2{0.5f,0.5f}}-state.start_pos;
+    update_border();
+}

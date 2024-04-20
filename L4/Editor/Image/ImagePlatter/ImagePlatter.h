@@ -7,7 +7,7 @@
 #include "ImagePlatterCommand.h"
 #include "ImagePlatterType.h"
 class ImagePlatter{
-    friend class ImagePlatterCommand;
+friend class ImagePlatterCommand;
 private:
     std::vector<std::shared_ptr<Command>> undo_list;
     std::vector<std::shared_ptr<Command>> redo_list;
@@ -22,6 +22,7 @@ private:
     struct ReSizeState{
         ImVec2 fixed_pos;
         ImVec2 move_pos;
+        ImVec2 start_click_pos;
         bool is_dragging=false;
         bool some_clicked=false;
     };
@@ -33,8 +34,8 @@ private:
         ImVec2  rect_vertex[4];
         char input_text[64]={0};
     };
-    std::unordered_map <int,UnitData> list;//<id, unit_data>
-    std::vector        <ZindexPair>   list2;        //<z-index, id> need sort before
+    std::unordered_map <int,UnitData> list; //<id, unit_data>
+    std::vector        <ZindexPair>   list2;//<z-index, id> need sort before
     ImageDB* image_db=nullptr;    
     State state;
     void sort_unit_by_z_index();
@@ -47,7 +48,7 @@ private:
     void save_to_db();
     int  add_unit(const std::string& key, ImageType type,const Transform& transform);
     void load_scene_from_db();
-    void handle_control_point(const ImVec2& point);
+    bool on_control_point_pre(const ImVec2& point);
     void draw_border();
 
     void start_canvas();
@@ -62,6 +63,8 @@ private:
     bool on_unit_clicked_pre(ImagePlatterType::UnitData& unit);
     void on_unit_clicked(ImagePlatterType::UnitData& unit);
     void update_border();
+
+    void do_resize();
 public:
     ImagePlatter();
     void init(ImageDB* p_image_db);   
