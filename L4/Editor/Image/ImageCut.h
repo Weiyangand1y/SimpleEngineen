@@ -74,7 +74,7 @@ class ImageCut{
         ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
             ImGui::SeparatorText(data.key);
             ImGui::PopFont();
-            ImGui::BeginChild("child",{400,400},0,ImGuiWindowFlags_NoMove|ImGuiWindowFlags_HorizontalScrollbar);
+            ImGui::BeginChild("child",{400,400},0,ImGuiWindowFlags_NoMove|ImGuiWindowFlags_HorizontalScrollbar|ImGuiChildFlags_Border|ImGuiChildFlags_ResizeX|ImGuiChildFlags_ResizeY);
             
             ImGui::SetCursorPosX(15);
             draw_image(data.texture_id,{300,300/data.aspect_ratio});
@@ -113,6 +113,8 @@ class ImageCut{
             }
             ImGui::EndChild();
             ImGui::Text("SubImage Key");
+            ImGui::Text("Cut Area");
+            ImGui::DragFloat4("##cut_area",&data.left,0.001f,0.f,1.f);
             ImGui::InputTextWithHint("##subkey","Input sub-image key",data.subkey,sizeof(data.subkey));
             ImGui::SetCursorPosX(100);
             if(ImGui::Button("Save",{150,60})){
@@ -124,6 +126,10 @@ class ImageCut{
             float inv_ratio=(data.top-data.bottom)/((data.right-data.left)*data.aspect_ratio);
             ImGui::SetCursorPosX(15);
             draw_image(data.texture_id,{300,300*inv_ratio},{data.left,data.top},{data.right,data.bottom});
+            auto rect_min2=ImGui::GetItemRectMin();
+            auto rect_max2=ImGui::GetItemRectMax();
+            draw_list->AddRect(rect_min2,rect_max2,IM_COL32(255,0,32,255));
+            draw_list->AddRect(rect_min,rect_max,IM_COL32(77,0,126,255));
             //drag
             //who to click => get_who_clicked(min,max,lrbt) => l,r,b,t,lt,lb,rt,rb
         

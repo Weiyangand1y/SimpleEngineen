@@ -27,10 +27,11 @@ private:
     };
     struct State{
         ImVec2 start_pos;
-        UnitData* current_unit=nullptr;
+        UnitData* selected_unit=nullptr;
         MoveState move_state;
         ReSizeState resize_state;
         ImVec2  rect_vertex[4];
+        int    resize_vertex_index=-1;
         char input_text[64]={0};
     };
     //--------------------------------------------------------------------------------
@@ -47,10 +48,11 @@ private:
     //[caculate]
 
     //check mouse pos if on the unit rect
-    bool is_inside_unit_rect(const ImVec2& mouse_pos, UnitData& unit);
+    bool is_inside_unit_rect(const ImVec2& mouse_pos, const UnitData& unit);
     //check mouse pos if on the control point
     bool on_control_point_pre(const ImVec2& point);
     //more complex, decide if need to move to advoid some unexpected situation
+    //这里是最容易出bug的地方，需要仔细检查
     bool check_if_to_move(ImagePlatterType::UnitData& unit);
     //--------------------------------------------------------------------------------
     //[set data: target data]
@@ -68,10 +70,9 @@ private:
     //[set data: to set state]
 
     //the unit rect is some bigger the unit, show rect frame
-    void calculate_and_update_unit_rect_pos(ImVec2 vertex[4],UnitData& unit);
-    //check if need to resize, yes, set resize state
-    //the function need to separate to two part, one is to check if need to resize, the other is to set resize state
-    void handle_control_point(UnitData& unit);
+    void calculate_and_update_unit_rect_pos(ImVec2 vertex[4],UnitData& unit);   
+    void check_and_update_if_need_resize();
+    void on_resize_start(int& index);
     void on_unit_clicked(ImagePlatterType::UnitData& unit);
     void update_border();
     //--------------------------------------------------------------------------------
@@ -94,10 +95,9 @@ private:
     void on_canvas_pressed();
     void on_canvas_released();
     void on_canvas_mouse_moving();
-
-
     void on_dragging();
 
+    void handle_control_point(UnitData& unit);
     void update_control_area();
     void update_canvas();
 

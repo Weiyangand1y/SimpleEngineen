@@ -31,7 +31,7 @@ void ImagePlatterCommand::DeleteCommand::execute() {
                         [&](const auto& e){return e.id==id;})
                     );
     env->id_pool.releaseID(id);
-    env->state.current_unit = nullptr;
+    env->state.selected_unit = nullptr;
 }
 
 void ImagePlatterCommand::DeleteCommand::undo() {

@@ -27,6 +27,9 @@ class Logger {
         case 2:
           fmt::print(fg(fmt::color::lime_green),args...);
           break;
+        case 3:
+          fmt::print(fg(fmt::color::cyan),args...);
+          break;
         case 8:
           fmt::print(fg(fmt::color::red),args...);
           break;

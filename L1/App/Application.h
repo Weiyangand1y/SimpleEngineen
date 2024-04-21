@@ -4,6 +4,7 @@
 #include "L1/Render/Drawer.h"
 
 class Application{
+bool show_frame_run_time=true;
 protected:
     Window window;//must before the renderer
     Render renderer;

@@ -46,6 +46,15 @@ include_directories(
     ${ASSIMP_PATH}/include
 )
 
+if(MSVC)
+    
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
+    add_compile_options(/wd26451)
+    add_compile_options(/wd4312)
+    add_compile_options("/utf-8")
+endif()
+
+
 add_executable(test01 
                 ./Test/test01.cpp
                 D:/一个文件夹/aLib/glad/src/glad.c
@@ -55,14 +64,8 @@ add_executable(test01
                 ${IMGUI_FILE}
                 )
 
+target_compile_options(test01 PRIVATE /D_CRT_SECURE_NO_WARNINGS )
 
-if(MSVC)
-    target_compile_options(test01 PRIVATE /D_CRT_SECURE_NO_WARNINGS )
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
-    add_compile_options(/wd26451)
-    add_compile_options(/wd4312)
-    add_compile_options("/utf-8")
-endif()
 #-----
 
 # add_executable(test02

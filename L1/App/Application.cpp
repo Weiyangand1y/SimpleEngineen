@@ -1,7 +1,8 @@
 #include "Application.h"
 #include "Config.h"
 #include <iostream>
-
+#include "L1/Debug/Log.h"
+#include "L1/Debug/TimeMeasure.h"
 Application::Application(){
     auto [w,h]=Config::getInstance().get_windows_size();
     window.create(w,h,Config::getInstance().get("title").c_str());
@@ -12,7 +13,10 @@ Application::Application(){
 }
 
 void Application::init() {
-    _init();
+    MEASURE_TIME2(
+        "init ===> ",
+        _init()
+        );
 }
 
 void Application::_init() {
@@ -26,9 +30,14 @@ void Application::run() {
         delta_time = time - old_time;
         window.poll_events();
         renderer.clear_color();
-
         _run();
-
+        if(show_frame_run_time){
+            static int count=0;
+            if(count++%100==0){
+            auto frame_run_time = window.get_time()-time;
+            debug("delta time: {:.3f}ms ___ frame_run_time: {:.3f}  __  rate: {:.2f}% \n",
+                        delta_time*1000.f,frame_run_time*1000.f,frame_run_time*100.f/delta_time);}
+        }
         window.swap_buffers();
     }
 }

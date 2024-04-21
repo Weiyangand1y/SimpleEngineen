@@ -2,7 +2,7 @@
 #include "rect_math.h"
 #include <algorithm>
 
-bool ImagePlatter::is_inside_unit_rect(const ImVec2& mouse_pos, UnitData& unit){
+bool ImagePlatter::is_inside_unit_rect(const ImVec2& mouse_pos, const UnitData& unit){
     ImVec2 target_pos=state.start_pos+unit.transform.position;
     return is_point_inside_rectangle(
                 mouse_pos,target_pos,
@@ -27,9 +27,9 @@ bool ImagePlatter::check_if_to_move(ImagePlatterType::UnitData& unit) {
     bool is_not_resize = !state.resize_state.some_clicked;
     bool is_inside_unit = is_inside_unit_rect(mouse_pos,  unit);
     bool is_inside_current_border = 
-                        state.current_unit 
-                        && state.current_unit!=&unit 
-                        && is_inside_unit_rect(mouse_pos,  *state.current_unit);
+                        state.selected_unit 
+                        && state.selected_unit!=&unit 
+                        && is_inside_unit_rect(mouse_pos,  *state.selected_unit);
     bool result = is_not_resize && is_inside_unit && !is_inside_current_border;
   
     return ( is_not_resize && is_inside_unit && !is_inside_current_border);    
@@ -86,7 +86,7 @@ int ImagePlatter::add_unit(const std::string& key, ImageType type,const Transfor
 }
 
 void ImagePlatter::do_move() {
-    auto& t = state.current_unit->transform;
+    auto& t = state.selected_unit->transform;
     auto mouse_pos = ImGui::GetMousePos();
     auto delta_move = mouse_pos - state.move_state.start_click_pos;
     t.position = state.move_state.object_start_pos + delta_move;
@@ -95,7 +95,7 @@ void ImagePlatter::do_move() {
 
 
 void ImagePlatter::do_resize() {
-    auto& t = state.current_unit->transform;
+    auto& t = state.selected_unit->transform;
     auto mouse_pos = ImGui::GetMousePos();
     auto delta_mouse = mouse_pos - state.resize_state.start_click_pos;
     auto fixed_pos = state.resize_state.fixed_pos;
@@ -153,26 +153,33 @@ void ImagePlatter::calculate_and_update_unit_rect_pos(ImVec2 vertex[4],UnitData&
 }
 
 void ImagePlatter::handle_control_point(UnitData& unit){  
-    update_border();
-    if(ImGui::IsMouseClicked(ImGuiMouseButton_Left))state.resize_state.some_clicked=false;
+    check_and_update_if_need_resize();
+    if (state.resize_state.some_clicked)
+        on_resize_start(state.resize_vertex_index);
+}
+
+void ImagePlatter::check_and_update_if_need_resize() {
+    if(ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+        state.resize_state.some_clicked=false;
     int index=0;
     for(auto& small_p:state.rect_vertex){
         bool result = on_control_point_pre(small_p);
         if(result)break;
         index++;
     }
-    if(state.resize_state.some_clicked){
-        debug("vertex: {}\n",index)
-        state.resize_state.is_dragging=true;
-        state.resize_state.fixed_pos=state.rect_vertex[(index+2)%4];
-        state.resize_state.move_pos=state.rect_vertex[index];
-        state.resize_state.start_click_pos=ImGui::GetMousePos();
-    }
+    state.resize_vertex_index=index;
+}
+
+void ImagePlatter::on_resize_start(int& index) {
+    debug("vertex: {}\n", index) state.resize_state.is_dragging = true;
+    state.resize_state.fixed_pos = state.rect_vertex[(index + 2) % 4];
+    state.resize_state.move_pos = state.rect_vertex[index];
+    state.resize_state.start_click_pos = ImGui::GetMousePos();
 }
 
 void ImagePlatter::on_unit_clicked(ImagePlatterType::UnitData& unit) {
     auto mouse_pos = ImGui::GetMousePos();
-    state.current_unit = &unit;
+    state.selected_unit = &unit;
     auto& move_state = state.move_state;
     move_state.object_start_pos   = unit.transform.position;
     move_state.start_click_pos    = mouse_pos;
@@ -182,7 +189,7 @@ void ImagePlatter::on_unit_clicked(ImagePlatterType::UnitData& unit) {
 }
 
 void ImagePlatter::update_border() {
-    calculate_and_update_unit_rect_pos(state.rect_vertex,*state.current_unit); 
+    calculate_and_update_unit_rect_pos(state.rect_vertex,*state.selected_unit); 
 }
 
 //--------------------------------------------------------------------------------
@@ -220,7 +227,7 @@ void ImagePlatter::draw_image(UnitData& unit,const ImVec2& target_pos){
 
 
 void ImagePlatter::draw_border() {
-    if(!state.current_unit)return;
+    if(!state.selected_unit)return;
     update_border();
     auto* draw_list=ImGui::GetWindowDrawList();   
     draw_list->AddQuad(state.rect_vertex[0],state.rect_vertex[1],
@@ -241,13 +248,13 @@ void ImagePlatter::draw_canvas() {
         draw_image(unit, target_pos);
     }  // end for
     draw_border();
-    if (state.current_unit) {        
+    if (state.selected_unit) {        
         if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
             ImGui::BeginTooltip();
-            auto& t = state.current_unit->transform;
-            ImGui::Text("%s_%s", state.current_unit->key.c_str(),
-                        state.current_unit->sub_key.c_str());
-            ImGui::Text("id:       %d", state.current_unit->id);
+            auto& t = state.selected_unit->transform;
+            ImGui::Text("%s_%s", state.selected_unit->key.c_str(),
+                        state.selected_unit->sub_key.c_str());
+            ImGui::Text("id:       %d", state.selected_unit->id);
             ImGui::Text("pos:      %.1f %.1f", t.position.x, t.position.x);
             ImGui::Text("size:     %.1f %.1f", t.size.x, t.size.x);
             ImGui::Text("rotation: %.1f", t.rotation);
@@ -284,7 +291,7 @@ void ImagePlatter::start_canvas() {
 }
 
 void ImagePlatter::preccess_input_from_canvas() {
-    if(!ImGui::IsWindowFocused())return;
+    if(!ImGui::IsWindowHovered())return;
     if(ImGui::IsMouseClicked(ImGuiMouseButton_Left))
         on_canvas_pressed();
     else if(ImGui::IsMouseReleased(ImGuiMouseButton_Left))
@@ -298,8 +305,8 @@ void ImagePlatter::on_canvas_pressed() {
     auto mouse_pos = ImGui::GetMousePos();
     bool is_in_canvas=is_point_inside_rectangle(mouse_pos,state.start_pos,{500,500},false);
     // 1. 先处理边框，防止点击边框时实际为点击了其他元素或清空unit
-    if (state.current_unit) {
-        handle_control_point(*state.current_unit);
+    if (state.selected_unit) {
+        handle_control_point(*state.selected_unit);
     }
     // 2. 对每个unit处理点击事件
     state.move_state.some_clicked = false;
@@ -314,8 +321,10 @@ void ImagePlatter::on_canvas_pressed() {
     
     // 3. 如果没有点击到任何unit和边框，清空current_unit
     bool is_nothing_clicked = !state.move_state.some_clicked && !state.resize_state.some_clicked;
-    if (is_nothing_clicked && is_in_canvas)
-            state.current_unit = nullptr;
+    if (is_nothing_clicked && is_in_canvas){
+        debug("nothing clicked\n");
+        state.selected_unit = nullptr;
+    }
 }
 
 void ImagePlatter::on_canvas_released() {
@@ -329,7 +338,7 @@ void ImagePlatter::on_canvas_released() {
 
 void ImagePlatter::on_canvas_mouse_moving() {
     change_cursor_shape_hover_control_point();
-    if(state.current_unit){
+    if(state.selected_unit){
         on_dragging();
     }
 }
@@ -350,15 +359,15 @@ void ImagePlatter::on_dragging() {
 
 void ImagePlatter::update_control_area() {
     ImGui::Text("Information");
-    if (state.current_unit) {
-        ImGui::DragFloat("rotation", &state.current_unit->transform.rotation,
+    if (state.selected_unit) {
+        ImGui::DragFloat("rotation", &state.selected_unit->transform.rotation,
                          1.f, -180.f, 180.f);
-        ImGui::DragFloat2("size", &state.current_unit->transform.size.x, 1.f,
+        ImGui::DragFloat2("size", &state.selected_unit->transform.size.x, 1.f,
                           0.f, 600.f);
-        if (ImGui::InputInt("z-index", &state.current_unit->transform.z_index,
+        if (ImGui::InputInt("z-index", &state.selected_unit->transform.z_index,
                             1)) {
-            set_z_index(state.current_unit->id,
-                        state.current_unit->transform.z_index);
+            set_z_index(state.selected_unit->id,
+                        state.selected_unit->transform.z_index);
         }
     }
     ImGui::Text("Input Scene key");
@@ -366,7 +375,9 @@ void ImagePlatter::update_control_area() {
                          ImGuiInputTextFlags_EnterReturnsTrue)) {
     }
     ImVec2 button_size = {120, 40};
-    if (ImGui::Button("Save", button_size)) {
+    int id=0;
+    image_db->main_texture_table.select_by_key("ui",[&](auto& r){id=r.texture_id;});
+    if (ImGui::ImageButton((void*)id, button_size,{0.008f,0.988f},{0.132f,0.937f},0)) {
         save_scene_to_db();
     }
     ImGui::SameLine();
@@ -377,9 +388,9 @@ void ImagePlatter::update_control_area() {
     }
     ImGui::SameLine();
     if (ImGui::Button("Delete", button_size)) {
-        if (state.current_unit) {
+        if (state.selected_unit) {
             undo_list.push_back(
-                std::make_shared<ImagePlatterCommand::DeleteCommand>(state.current_unit->id, this));
+                std::make_shared<ImagePlatterCommand::DeleteCommand>(state.selected_unit->id, this));
             undo_list.back()->execute();
         }
     }
