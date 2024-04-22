@@ -29,6 +29,14 @@ public:
         callback(it->second);
     }
 
+    T* select_by_key(const std::string& id){
+        auto it = records.find(id);
+        if(it == records.end()){
+            return nullptr;
+        }
+        return &it->second;
+    }
+
 
     void select_all(std::function<void(T& record)> callback) {
         std::for_each(records.begin(), records.end(), [&](auto& record) {

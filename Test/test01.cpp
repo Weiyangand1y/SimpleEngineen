@@ -2,6 +2,7 @@
 #include "L1/App/Application.h"
 #include "L1/Lib/Math/math.h"
 #include "L2/Lib/imgui/MyImGui.h"
+#include "L2/Object/TaskQueue.h"
 
 #include "L1/Object/ScriptObject.h"
 #include "L1/Object/SignalObject.h"
@@ -12,6 +13,20 @@
 #include "L4/Editor/Image/ImageDB.h"
 #include "L4/Editor/Image/ImagePlatter/ImagePlatter.h"
 #include "L4/Editor/Console/ImConsole.h"
+
+#include <thread>
+
+class TestTask:public Task{
+    Application* app;
+    int index;
+public:
+    TestTask(Application* app,int index):app(app),index(index){}
+    void execute() override{
+        app->get_renderer()->get_texture_db().load("bg"+std::to_string(index),"C:/Users/21wyc/Pictures/pixel/117601008_p0.png");
+        std::cout << "TestTask" << std::endl;
+    }
+};
+
 
 class TestApplication:public Application{
     struct Context{
@@ -28,8 +43,19 @@ class TestApplication:public Application{
     ScriptObject so;
     ImageDB image_db;
     ImConsole console;
+    TimeCutQueue tq;
+    static void test(Application* app){
+        std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i < 100; i++)
+        {
+            app->get_renderer()->get_texture_db().load("bg"+std::to_string(i),"C:/Users/21wyc/Pictures/pixel/117601008_p0.png");
+        }
+        std::cout << "test:" << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()-start).count() << std::endl;
+    }
 public:
     void _init() override{
+        std::thread t(test,this);
+        t.detach();
         std::cout << "===============" << std::endl;
         Window* window = get_window();
         MyImGui::static_init(window->get_window());
@@ -45,10 +71,9 @@ public:
         so.script.do_string("print(count)");
         image_cut.init(&image_db);
         image_platter.init(&image_db);
-    
+
     }
     void _run() override{
-        //debug("{}\n",1/delta_time);
         renderer.start_framebuffer("f1");  //--------------------
         renderer.clear_color();
 
@@ -102,6 +127,7 @@ public:
         image_platter.render();
         console.render();
         MyImGui::static_end();
+
     }
 };
 

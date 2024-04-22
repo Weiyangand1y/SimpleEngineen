@@ -33,7 +33,7 @@ void Application::run() {
         _run();
         if(show_frame_run_time){
             static int count=0;
-            if(count++%100==0){
+            if(count++%10==0){
             auto frame_run_time = window.get_time()-time;
             debug("delta time: {:.3f}ms ___ frame_run_time: {:.3f}  __  rate: {:.2f}% \n",
                         delta_time*1000.f,frame_run_time*1000.f,frame_run_time*100.f/delta_time);}
