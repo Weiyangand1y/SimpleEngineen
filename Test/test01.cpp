@@ -3,6 +3,8 @@
 #include "L1/Lib/Math/math.h"
 #include "L2/Lib/imgui/MyImGui.h"
 #include "L2/Object/TaskQueue.h"
+#include "L2/Lib/Net/TcpClient.h"
+
 
 #include "L1/Object/ScriptObject.h"
 #include "L1/Object/SignalObject.h"
@@ -16,27 +18,11 @@
 
 #include <thread>
 
-class TestTask:public Task{
-    Application* app;
-    int index;
-public:
-    TestTask(Application* app,int index):app(app),index(index){}
-    void execute() override{
-        app->get_renderer()->get_texture_db().load("bg"+std::to_string(index),"C:/Users/21wyc/Pictures/pixel/117601008_p0.png");
-        std::cout << "TestTask" << std::endl;
-    }
-};
-
 
 class TestApplication:public Application{
-    struct Context{
-        char image_key[64]={0};
-        char text[64]={0};
-        char input_image_key[64]={0};
-        int texture_id=-1;
-        char t3[128]={0};
-    };
-    Context context;
+    char msg[128]={0};
+    char to_send[128]={0};
+    MyGameClient client;
     ImgageLoad image_load;
     ImageCut image_cut;
     ImagePlatter image_platter;
@@ -71,9 +57,16 @@ public:
         so.script.do_string("print(count)");
         image_cut.init(&image_db);
         image_platter.init(&image_db);
-
+        client.read_callback=[this](const std::string& message){
+            memcpy(msg,message.c_str(),message.size()+1);
+        };
+        client.init("127.0.0.1","8888");
+        client.startAsyncRead();
     }
     void _run() override{
+
+        client.poll();
+
         renderer.start_framebuffer("f1");  //--------------------
         renderer.clear_color();
 
@@ -83,45 +76,15 @@ public:
                             "screen");
 
         MyImGui::static_begin();
-        auto& io=ImGui::GetIO();
-    {   
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,{0,0});
-        ImGui::Begin("Image",nullptr,ImGuiWindowFlags_NoTitleBar);
-        ImVec2 windowPos = ImGui::GetWindowPos();
-        ImVec2 windowSize = ImGui::GetWindowSize();
-        auto* wdl=ImGui::GetWindowDrawList();
-        wdl->AddImage((void*)(intptr_t)renderer.get_texture("bg").get_id(),
-        windowPos, ImVec2(windowPos.x + windowSize.x, windowPos.y + windowSize.y),
-        {0,1},{1,0}
-        );
-        float offset_y=16,height=80;
-        wdl->AddRectFilled({windowPos.x+20,windowPos.y+offset_y},ImVec2(windowPos.x + windowSize.x/3, windowPos.y + height),ImColor(203,207,86));
-        wdl->AddRectFilled(ImVec2(windowPos.x + windowSize.x/3, windowPos.y+offset_y),ImVec2(windowPos.x + windowSize.x*2/3, windowPos.y + height),IM_COL32(150,176,139,255));
-        wdl->AddRectFilled(ImVec2(windowPos.x + windowSize.x*2/3, windowPos.y+offset_y),ImVec2(windowPos.x + windowSize.x-18, windowPos.y + height),IM_COL32(206,126,111,255));
-        
-        ImGui::SetCursorPos({50,100});
-        ImGui::SetNextItemWidth(160);
-        if(ImGui::InputText("image_key",context.image_key,64,ImGuiInputTextFlags_EnterReturnsTrue)){
-            renderer.get_texture_db().load(std::string(context.image_key),std::string(context.text));
+        ImGui::Begin("TCP Net");
+        ImGui::Text("read message:\n%s",msg);
+        if(ImGui::IsWindowFocused() && ImGui::IsKeyDown(ImGuiKey_Enter)){
+            ImGui::SetKeyboardFocusHere();
         }
-        ImGui::SetCursorPosX(50);
-        ImGui::SetNextItemWidth(260);
-        if(ImGui::InputText("text",context.text,64,ImGuiInputTextFlags_EnterReturnsTrue)){
-            
+        if(ImGui::InputText("send",to_send,128,ImGuiInputTextFlags_EnterReturnsTrue)){
+            client.sendMessage(std::string(to_send));
         }
-        ImGui::SetCursorPosX(50);
-        ImGui::SetNextItemWidth(160);
-        if(ImGui::InputText("in_image_key",context.input_image_key,64,ImGuiInputTextFlags_EnterReturnsTrue)){
-            context.texture_id=renderer.get_texture(std::string(context.input_image_key)).get_id();
-        }
-        ImGui::SetCursorPosX(50);
-        if(context.texture_id!=-1){
-            ImGui::Image((void*)(intptr_t)context.texture_id,{200,200},{0,1},{1,0});
-        }
-        ImGui::PopStyleVar();
-
-        ImGui::End();}
-        
+        ImGui::End();
         image_load.render();
         image_cut.render();
         image_platter.render();
