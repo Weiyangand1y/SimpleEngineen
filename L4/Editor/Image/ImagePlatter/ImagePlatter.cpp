@@ -136,6 +136,10 @@ void ImagePlatter::load_scene_from_db() {
     });
 }
 
+void ImagePlatter::update_texture_id_from_db() {
+    
+}
+
 //--------------------------------------------------------------------------------
 
 void ImagePlatter::calculate_and_update_unit_rect_pos(ImVec2 vertex[4],UnitData& unit){

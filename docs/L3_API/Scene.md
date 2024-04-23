@@ -91,7 +91,7 @@ class SubClassofApp : public Application{
 
 #### -进行queue_free
 
-scene node调用queue_free()，scene调用do_queue_free()
+scene node调用queue_free()，scene调用do_queue_free()，可以看到对象删除后其记录的信号也解除连接了。
 
 ```c++
 auto n1=scene->root_node->create_add_child<SceneNode>();
@@ -115,4 +115,3 @@ scene->do_queue_free();
 debug("---after free\n");
 so.emit("hello");
 ```
-

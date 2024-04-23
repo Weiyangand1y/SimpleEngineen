@@ -54,13 +54,13 @@ public:
     }
 
     // 更新记录
-    template <typename Container, typename Condition, typename Updater>
-    void update_where(Container& records, Condition condition, Updater updater) {
-        std::for_each(records.begin(), records.end(), [&](auto& record) {
-            if (condition(record)) {
-                updater(record);
+    template <typename Condition, typename Updater>
+    void update_where(Condition condition, Updater updater) {
+        for (auto& record : records) {
+            if (condition(record.second)) {
+                updater(record.second);
             }
-        });
+        }
     }
 
     // 删除记录

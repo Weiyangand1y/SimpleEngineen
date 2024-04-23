@@ -1,89 +1,78 @@
-//
-// httpget.cpp
-//
-// This sample demonstrates the HTTPClientSession and the HTTPCredentials classes.
-//
-// Copyright (c) 2005-2012, Applied Informatics Software Engineering GmbH.
-// and Contributors.
-//
-// SPDX-License-Identifier:	BSL-1.0
-//
-
-
-#include "Poco/Net/HTTPClientSession.h"
-#include "Poco/Net/HTTPRequest.h"
-#include "Poco/Net/HTTPResponse.h"
-#include <Poco/Net/HTTPCredentials.h>
-#include "Poco/StreamCopier.h"
-#include "Poco/NullStream.h"
-#include "Poco/Path.h"
-#include "Poco/URI.h"
-#include "Poco/Exception.h"
-#include "Poco/Net/HTMLForm.h"
 #include <iostream>
+#include <asio.hpp>
 
+using asio::ip::tcp;
 
-
-bool doRequest(Poco::Net::HTTPClientSession& session, Poco::Net::HTTPRequest& request, Poco::Net::HTTPResponse& response)
-{
-	session.sendRequest(request);
-	std::istream& rs = session.receiveResponse(response);
-	std::cout << response.getStatus() << " " << response.getReason() << std::endl;
-	if (response.getStatus() != Poco::Net::HTTPResponse::HTTP_UNAUTHORIZED)
-	{
-		Poco::StreamCopier::copyStream(rs, std::cout);
-		return true;
-	}
-	else
-	{
-		Poco::NullOutputStream null;
-		Poco::StreamCopier::copyStream(rs, null);
-		return false;
-	}
-}
-
-
-int main(int argc, char** argv)
-{
-    try
+class GameClient {
+public:
+    GameClient(asio::io_context& io_context, const std::string& server_address, const std::string& port)
+        : socket_(io_context), io_context_(io_context)
     {
-        // json
-        std::string body("{key:value}");
-
-        // uri
-        //Poco::URI uri("http://www.baidu.com/test");
-        Poco::URI uri("http://127.0.0.1:3000/");
-        // session
-        Poco::Net::HTTPClientSession session(uri.getHost(), uri.getPort());
-        session.setKeepAlive(true);
-
-        // request
-        Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, uri.getPathAndQuery(), Poco::Net::HTTPRequest::HTTP_1_1);
-        request.setContentType("application/text");
-        request.add("Accept", "Agent-007");
-        request.add("User-Agent", "xxxxoooo");
-        request.setContentLength(body.length());
-        //
-        session.sendRequest(request) << body;
-
-
-        // response
-        Poco::Net::HTTPResponse res;
-        std::string recv_string;
-        std::istream & is = session.receiveResponse(res);
-        int result = (int)res.getStatus();
-        std::cout << "result:" << result << ", reason:" << res.getReason() << std::endl;
-        Poco::StreamCopier::copyToString(is, recv_string);
-        std::cout << "recv : " << std::endl << recv_string << std::endl;
-
-        std::string recv_body = res.get("body");
-        std::cout << "body : " << std::endl << recv_body << std::endl;
+        tcp::resolver resolver(io_context);
+        asio::connect(socket_, resolver.resolve(server_address, port));
     }
-	catch (Poco::Exception& exc)
-	{
-		std::cerr << exc.displayText() << std::endl;
-		return 1;
-	}
-	return 0;
-}
 
+    void startAsyncRead() {
+        asio::async_read_until(socket_, receive_buffer_, "\r\n",
+            [this](std::error_code ec, std::size_t length) {
+                if (!ec) {
+                    std::istream is(&receive_buffer_);
+                    std::string received_message;
+                    std::getline(is, received_message, '\0'); // Read until '\0'
+                    std::cout << "Received message from server: " << received_message << std::endl;
+
+                    // Continue reading
+                    startAsyncRead();
+                } else {
+                    std::cerr << "Error receiving message: " << ec.message() << std::endl;
+                }
+            });
+    }
+
+    void sendMessage(const std::string& message) {
+        asio::async_write(socket_, asio::buffer(message.c_str(), message.size() + 1), // Include '\0' in buffer
+            [this](std::error_code ec, std::size_t /*length*/) {
+                if (!ec) {
+                    //std::cout << "Message sent successfully!" << std::endl;
+                } else {
+                    std::cerr << "Error sending message: " << ec.message() << std::endl;
+                }
+            });
+    }
+
+private:
+    tcp::socket socket_;
+    asio::io_context& io_context_;
+    asio::streambuf receive_buffer_;
+};
+
+int main() {
+    try {
+        asio::io_context io_context;
+
+        // Connect to server
+        GameClient client(io_context, "127.0.0.1", "12345");
+
+        // Start asynchronous reading from the server
+        client.startAsyncRead();
+
+        // Main game loop
+        while (true) {
+            // Handle user input, update game state, render graphics, etc.
+
+            // Example: sending player input to the server
+            std::string player_input = "Player input";
+            client.sendMessage(player_input);
+
+            // Run asynchronous operations in the io_context
+            io_context.poll();
+
+            // Sleep or yield to control frame rate
+            std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Example: 60 FPS
+        }
+    } catch (std::exception& e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
+
+    return 0;
+}

@@ -43,6 +43,23 @@ public:
     void set_renderer(Render* p_renderer){
         renderer=p_renderer;
     }
+
+    void update_texture_id(ImageType type,const std::string& key, int texture_id){
+        if(type==ImageType::MainImage){
+            auto* main_texture=main_texture_table.select_by_key(key);
+            main_texture->texture_id=texture_id;
+        }else if(type==ImageType::SubImage){
+            sub_texture_table.update_where(
+            [=](SubTexture& record){
+                return record.key==key;
+            },
+            [=](SubTexture& record){
+                record.texture_id=texture_id;
+            }
+            );
+        }
+    }
+
     // std::unordered_map<std::string,std::vector<std::string>> image_tasks;
     // void async_load_image(){
     //     ScriptObject so;

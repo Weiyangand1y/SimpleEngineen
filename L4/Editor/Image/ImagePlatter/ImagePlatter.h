@@ -66,6 +66,7 @@ private:
     //db
     void save_scene_to_db();   
     void load_scene_from_db();
+    void update_texture_id_from_db();
     //--------------------------------------------------------------------------------
     //[set data: to set state]
 
