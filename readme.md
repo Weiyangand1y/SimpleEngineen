@@ -1,3 +1,3 @@
-![doc](./assets/Image/doc.png)
+![doc](./assets/Image/doc.svg)
 
-![doc](./assets/Image/doc2.png)
+![doc](./assets/Image/Architecture.svg)
