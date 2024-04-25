@@ -2,6 +2,8 @@
 #include "L1/App/Application.h"
 #include "L1/Lib/Math/math.h"
 #include "L2/Lib/imgui/MyImGui.h"
+#include "L2/Lib/imgui/UI/RoundButton.h"
+
 #include "L2/Object/TaskQueue.h"
 #include "L2/Lib/Net/TcpClient.h"
 #include "L2/Lib/Net/TcpServer.h"
@@ -15,7 +17,8 @@
 #include "L4/Editor/Image/ImageDB.h"
 #include "L4/Editor/Image/ImagePlatter/ImagePlatter.h"
 #include "L4/Editor/Console/ImConsole.h"
-
+#include "L2/Lib/imgui/UI/AButton.h"
+#include "L2/Lib/Audio/AudioPlayer.h"
 #include <thread>
 
 
@@ -24,12 +27,13 @@ public:
     float progress_bar=0.f;
 private:
     char msg[128]={0};
-    char to_send[128]={0};
+    char to_send[128]="Hello from client";
     char host[32]="127.0.0.1";
     char port[8]="8888";
 
     char server_rec_msg[128]={0};
-    char server_msg[128]={0};
+    char server_msg[128]="Hello from server";
+    int server_port=8888;
 
     MyGameClient client;
     TcpServer server;
@@ -49,6 +53,7 @@ private:
         }
         std::cout << "test:" << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()-start).count() << std::endl;
     }
+    AudioPlayer audio_player;
 public:
     void _init() override{
         std::thread t(test,this);
@@ -95,28 +100,54 @@ public:
         ImGui::Begin("TCP Net");
         ImGui::BeginChild("Client",ImVec2{500,200},ImGuiChildFlags_Border);
         ImGui::SeparatorText("Client");
-        ImGui::Text("read message:\n%s",msg);
-        ImGui::InputTextWithHint("host","host",host,sizeof(host));
-        ImGui::InputTextWithHint("port","port",port,sizeof(port));
+        ImGui::Text("Client recieve message:\n%s",msg);
+        ImGui::Text("Host=>");
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(250);
+        ImGui::InputTextWithHint("##host","host",host,sizeof(host));
+        ImGui::SameLine();
+        ImGui::Text("Port=>");
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(100);
+        ImGui::InputTextWithHint("##port","port",port,sizeof(port));
         if(ImGui::Button("connect")){
             client.reconnect(host,port);
         }
         if(ImGui::IsWindowFocused() && ImGui::IsKeyDown(ImGuiKey_Enter)){
             ImGui::SetKeyboardFocusHere();
         }
-        if(ImGui::InputText("send",to_send,128,ImGuiInputTextFlags_EnterReturnsTrue)){
+        if(ImGui::InputText("##send",to_send,128,ImGuiInputTextFlags_EnterReturnsTrue)){
+            client.sendMessage(std::string(to_send)+"\n");
+        }
+        ImGui::SameLine();
+        if(AButton("Send",renderer.get_texture("cake").get_id())){
             client.sendMessage(std::string(to_send)+"\n");
         }
         ImGui::EndChild();
+        ImGui::SameLine();
         ImGui::BeginChild("Server",ImVec2{500,200},ImGuiChildFlags_Border);
         ImGui::SeparatorText("Server");
-        ImGui::Text(server_rec_msg);
-        ImGui::InputText("s_msg",server_msg,sizeof(server_msg));
-        if(ImGui::Button("send")){
+        ImGui::Text("Server recieve: \n%s",server_rec_msg);
+        ImGui::InputText("##s_msg",server_msg,sizeof(server_msg));
+        ImGui::SameLine();
+        if(RoundedButton("Send")){
             server.sendMessage(std::string(server_msg)+"\n");
         }
+        if(ImGui::Button("stop")){
+            server.stopListening();
+        }
+        ImGui::InputInt("port",&server_port);
+        if(ImGui::Button("start")){
+            server.startListening(server_port);
+        }
         ImGui::EndChild();
-        ImGui::SliderFloat("progress",&progress_bar,0,1);
+        if(progress_bar<0.985f){
+            ImGui::Text("Loading Images...");
+            ImGui::SliderFloat("progress",&progress_bar,0,1);
+        }else{
+            ImGui::Text("Load Finish");
+        }
+        
         ImGui::End();
         image_load.render();
         image_cut.render();

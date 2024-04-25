@@ -59,6 +59,7 @@ public:
                     std::istream is(&receive_buffer_);
                     std::string received_message;
                     std::getline(is, received_message, '\n'); // Read until '\0'
+                    is.get();//读取\0
                     handleRead(received_message);
 
                     // Continue reading

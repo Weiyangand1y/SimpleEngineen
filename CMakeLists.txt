@@ -44,6 +44,7 @@ include_directories(
     D:/a_folder/fmt-master/fmt-master/include
     D:/a_folder/box2d-main/box2d-main/include
     ${ASSIMP_PATH}/include
+    D:/一个文件夹/aLib/irrKlang-master/irrKlang-master/include
 )
 
 if(MSVC)    
@@ -99,8 +100,9 @@ target_link_libraries(test04 PRIVATE box2d)
 target_link_directories(test01 PRIVATE
     D:/一个文件夹/aLib/glfw-3.3.8.bin.WIN64/lib-vc2022
     D:/一个文件夹/aLib/lua
+    D:/一个文件夹/aLib/irrKlang-master/irrKlang-master/lib/Winx64-visualStudio
 )
-target_link_libraries(test01 PRIVATE glfw3 LuaLib)
+target_link_libraries(test01 PRIVATE glfw3 LuaLib irrKlang.lib)
 
 #-----------------------------------------------------
 add_executable(test06

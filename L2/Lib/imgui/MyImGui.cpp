@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include "L1/App/Config.h"
 #include "L1/Debug/Log.h"
+#include "imgui_internal.h"
 int MyImGui::count =10;
 void load_font_file(){
     ImGuiIO& io = ImGui::GetIO();
@@ -32,7 +33,9 @@ void set_style(){
     colors[ImGuiCol_ScrollbarGrabHovered]   = ImVec4(0.20f, 0.37f, 0.09f, 1.00f);
     colors[ImGuiCol_ScrollbarGrabActive]    = ImVec4(0.57f, 0.82f, 0.54f, 1.00f);
     colors[ImGuiCol_SliderGrab]             = ImVec4(0.19f, 0.46f, 0.82f, 1.00f);
-    colors[ImGuiCol_Button]                 = ImVec4(0.91f, 1.00f, 0.66f, 0.77f);
+    colors[ImGuiCol_Button]                 = ImVec4(0.63f, 0.60f, 0.9f, 0.9f);
+    colors[ImGuiCol_ButtonHovered]          = ImVec4(0.7f, 0.7f, 0.99f, 0.9f);
+    colors[ImGuiCol_ButtonActive]          = ImVec4(0.78f, 0.78f, 0.99f, 0.9f);
     colors[ImGuiCol_Separator]              = ImVec4(0.47f, 0.47f, 0.92f, 0.50f);
 
     colors[ImGuiCol_Tab]                    = ImVec4(0.91f, 0.99f, 0.84f, 0.86f);
