@@ -11,15 +11,17 @@
 #include "L1/Object/ScriptObject.h"
 #include "L1/Object/SignalObject.h"
 #include "L1/Debug/Log.h"
+#include "L1/ResourceManger/TextureAsyncLoader.h"
 
 #include "L4/Editor/Image/ImageLoad.h"
 #include "L4/Editor/Image/ImageCut.h"
 #include "L4/Editor/Image/ImageDB.h"
 #include "L4/Editor/Image/ImagePlatter/ImagePlatter.h"
 #include "L4/Editor/Console/ImConsole.h"
+
 #include "L2/Lib/imgui/UI/AButton.h"
+#include "L2/Lib/imgui/Description/FlatDescription.h"
 #include "L2/Lib/Audio/AudioPlayer.h"
-#include <thread>
 
 
 class TestApplication:public Application{
@@ -43,36 +45,27 @@ private:
     ScriptObject so;
     ImageDB image_db;
     ImConsole console;
-    TimeCutQueue tq;
-    static void test(TestApplication* app){
-        std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-        for (int i = 0; i < 100; i++)
-        {
-            app->get_renderer()->get_texture_db().load("bg"+std::to_string(i),"C:/Users/21wyc/Pictures/pixel/117601008_p0.png");
-            app->progress_bar=(float)i/100;
-        }
-        std::cout << "test:" << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()-start).count() << std::endl;
-    }
     AudioPlayer audio_player;
 public:
     void _init() override{
-        std::thread t(test,this);
-        t.detach();
         std::cout << "===============" << std::endl;
         Window* window = get_window();
         MyImGui::static_init(window->get_window());
         ImGui::GetIO().IniFilename = "test01.ini";
-        renderer.get_texture_db().load(
-            "bg", R"(C:\Users\21wyc\Pictures\KritaProject\bg.png)");
+
         image_db.set_renderer(&renderer);
-        image_db.load_from_file();
+        
+
         image_load.set_renderer(&renderer);
         image_load.set_db(&image_db);
         so.script.do_string("count=0");
         so.script.do_string("count=count+20");
         so.script.do_string("print(count)");
+
         image_cut.init(&image_db);
         image_platter.init(&image_db);
+        image_db.async_load_image();
+        
         client.read_callback=[this](const std::string& message){
             memcpy(msg,message.c_str(),message.size()+1);
         };
@@ -85,6 +78,7 @@ public:
         client.start_async_read();
     }
     void _run() override{
+        image_db.update();
         server.poll();
         client.poll();
 
@@ -124,7 +118,8 @@ public:
             client.sendMessage(std::string(to_send)+"\n");
         }
         ImGui::EndChild();
-        ImGui::SameLine();
+        if(ImGui::GetContentRegionAvail().x>800)
+            ImGui::SameLine();
         ImGui::BeginChild("Server",ImVec2{500,200},ImGuiChildFlags_Border);
         ImGui::SeparatorText("Server");
         ImGui::Text("Server recieve: \n%s",server_rec_msg);

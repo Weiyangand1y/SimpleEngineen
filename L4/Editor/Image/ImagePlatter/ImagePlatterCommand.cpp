@@ -1,6 +1,6 @@
 #include "ImagePlatterCommand.h"
 #include "ImagePlatter.h"
-
+#include "L1/Debug/Log.h"
 ImagePlatterCommand::AddCommand::AddCommand(std::string key,ImageType type,ImVec2 pos,ImagePlatter* env)
     :env(env),pos(pos),key(key),type(type){}
 

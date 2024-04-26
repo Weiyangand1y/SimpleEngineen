@@ -12,4 +12,5 @@ public:
     void unload(std::string name);
     Texture& get_texture(std::string name);
     Texture& operator[](std::string name);
+    void add(const std::string& name,Texture& texture);
 };

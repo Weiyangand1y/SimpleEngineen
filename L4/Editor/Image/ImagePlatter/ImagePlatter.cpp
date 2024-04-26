@@ -1,7 +1,7 @@
 #include "ImagePlatter.h"
 #include "rect_math.h"
 #include <algorithm>
-
+#include "L1/Debug/Log.h"
 bool ImagePlatter::is_inside_unit_rect(const ImVec2& mouse_pos, const UnitData& unit){
     ImVec2 target_pos=state.start_pos+unit.transform.position;
     return is_point_inside_rectangle(
@@ -136,8 +136,13 @@ void ImagePlatter::load_scene_from_db() {
     });
 }
 
-void ImagePlatter::update_texture_id_from_db() {
-    
+void ImagePlatter::update_texture_from_db() {
+    load_scene_from_db();
+    for(auto& [id,unit]:list){
+        auto* t=image_db->main_texture_table.select_by_key(unit.key);
+        unit.texture_id=t->texture_id;
+    }
+
 }
 
 //--------------------------------------------------------------------------------
@@ -429,8 +434,10 @@ void ImagePlatter::update_canvas() {
 
 
 void ImagePlatter::init(ImageDB* p_image_db){
-    image_db=p_image_db;       
-    load_from_db();
+    image_db=p_image_db;
+    image_db->signal.connect("load_finish",[&](const Info&){
+        update_texture_from_db();
+    });     
 }
 ImagePlatter::ImagePlatter(){
     id_pool.init(60);

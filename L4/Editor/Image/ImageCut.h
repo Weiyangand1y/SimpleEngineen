@@ -38,7 +38,14 @@ class ImageCut{
     void make_image_tool_tip(int texture_id,float inv_ratio,float width,const ImVec2& uv1={0,1},const ImVec2& uv2={1,0}) {
         if (ImGui::IsItemHovered()) {
             ImGui::BeginTooltip();
-            ImGui::Image((void*)(intptr_t)texture_id, {width, width * inv_ratio},uv1, uv2);
+            ImVec2 rect_size;
+            const float max_length=400;
+            if(inv_ratio<1.f){//w>h
+                rect_size={max_length,max_length*inv_ratio};
+            }else{
+                rect_size={max_length/inv_ratio,max_length};
+            }
+            ImGui::Image((void*)(intptr_t)texture_id, rect_size,uv1, uv2);
             ImGui::EndTooltip();
         }
     }

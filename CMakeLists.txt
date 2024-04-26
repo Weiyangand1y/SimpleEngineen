@@ -69,7 +69,7 @@ add_executable(test01
 
 target_compile_options(test01 PRIVATE /D_CRT_SECURE_NO_WARNINGS )
 target_compile_options(test01 PUBLIC -DASIO_STANDALONE)
-#-----
+#------
 
 add_executable(test02
                 ./Test/test02.cpp

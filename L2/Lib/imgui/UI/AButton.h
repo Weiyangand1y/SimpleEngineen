@@ -33,8 +33,11 @@ bool AButton(const char* label, int texure_id, const ImVec2& size = ImVec2(0, 0)
 
     // Draw border
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    draw_list->AddRect(bb.Min, bb.Max, IM_COL32(0, 0, 0, 255), 
-    corner_radius, ImDrawFlags_RoundCornersAll, border_thickness);
+    draw_list->AddRect(bb.Min, bb.Max, IM_COL32(0, 0, 0, 255),
+        corner_radius, ImDrawFlags_RoundCornersAll, border_thickness);
+
+    draw_list->AddLine(bb.Min+ImVec2{corner_radius,s.y},bb.Max-ImVec2{corner_radius,0.f},IM_COL32(0, 0, 0, 255),1.f);
+    draw_list->AddLine(bb.Min+ImVec2{corner_radius,1.f},bb.Max+ImVec2{-corner_radius,-s.y+1.f},IM_COL32(255, 255, 255, 255),1.f);
     if(held){        
         draw_list->AddImage(
                 (ImTextureID)(intptr_t)texure_id,

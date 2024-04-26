@@ -33,3 +33,7 @@ Texture& TextureDB::get_texture(std::string name) {
 Texture& TextureDB::operator[](std::string name) {
     return get_texture(name);
 }
+
+void TextureDB::add(const std::string& name, Texture& texture) {
+    db[name]=texture;
+}
