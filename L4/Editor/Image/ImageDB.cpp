@@ -21,6 +21,11 @@ void ImageDB:: async_load_image(){
         insert_main_texture(name,-1,-1,path);
         texture_async_loader.add_task(name,path);
     }
+    for (int i = 0; i < 100; i++){
+        texture_async_loader.add_task("sth"+std::to_string(i),"C:/Users/21wyc/Pictures/pixel/117601008_p0.png");
+    }
+    
+
     sol::table sub_image_list=so.script["sub_images"];
     for(auto& r:sub_image_list){
         sol::table& imageTable = r.second.as<sol::table>();
@@ -35,6 +40,7 @@ void ImageDB:: async_load_image(){
     texture_async_loader.one_done_callback=[&](Texture* t, const std::string& key,float){
         //update Main
         MainTexture* main_texture=main_texture_table.select_by_key(key);
+        if(!main_texture)return;
         main_texture->texture_id=t->get_id();
         main_texture->aspect_ratio=t->get_aspect_ratio();
         //update Sub
@@ -47,6 +53,7 @@ void ImageDB:: async_load_image(){
             record.aspect_ratio=t->get_aspect_ratio();
         }
         );
+        signal.emit("one_finish");
     };
     texture_async_loader.all_done_callback=[&](){
         signal.emit("load_finish",Info());

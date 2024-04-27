@@ -1,5 +1,6 @@
 #include "TextureAsyncLoader.h"
 #include "L1/Lib/IO/ImageLoader.h"
+#include "L1/Debug/Log.h"
 TextureAsyncLoader::TextureAsyncLoader() {
     
 }
@@ -26,6 +27,7 @@ void TextureAsyncLoader::start_loading() {
             unsigned char* data = loader.loadImage(path.c_str(),&w,&h,&c);
             image_queue.push(ImageData{key,data,w,h,c});            
             task_queue.pop();
+            debug("!!!load a image from file------------\n");
         }
     });
     thread.detach();
@@ -34,14 +36,19 @@ void TextureAsyncLoader::start_loading() {
 void TextureAsyncLoader::load_gl_texture() {
     if(finished)return;
     size_t size=image_queue.size();
+    debug("in the frame: task:{}  image:{}\n",task_queue.size(),image_queue.size());
     for (size_t i = 0; i < size; i++){
         auto& image=image_queue.front();
-        texture_db->add(image.key,Texture(image.data,image.w,image.h,image.c));        
+        texture_db->add(image.key,Texture(image.data,image.w,image.h,image.c));   
+        debug("key: {},  id:{}\n",image.key,texture_db->get_texture(image.key).get_id());
         if(one_done_callback)one_done_callback(&texture_db->get_texture(image.key),image.key,0.f);        
         image_queue.pop();
     }    
-    if(task_queue.size()==0 && image_queue.size()==0 &&all_done_callback){
+    
+    if(task_queue.size()==0 && image_queue.size()==0){
+        if(all_done_callback)all_done_callback;
         all_done_callback();
+        
         finished=true;
     }
 }
