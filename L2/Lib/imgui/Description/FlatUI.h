@@ -9,19 +9,26 @@ struct DrawData{
 void draw(FlatDescription::StateDecription& d, DrawData& draw_data){
     // Draw Box
     const ImU32 col = d.color.background.to_imgui_color();
+    ImVec2 start_pos=draw_data.bb.Min;
+    ImVec2 end_pos = draw_data.bb.Max;
+    if(d.size.x!=0.f && d.size.y!=0.f){
+        start_pos=draw_data.bb.GetCenter()-d.size*0.5f;
+        end_pos  =draw_data.bb.GetCenter()+d.size*0.5f;
+    }
     ImGui::RenderFrame(
-        draw_data.bb.Min, draw_data.bb.Max, 
+        start_pos,end_pos,
         col, true, d.border.r
         );
     // Draw Border
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->AddRect(
-        draw_data.bb.Min, draw_data.bb.Max, 
+        start_pos,end_pos,
         d.border.color.to_imgui_color(), 
         d.border.r, 
         ImDrawFlags_RoundCornersAll, 
         d.border.thickness
         );
+    ImGui::PushStyleColor(ImGuiCol_Text,d.color.font_color.to_imgui_color());
     ImGui::RenderTextClipped(
         draw_data.bb.Min + d.frame_padding, 
         draw_data.bb.Max - d.frame_padding, 
@@ -30,6 +37,8 @@ void draw(FlatDescription::StateDecription& d, DrawData& draw_data){
         ImVec2(0,0), 
         &draw_data.bb
         );
+    ImGui::PopStyleColor();
+    
 }
 bool FlatButton(const char* label, FlatDescription& d){
     //获取当前环境

@@ -35,12 +35,75 @@ struct Color{
 
 };
 struct PresetColor{
+    static Color white(){return Color::from_hex6(0xffffff);}
+    static Color black(){return Color::from_hex6(0x0);}
     struct Orange{
-        static Color d50(){return Color::from_hex8(0xfff7edff);}
-        static Color d500(){return Color::from_hex6(0xf97316);}
+        static Color d50()  {return Color::from_hex6(0xfff7ed);}
+        static Color d100() {return Color::from_hex6(0xffedd5);}
+        static Color d200() {return Color::from_hex6(0xfed7aa);}
+        static Color d300() {return Color::from_hex6(0xfdba74);}
+        static Color d400() {return Color::from_hex6(0xfb923c);}
+        static Color d500() {return Color::from_hex6(0xf97316);}
+        static Color d600() {return Color::from_hex6(0xea580c);}
+        static Color d700() {return Color::from_hex6(0xc2410c);}
+        static Color d800() {return Color::from_hex6(0x9a3412);}
+        static Color d900() {return Color::from_hex6(0x7c2d12);}
+        static Color d950() {return Color::from_hex6(0x431407);}       
     };
     struct Red{
         static Color d500(){return Color::from_hex6(0xef4444);}
+    };
+    struct Green{
+        static Color d50()  {return Color::from_hex6(0xf0fdf4);}
+        static Color d100() {return Color::from_hex6(0xdcfce7);}
+        static Color d200() {return Color::from_hex6(0xbbf7d0);}
+        static Color d300() {return Color::from_hex6(0x86efac);}
+        static Color d400() {return Color::from_hex6(0x4ade80);}
+        static Color d500() {return Color::from_hex6(0x22c55e);}
+        static Color d600() {return Color::from_hex6(0x16a34a);}
+        static Color d700() {return Color::from_hex6(0x15803d);}
+        static Color d800() {return Color::from_hex6(0x166534);}
+        static Color d900() {return Color::from_hex6(0x14532d);}
+        static Color d950() {return Color::from_hex6(0x052e16);}
+    };
+    struct Cyan{
+        static Color d50() {return Color::from_hex6(0xecfeff);}
+        static Color d100() {return Color::from_hex6(0xcffafe);}
+        static Color d200() {return Color::from_hex6(0xa5f3fc);}
+        static Color d300() {return Color::from_hex6(0x67e8f9);}
+        static Color d400() {return Color::from_hex6(0x22d3ee);}
+        static Color d500() {return Color::from_hex6(0x06b6d4);}
+        static Color d600() {return Color::from_hex6(0x0891b2);}
+        static Color d700() {return Color::from_hex6(0xe7490);}
+        static Color d800() {return Color::from_hex6(0x155e75);}
+        static Color d900() {return Color::from_hex6(0x164e63);}
+        static Color d950() {return Color::from_hex6(0x083344);}
+    };
+    struct Rose{
+        static Color d50()  {return Color::from_hex6(0xfff1f2);}
+        static Color d100() {return Color::from_hex6(0xffe4e6);}
+        static Color d200() {return Color::from_hex6(0xfecdd3);}
+        static Color d300() {return Color::from_hex6(0xfda4af);}
+        static Color d400() {return Color::from_hex6(0xfb7185);}
+        static Color d500() {return Color::from_hex6(0xf43f5e);}
+        static Color d600() {return Color::from_hex6(0xe11d48);}
+        static Color d700() {return Color::from_hex6(0xbe123c);}
+        static Color d800() {return Color::from_hex6(0x9f1239);}
+        static Color d900() {return Color::from_hex6(0x881337);}
+        static Color d950() {return Color::from_hex6(0x4c0519);}
+    };
+    struct Blue{
+        static Color d50() {return Color::from_hex6(0xeff6ff);}
+        static Color d100() {return Color::from_hex6(0xdbeafe);}
+        static Color d200() {return Color::from_hex6(0xbfdbfe);}
+        static Color d300() {return Color::from_hex6(0x93c5fd);}
+        static Color d400() {return Color::from_hex6(0x60a5fa);}
+        static Color d500() {return Color::from_hex6(0x3b82f6);}
+        static Color d600() {return Color::from_hex6(0x2563eb);}
+        static Color d700() {return Color::from_hex6(0x1d4ed8);}
+        static Color d800() {return Color::from_hex6(0x1e40af);}
+        static Color d900() {return Color::from_hex6(0x1e3a8a);}
+        static Color d950() {return Color::from_hex6(0x172554);}
     };
 };
 struct FlatDescription{

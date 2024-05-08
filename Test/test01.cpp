@@ -1,6 +1,7 @@
-#include <iostream>
 #include "L1/App/Application.h"
 #include "L1/Lib/Math/math.h"
+#include "L1/Debug/ScriptValue.h"
+
 #include "L2/Lib/imgui/MyImGui.h"
 #include "L2/Lib/imgui/UI/RoundButton.h"
 
@@ -17,6 +18,7 @@
 #include "L4/Editor/Image/ImageCut.h"
 #include "L4/Editor/Image/ImageDB.h"
 #include "L4/Editor/Image/ImagePlatter/ImagePlatter.h"
+#include "L4/Editor/Image/ImageDrawer.h"
 #include "L4/Editor/Console/ImConsole.h"
 
 #include "L2/Lib/imgui/UI/AButton.h"
@@ -94,8 +96,14 @@ public:
         MyImGui::static_begin();
         ImGui::Begin("TCP Net");
         FlatDescription d;
-        d.hover.color.background=PresetColor::Orange::d50();
-        d.hold.color.background=PresetColor::Red::d500();
+        d.normal.color.font_color=PresetColor::Cyan::d600();
+        d.hover.color.background=PresetColor::Orange::d200();
+        d.hover.color.font_color=PresetColor::Orange::d500();
+        d.hover.border.r=0.f;
+        d.hold.color.font_color=PresetColor::black();
+        d.hold.color.background=PresetColor::Orange::d100();
+        d.hover.size={80,ScriptValueGetter::getInstance()->get_value("height")};
+        ImGui::SetCursorPosX(50);
         FlatButton("ni hao",d);
         ImGui::BeginChild("Client",ImVec2{500,200},ImGuiChildFlags_Border);
         ImGui::SeparatorText("Client");
@@ -147,12 +155,13 @@ public:
         }else{
             ImGui::Text("Load Finish");
         }
-        
+        draw_image("ui-delete-button",{100,500,100,100},&image_db);
         ImGui::End();
         image_load.render();
         image_cut.render();
         image_platter.render();
         console.render();
+
         MyImGui::static_end();
 
     }
