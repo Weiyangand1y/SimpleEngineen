@@ -17,7 +17,7 @@ void SceneNode::set_viewport(Viewport* p_viewport) {
 }
 
 void SceneNode::before_free() {
-    parent->removeChild(this);
+    parent->remove_child(this);
     for(auto [so,name,id]:signal_record){
         so->disconnect(name,id);
     }

@@ -124,6 +124,8 @@ target_link_libraries(test06 PRIVATE
                         glfw3 
                         LuaLib           
                         )
+target_link_directories(test06 PRIVATE D:/a_folder/box2d-main/box2d-main/build/bin/Debug)
+target_link_libraries(test06 PRIVATE box2d)
 # -----------------------------------
 add_executable(test07
                 ./Test/test07.cpp

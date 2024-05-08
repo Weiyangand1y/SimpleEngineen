@@ -20,8 +20,23 @@ class ImConsole{
     }
     ScriptObject so;
 public:
-    ImConsole(){
-        
+    ImConsole(){         
+        so.script["myprint"]=[this](sol::variadic_args args){            
+            std::string content="";
+            debug("-->");
+            for (auto& arg : args) {
+                if (arg.is<int>()) {
+                content += std::to_string(arg.as<int>());
+                } else if (arg.is<float>()) {
+                    content += std::to_string(arg.as<float>());
+                } else {
+                content += arg.as<std::string>();
+                }
+                content+=" ";        
+            }
+            debug("--> {}",content);
+            text_list.push_back({IM_COL32(187,17,64,255),content});
+        };
         text_list.reserve(max_count);
         text_list.push_back({IM_COL32(17,17,64,255),"aabb"});
         text_list.push_back({0xffccaf22,"aabbcc"});
@@ -40,6 +55,7 @@ public:
         if(ImGui::InputText("##input",input,64,ImGuiInputTextFlags_EnterReturnsTrue)){
             text_list.push_back({IM_COL32(21,34,99,255),">>"+std::string(input)});
             so.script.do_string(input);
+            //so.script.do_string("myprint('Hello', 'from', 'Lua!')");
         }
         ImGui::SetScrollHereY(1.0f);
         ImGui::End();

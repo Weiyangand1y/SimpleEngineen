@@ -8,9 +8,14 @@
 class Node {
     std::unordered_map<std::string, Node*> children_cache;
 public:
-    Node* get_Child(const std::string& name);
+    Node* get_child(const std::string& name);
+    Node* get_child_by_path(const std::string& name);
     void addChild(Node* node);
-    void removeChild(Node* node);
+    void remove_child(Node* node);
+
+    std::string get_name();
+    std::string get_path();
+
     virtual void ready();
     virtual void process(float delta);
     virtual void _process(float delta);
@@ -28,6 +33,6 @@ public:
 
 protected:
     std::vector<Node*> children;
-    Node* parent;
+    Node* parent=nullptr;//if null => root
     std::string name="@node";
 };

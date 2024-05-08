@@ -21,7 +21,7 @@ void ImageDB:: async_load_image(){
         insert_main_texture(name,-1,-1,path);
         texture_async_loader.add_task(name,path);
     }
-    for (int i = 0; i < 100; i++){
+    for (int i = 0; i < 10; i++){
         texture_async_loader.add_task("sth"+std::to_string(i),"C:/Users/21wyc/Pictures/pixel/117601008_p0.png");
     }
     

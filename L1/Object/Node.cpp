@@ -1,10 +1,35 @@
 #include "Node.h"
 #include "L1/Debug/Log.h"
-Node* Node::get_Child(const std::string& name) {
+#include <stack>
+Node* Node::get_child(const std::string& name) {
     if(children_cache.find(name)==children_cache.end())
         return nullptr;
     return children_cache[name];
 }
+
+Node* Node::get_child_by_path(const std::string& path) {
+    std::vector<std::string> split_path;
+    //split path
+    size_t start = 0;
+    size_t pos = path.find('/');
+    while (pos != std::string::npos) {
+        split_path.push_back(path.substr(start, pos - start));
+        start = pos + 1;
+        pos = path.find('/', start);
+    }
+    if (start < path.length()) {
+        split_path.push_back(path.substr(start));
+    }
+    //get node according path
+    if (split_path.empty()) return nullptr;
+    Node* currentNode = this;
+    for (const std::string& nodeName : split_path) {
+        currentNode = currentNode->get_child(nodeName);
+        if (!currentNode) return nullptr;
+    }
+    return currentNode;
+}
+
 void Node::addChild(Node* node) {
     children.push_back(node);   
     node->parent=this;
@@ -15,10 +40,35 @@ void Node::addChild(Node* node) {
     children_cache[node->name]=node;
     node->ready();
 }
-void Node::removeChild(Node* node) {
+void Node::remove_child(Node* node) {
     children.erase(std::remove(children.begin(), children.end(), node),
                    children.end());
     children_cache.erase(node->name);
+}
+
+std::string Node::get_name() {
+    return name;
+}
+
+std::string Node::get_path() {
+    std::stack<std::string> pathStack;
+    Node* current_node=this;
+    // 从给定节点向上遍历父节点，直到根节点
+    while (current_node != nullptr) {
+        pathStack.push(current_node->name);
+        current_node = current_node->parent;
+    }
+
+    // 构造路径字符串
+    std::string path = "";
+    while (!pathStack.empty()) {
+        path += pathStack.top();
+        pathStack.pop();
+        if (!pathStack.empty()) {
+            path += "/";
+        }
+    }
+    return path;
 }
 
 void Node::ready() {
