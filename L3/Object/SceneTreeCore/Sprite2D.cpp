@@ -4,6 +4,7 @@
 #include "L1/Lib/Math/Transform2D.h"
 Sprite2D::Sprite2D(){
     set_name("@Sprite2D");
+    class_name="Sprite2D";
     m_position  =   math::vec2(0.0f);
     m_scale     =   math::vec2(0.1f);
     m_rotation  =   0.f;
@@ -22,7 +23,7 @@ void Sprite2D::draw() {
     drawer->draw_texture(texture_id,rect_transform.get_matrix_ptr());
 }
 
-void Sprite2D::set_texture(std::string name) {
+void Sprite2D::set_texture(const std::string& name) {
     assert(scene);
     Render* renderer=scene->app->get_renderer();
     Texture& texture=renderer->get_texture(name);
@@ -31,6 +32,7 @@ void Sprite2D::set_texture(std::string name) {
     m_size={texture.w,texture.h};
     math::vec2 s2=m_scale*m_size;
     debug("sprite[{}] total size: {:.2f}, {:.2f}\n",name,s2.x,s2.y);
+    texture_key=name.c_str();
     //
 }
 

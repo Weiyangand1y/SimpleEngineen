@@ -56,6 +56,7 @@ void script_bind_class(sol::state& script){
         "emit",     static_cast<void(SignalObject::*)(std::string signal_name,const Info&)>(&SignalObject::emit)
     );
     script.new_usertype<SceneNode>("SceneNode",
+        "set_name",         &SceneNode::set_name,
         "signal",           &SceneNode::signal,
         "queue_free",       &SceneNode::queue_free,
         "connect_signal",   &SceneNode::make_signal_record 

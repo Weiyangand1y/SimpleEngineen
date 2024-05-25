@@ -31,7 +31,7 @@ math::mat4& Viewport::get_view_projection_matrix() {
 void Viewport::add_child(SceneNode* node) {
     node->set_viewport(this);
     Logger::log(0,"Viewport should put itself to its child\n");
-    addChild(node);
+    Node::add_child(node);
     
 }
 #define FB(X) r->start_framebuffer("f2");\

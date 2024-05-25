@@ -2,6 +2,8 @@
 #include "Scene.h"
 #include "L1/Debug/Log.h"
 #include "Viewport.h"
+void SceneNode::serialize() {}
+void SceneNode::deserialize() {}
 void SceneNode::enter_scene(Scene* p_scene) {
     scene=p_scene;
 }
@@ -9,7 +11,7 @@ void SceneNode::enter_scene(Scene* p_scene) {
 void SceneNode::add_child(SceneNode* node) {
     assert(viewport);
     node->viewport=viewport;
-    addChild(node);    
+    Node::add_child(node);    
 }
 
 void SceneNode::set_viewport(Viewport* p_viewport) {
@@ -32,6 +34,12 @@ void SceneNode::get_all_children(std::vector<SceneNode*>& result) {
         result.push_back(static_cast<SceneNode*>(child));
         if(!children.empty())
             static_cast<SceneNode*>(child)->get_all_children(result);
+    }
+}
+
+void SceneNode::get_children(std::vector<SceneNode*>& result) {
+    for (Node* child : children) {
+        result.push_back(static_cast<SceneNode*>(child));
     }
 }
 

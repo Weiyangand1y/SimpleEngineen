@@ -11,7 +11,10 @@ private:
 protected:
     Scene* scene;
     Viewport* viewport=nullptr;
+    void serialize();
+    void deserialize();
 public:
+    const char* class_name="SceneNode";
     SignalObject signal;
     SignalRecode signal_record;
     virtual void enter_scene(Scene* scene);
@@ -21,6 +24,7 @@ public:
     virtual void before_free();
     void queue_free();
     void get_all_children(std::vector<SceneNode*>& result);
+    void get_children(std::vector<SceneNode*>& result);
     void make_signal_record(SignalObject& so,std::string name,int id);
     void connect_signal(SignalObject& so,std::string signal_name,Callback func);
 

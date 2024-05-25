@@ -2,6 +2,10 @@
 #include "L1/Debug/Log.h"
 #include <stack>
 Node* Node::get_child(const std::string& name) {
+    debug("chidren num: {}\n",children_cache.size());
+    for(auto [k,v]: children_cache){
+        debug("chidren name: {}\n",k);
+    }
     if(children_cache.find(name)==children_cache.end())
         return nullptr;
     return children_cache[name];
@@ -30,7 +34,7 @@ Node* Node::get_child_by_path(const std::string& path) {
     return currentNode;
 }
 
-void Node::addChild(Node* node) {
+void Node::add_child(Node* node) {
     children.push_back(node);   
     node->parent=this;
     if(children_cache.find(node->name)!=children_cache.end()){
@@ -102,6 +106,10 @@ void Node::_after_process(float delta) {
 
 
 void Node::set_name(std::string p_name) {
+    if(parent){
+        parent->children_cache[p_name]=this;
+        parent->children_cache.erase(name);
+    }
     name=p_name;
 }
 

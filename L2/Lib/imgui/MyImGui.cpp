@@ -5,14 +5,20 @@
 #include "L1/Debug/Log.h"
 #include "imgui_internal.h"
 int MyImGui::count =10;
+std::unordered_map<std::string, ImFont*> MyImGui::font_map;
 void load_font_file(){
     ImGuiIO& io = ImGui::GetIO();
-    io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
-                                20, nullptr,
-                                io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
-    io.Fonts->AddFontFromFileTTF(Config::getInstance().get("font_path").c_str(),
-                                40, nullptr,
-                                io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
+
+    MyImGui::font_map["text"]=io.Fonts->AddFontFromFileTTF(
+            Config::getInstance().get("font_path").c_str(),
+            20, nullptr,
+            io.Fonts->GetGlyphRangesChineseSimplifiedCommon()
+        );                           
+    MyImGui::font_map["large"]=io.Fonts->AddFontFromFileTTF(
+            Config::getInstance().get("font_path").c_str(),
+            40, nullptr,
+            io.Fonts->GetGlyphRangesChineseSimplifiedCommon()
+        );
 }
 
 void set_style(){

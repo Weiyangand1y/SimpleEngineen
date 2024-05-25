@@ -2,6 +2,7 @@
 #include "L1/Lib/Math/Transform2D.h"
 Node2D::Node2D() {
     set_name("@Node2D");
+    class_name="Node2D";
 }
 
 math::mat4 Node2D::get_transform_matrix() {

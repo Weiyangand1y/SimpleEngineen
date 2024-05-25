@@ -14,10 +14,10 @@ Texture::Texture(std::string filename,std::string* message){
     int c;
     ImageLoader image_loader;
     unsigned char* data;
-    MEASURE_TIME2(
-        "load time",
+    // MEASURE_TIME2(
+    //     "load time",
         data=image_loader.loadImage(filename.c_str(),&w,&h,&c);
-    );
+    // );
 
     if (!data){
         if(message)*message=std::string("can't load image") ;

@@ -10,7 +10,7 @@ class Node {
 public:
     Node* get_child(const std::string& name);
     Node* get_child_by_path(const std::string& name);
-    void addChild(Node* node);
+    virtual void add_child(Node* node);
     void remove_child(Node* node);
 
     std::string get_name();
@@ -22,6 +22,9 @@ public:
 
     virtual void after_process(float delta);
     virtual void _after_process(float delta);
+
+    template<typename T>
+    T* cast_to();
 
     
 
@@ -36,3 +39,8 @@ protected:
     Node* parent=nullptr;//if null => root
     std::string name="@node";
 };
+
+template <typename T>
+inline T* Node::cast_to() {
+    return dynamic_cast<T*>(this);
+}

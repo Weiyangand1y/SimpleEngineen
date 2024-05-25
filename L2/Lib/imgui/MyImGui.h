@@ -2,7 +2,8 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-
+#include <unordered_map>
+#include <string>
 class MyImGui{
 private:
 public:
@@ -11,10 +12,9 @@ public:
     static void static_end();
     static ImFont* get_imfont(int index);
     static int count;
+    static std::unordered_map<std::string, ImFont*> font_map;
     MyImGui();
     
-    bool show_demo_window = true;
-    bool show_another_window = true;
     virtual void render();
 };
 

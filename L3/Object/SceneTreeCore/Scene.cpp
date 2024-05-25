@@ -8,6 +8,7 @@ Scene::Scene(Application* p_app) {
     default_camera=new Camera();
     default_viewport->set_camera(default_camera);
     root_node=default_viewport;
+    root_node->set_name("root");
 
     make_enter_scene(root_node);
 }
