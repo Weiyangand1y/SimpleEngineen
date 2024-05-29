@@ -32,7 +32,7 @@ void Sprite2D::set_texture(const std::string& name) {
     m_size={texture.w,texture.h};
     math::vec2 s2=m_scale*m_size;
     debug("sprite[{}] total size: {:.2f}, {:.2f}\n",name,s2.x,s2.y);
-    texture_key=name.c_str();
+    texture_key=name;
     //
 }
 

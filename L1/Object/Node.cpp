@@ -75,6 +75,22 @@ std::string Node::get_path() {
     return path;
 }
 
+void Node::print_child_as_tree(const std::string& prefix, bool isLast ) {
+    // Print the current node's name with proper prefix
+    std::cout << prefix;
+
+    // Print the node connector
+    std::cout << (isLast ? "└── " : "├── ");
+
+    // Print the node name
+    std::cout << name << std::endl;
+
+    // Recursively print each child with the updated prefix
+    for (size_t i = 0; i < children.size(); ++i) {
+        children[i]->print_child_as_tree(prefix + (isLast ? "    " : "│   "), i == children.size() - 1);
+    }
+}
+
 void Node::ready() {
 //    debug("{} is ready\n",name);
 }

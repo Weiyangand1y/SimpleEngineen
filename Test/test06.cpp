@@ -5,17 +5,31 @@
 #include "L3/Object/SceneTreeCore/Sprite2D.h"
 #include "L1/Object/ScriptObject.h"
 #include "L3/Object/Mix/ScriptBind.h"
-void save_node(SceneNode* node,int& index){
+void save_node(SceneNode* node,int& index,int parent_index){
     std::unordered_map<std::string, std::function<void()>> db;
-    db["Node2D"]=[node,index]{
+    db["Node2D"]=[node,index](){
         auto node2d=reinterpret_cast<Node2D*>(node);
         float x=node2d->m_position.x;
         float y=node2d->m_position.y;
         std::string str = fmt::format(
-            "n{}=add_node2d()\n"
+            "n{}=add_node2d();  "
             "n{}:set_position({},{})",
             index,index,
             x ,y
+            );
+        Logger::log(2,str);
+    };
+    db["Sprite2D"]=[node,index](){
+        auto sprite2d=reinterpret_cast<Sprite2D*>(node);
+        float x=sprite2d->m_position.x;
+        float y=sprite2d->m_position.y;
+        std::string str = fmt::format(
+            "n{}=add_sprite2d();  "
+            "n{}:set_position({},{});  "
+            "n{}:set_texture('{}')",
+            index,
+            index,x ,y,
+            index,std::string(sprite2d->texture_key) 
             );
         Logger::log(2,str);
     };
@@ -23,6 +37,10 @@ void save_node(SceneNode* node,int& index){
     auto call_function=db[class_name];
     if(call_function){
         call_function();
+        if(parent_index>=0){
+            std::string str = fmt::format("n{}:add_child(n{})",parent_index,index);
+            Logger::log(2,str);
+        }
     }else{
         Logger::log(8,"unregistered class");
     }
@@ -31,17 +49,13 @@ void save_node(SceneNode* node,int& index){
     int original_index=index;
     for(auto n:v){
         index++;
-        save_node(n,index);
-        std::string str = fmt::format("n{}:add_child(n{})",original_index,index);
-        Logger::log(2,str);
+        save_node(n,index,original_index);
     }
 
 }
 void save_all(SceneNode* node){
     int index=0;
-    save_node(node,index);
-
-
+    save_node(node,index,-1);
 }
 void load(SceneNode* node){
     ScriptObject so;
@@ -51,7 +65,7 @@ void load(SceneNode* node){
     };
     so.script.do_string(
         "n1=add_node2d()\n"
-        "n1:set_name('hello')"
+        "n1:set_name('hello')\n"
         "n1:set_position(3,1)"
         );
 }
@@ -67,7 +81,9 @@ public:
         debug("class name: {}\n",sp->class_name);
         Node2D* n2=scene->root_node->create_add_child<Node2D>();
         Node2D* n3=n2->create_add_child<Node2D>();
-        n2->create_add_child<Node2D>();
+        auto n4=n2->create_add_child<Sprite2D>();
+        n4->set_texture("js");
+        n4->create_add_child<Node2D>();
         debug("class name: {}\n",n2->class_name);
         sp->add_child(n2);
         debug("path: {}\n",n3->get_path());
@@ -87,6 +103,7 @@ public:
         Node* n=n2->get_child("hello");
         
         if(n)debug("find~~\n");
+        scene->root_node->print_child_as_tree();
 
 
 
@@ -120,6 +137,7 @@ public:
 };
 int main(){
     system("cls");
+    system("chcp 65001");
     L3App app;
     app.init();
     app.run();

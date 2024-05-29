@@ -15,6 +15,7 @@ public:
 
     std::string get_name();
     std::string get_path();
+    void print_child_as_tree(const std::string& prefix = "", bool isLast = true);
 
     virtual void ready();
     virtual void process(float delta);
