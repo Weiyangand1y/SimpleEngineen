@@ -1,5 +1,6 @@
 #include "Shader.h"
 #include "L1/Debug/CheckGL.h"
+#include "L1/Debug/Log.h"
 int Shader::compile_shader(GLuint type, const std::string& code) {
     unsigned int shader_id = glCreateShader(type);
     const char* code_str = code.c_str();

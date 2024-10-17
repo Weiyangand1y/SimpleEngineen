@@ -21,7 +21,7 @@ Texture::Texture(std::string filename,std::string* message){
 
     if (!data){
         if(message)*message=std::string("can't load image") ;
-        std::cout<<"can't load image"<<std::endl;
+        std::cout<<"can't load image"<<":"<<filename<<std::endl;
     }else{
         if(c==3){
             GL_CALL(glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,w,h,0,GL_RGB,GL_UNSIGNED_BYTE,data);)

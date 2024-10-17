@@ -59,7 +59,8 @@ void script_bind_class(sol::state& script){
         "set_name",         &SceneNode::set_name,
         "signal",           &SceneNode::signal,
         "queue_free",       &SceneNode::queue_free,
-        "connect_signal",   &SceneNode::make_signal_record 
+        "connect_signal",   &SceneNode::make_signal_record,
+        "add_child",        &SceneNode::add_child
     );
     script.new_usertype<Node2D>("Node2D",
         "set_position",     &Node2D::set_position,

@@ -43,6 +43,13 @@ void SceneNode::get_children(std::vector<SceneNode*>& result) {
     }
 }
 
+SceneNode* SceneNode::get_child(int index) {
+    if(index>=0 && index<children.size()){
+        return static_cast<SceneNode*>(children[index]);
+    }
+    return nullptr;
+}
+
 void SceneNode::make_signal_record(SignalObject& so, std::string name, int id) {
     signal_record.push_back({&so,name,id});
 }
@@ -50,4 +57,8 @@ void SceneNode::make_signal_record(SignalObject& so, std::string name, int id) {
 void SceneNode::connect_signal(SignalObject& so,std::string signal_name,Callback func) {
     int id=so.connect(signal_name,func);
     make_signal_record(so,signal_name,id);
+}
+
+Scene* SceneNode::get_scene() {
+    return scene;
 }

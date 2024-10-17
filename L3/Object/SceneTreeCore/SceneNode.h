@@ -25,9 +25,10 @@ public:
     void queue_free();
     void get_all_children(std::vector<SceneNode*>& result);
     void get_children(std::vector<SceneNode*>& result);
+    SceneNode* get_child(int index);
     void make_signal_record(SignalObject& so,std::string name,int id);
     void connect_signal(SignalObject& so,std::string signal_name,Callback func);
-
+    Scene* get_scene();
     template<typename T, typename...Args>
     T* create_add_child(Args... args);
     template<typename T>
